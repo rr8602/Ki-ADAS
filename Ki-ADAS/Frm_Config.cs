@@ -21,6 +21,6 @@ namespace Ki_ADAS
         {
             m_frmParent = f;
         }
-
+        asdf
     }
 }
