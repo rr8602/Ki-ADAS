@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Ki_ADAS
+namespace Simulator
 {
     internal static class Program
     {
@@ -16,13 +16,7 @@ namespace Ki_ADAS
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            Frm_Mainfrm mainForm = new Frm_Mainfrm();
-
-            Frm_Operator operatorForm = new Frm_Operator();
-            operatorForm.Show();
-
-            Application.Run(mainForm);
+            Application.Run(new Frm_CameraSimulator());
         }
     }
 }

@@ -10,5 +10,9 @@ namespace Ki_ADAS
     {
         public const int FOM_IDX_MAIN = 0;
         public const int FOM_IDX_CONFIG = 1;
+        public const int FOM_IDX_CALIBRATION = 2;
+        public const int FOM_IDX_MANUAL = 3;
+        public const int FOM_IDX_RESULT = 4;
+        public const int FOM_IDX_VEP = 5;
     }
 }
