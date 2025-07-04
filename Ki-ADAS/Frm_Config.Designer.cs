@@ -199,7 +199,7 @@
             this.BtnSave.Name = "BtnSave";
             this.BtnSave.Size = new System.Drawing.Size(462, 123);
             this.BtnSave.TabIndex = 214;
-            this.BtnSave.Text = "저   장";
+            this.BtnSave.Text = "SAVE";
             this.BtnSave.UseVisualStyleBackColor = true;
             this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
