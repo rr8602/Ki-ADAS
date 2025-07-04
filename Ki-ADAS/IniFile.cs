@@ -71,5 +71,15 @@ namespace Ki_ADAS
         {
             WriteValue(section, key, value.ToString());
         }
+
+        public string ReadString(string section, string key, string defaultValue = "")
+        {
+            return ReadValue(section, key, defaultValue);
+        }
+
+        public void WriteString(string section, string key, string value)
+        {
+            WriteValue(section, key, value);
+        }
     }
 }

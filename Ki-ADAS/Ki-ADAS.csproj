@@ -81,12 +81,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Define.cs" />
-    <Compile Include="Frm_CameraSimulator.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Frm_CameraSimulator.Designer.cs">
-      <DependentUpon>Frm_CameraSimulator.cs</DependentUpon>
-    </Compile>
     <Compile Include="Frm_Config.cs">
       <SubType>Form</SubType>
     </Compile>

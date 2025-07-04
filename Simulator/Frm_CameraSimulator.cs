@@ -53,7 +53,7 @@ namespace Simulator
         private void InitializeComponents()
         {
             // 설정 파일 로드
-            string iniPath = System.IO.Path.Combine(Application.StartupPath, "config.ini");
+            string iniPath = System.IO.Path.Combine(Application.StartupPath, @"..\..\..\..\Excute\config.ini");
             _iniFile = new Ki_ADAS.IniFile(iniPath);
 
             // VEP 프로토콜 초기화
@@ -180,7 +180,6 @@ namespace Simulator
 
         private void ProcessSynchroUpdate(int synchroNumber, int value)
         {
-            // 이미지 표시된 캘리브레이션 프로세스에 따른 시뮬레이션 처리
             switch (synchroNumber)
             {
                 case 3:
@@ -188,14 +187,20 @@ namespace Simulator
                     {
                         AddLogMessage("전면 카메라 캘리브레이션 요청됨");
                         UpdateStatus(CalibrationStatus.Requested);
+
+                        _vepProtocol.SetSynchroValue(4, 1);
                     }
                     else if (value == 20)
                     {
                         AddLogMessage("타겟을 홈 위치로 이동");
+
+                        _vepProtocol.SetSynchroValue(3, 21);
                     }
                     else if (value == 21)
                     {
                         AddLogMessage("타겟을 홈 위치로 이동 2단계");
+
+                        _vepProtocol.SetSynchroValue(110, ConvertAngleToRawValue(_rollAngle));
                     }
                     break;
 
@@ -204,39 +209,45 @@ namespace Simulator
                     {
                         AddLogMessage("전면 카메라 타겟 위치 확인");
                         UpdateStatus(CalibrationStatus.InProgress);
+
+                        _vepProtocol.SetSynchroValue(3, 20);
                     }
                     break;
 
                 case 110: // 각도 1 (Roll)
                     AddLogMessage($"Roll 각도 값 요청됨");
-                    // 시뮬레이션으로 입력된 Roll 값 전송
                     int rollValue = ConvertAngleToRawValue(_rollAngle);
                     AddLogMessage($"Roll 각도 값 전송: {_rollAngle} (raw: {rollValue})");
+
+                    _vepProtocol.SetSynchroValue(111, ConvertAngleToRawValue(_azimuthAngle));
                     break;
 
                 case 111: // 각도 2 (Azimuth)
                     AddLogMessage($"Azimuth 각도 값 요청됨");
-                    // 시뮬레이션으로 입력된 Azimuth 값 전송
                     int azimuthValue = ConvertAngleToRawValue(_azimuthAngle);
                     AddLogMessage($"Azimuth 각도 값 전송: {_azimuthAngle} (raw: {azimuthValue})");
+
+                    _vepProtocol.SetSynchroValue(112, ConvertAngleToRawValue(_elevationAngle));
                     break;
 
                 case 112: // 각도 3 (Elevation)
                     AddLogMessage($"Elevation 각도 값 요청됨");
-                    // 시뮬레이션으로 입력된 Elevation 값 전송
                     int elevationValue = ConvertAngleToRawValue(_elevationAngle);
                     AddLogMessage($"Elevation 각도 값 전송: {_elevationAngle} (raw: {elevationValue})");
+
+                    _vepProtocol.SetSynchroValue(89, 1);
                     break;
 
                 case 89:
                     if (value == 1)
                     {
                         AddLogMessage("Synchro 89 첫번째 시도");
+
+                        _vepProtocol.SetSynchroValue(89, 2);
                     }
                     else if (value == 2)
                     {
                         AddLogMessage("Synchro 89 두번째 시도");
-                        // 각도 검증 처리
                         ValidateCalibration();
                     }
                     break;
@@ -257,34 +268,34 @@ namespace Simulator
             // Roll 각도 검증
             if (Math.Abs(_rollAngle) > ROLL_THRESHOLD)
             {
-                message += $"Roll 각도 오류: {_rollAngle}, 허용범위: ±{ROLL_THRESHOLD}\n";
+                message += $"Roll 각도 오류: {_rollAngle}, 허용범위: ±{ROLL_THRESHOLD} (실패)\n";
                 isValid = false;
             }
             else
             {
-                message += $"Roll 각도 정상: {_rollAngle}\n";
+                message += $"Roll 각도 정상: {_rollAngle} (성공)\n";
             }
 
             // Azimuth 각도 검증
             if (Math.Abs(_azimuthAngle) > AZIMUTH_THRESHOLD)
             {
-                message += $"Azimuth 각도 오류: {_azimuthAngle}, 허용범위: ±{AZIMUTH_THRESHOLD}\n";
+                message += $"Azimuth 각도 오류: {_azimuthAngle}, 허용범위: ±{AZIMUTH_THRESHOLD} (실패)\n";
                 isValid = false;
             }
             else
             {
-                message += $"Azimuth 각도 정상: {_azimuthAngle}\n";
+                message += $"Azimuth 각도 정상: {_azimuthAngle} (성공)\n";
             }
 
             // Elevation 각도 검증
             if (Math.Abs(_elevationAngle) > ELEVATION_THRESHOLD)
             {
-                message += $"Elevation 각도 오류: {_elevationAngle}, 허용범위: ±{ELEVATION_THRESHOLD}\n";
+                message += $"Elevation 각도 오류: {_elevationAngle}, 허용범위: ±{ELEVATION_THRESHOLD} (실패)\n";
                 isValid = false;
             }
             else
             {
-                message += $"Elevation 각도 정상: {_elevationAngle}\n";
+                message += $"Elevation 각도 정상: {_elevationAngle} (성공)\n";
             }
 
             AddLogMessage(message);
@@ -293,12 +304,15 @@ namespace Simulator
             if (isValid)
             {
                 UpdateStatus(CalibrationStatus.Success);
-                AddLogMessage("캘리브레이션 성공");
+                AddLogMessage("캘리브레이션 성공: 모든 각도가 허용 범위 내에 있습니다.");
+
+                // 캘리브레이션 결과를 VEP로 전송
+                _vepProtocol.SetSynchroValue(3, 20); // 캘리브레이션 완료 신호 전송
             }
             else
             {
                 UpdateStatus(CalibrationStatus.Failed);
-                AddLogMessage("캘리브레이션 실패");
+                AddLogMessage("캘리브레이션 실패: 하나 이상의 각도가 허용 범위를 벗어났습니다.");
             }
         }
 
@@ -383,6 +397,33 @@ namespace Simulator
             tbAzimuthAngle.Text = "0.5";
             tbElevationAngle.Text = "0.5";
             BtnApplyAngles_Click(sender, e);
+        }
+
+        private void btnStartCalibration_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!_vepProtocol.RequestCameraCalibration())
+                {
+                    AddLogMessage("카메라 캘리브레이션 요청 실패");
+                    return;
+                }
+
+                AddLogMessage("카메라 캘리브레이션 프로세스 시작");
+
+                // Synchro 3 = 1 설정 (전면 카메라 캘리브레이션 요청)
+                if (!_vepProtocol.SetSynchroValue(3, 1))
+                {
+                    AddLogMessage("Synchro 3 = 1 설정 실패");
+                    return;
+                }
+
+                UpdateStatus(CalibrationStatus.Requested);
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"캘리브레이션 시작 오류: {ex.Message}");
+            }
         }
     }
 }
