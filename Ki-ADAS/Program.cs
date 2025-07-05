@@ -19,9 +19,6 @@ namespace Ki_ADAS
 
             Frm_Mainfrm mainForm = new Frm_Mainfrm();
 
-            Frm_Operator operatorForm = new Frm_Operator();
-            operatorForm.Show();
-
             Application.Run(mainForm);
         }
     }

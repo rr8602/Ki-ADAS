@@ -13,7 +13,7 @@ namespace Ki_ADAS
     public partial class Frm_Operator : Form
     {
         private static Frm_Operator _instance;
-
+        private Point mousePoint; // 현재 마우스 포인터의 좌표저장 변수 선언
         public static Frm_Operator Instance
         {
             get
@@ -30,6 +30,38 @@ namespace Ki_ADAS
         public Frm_Operator()
         {
             InitializeComponent();
+
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+            this.UpdateStyles();
+            MoveFormToSecondMonitor();
+        }
+        private void Frm_Operator_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MoveFormToSecondMonitor()
+        {
+            // 연결된 모든 모니터 가져오기
+            Screen[] screens = Screen.AllScreens;
+
+            if (screens.Length > 1)
+            {
+                // 두 번째 모니터 가져오기
+                Screen secondScreen = screens[2];
+
+                // 두 번째 모니터의 작업 영역 중앙에 폼 위치
+                Rectangle workingArea = secondScreen.WorkingArea;
+                this.StartPosition = FormStartPosition.Manual;
+                this.Location = new Point(
+                    workingArea.Left + (workingArea.Width - this.Width) / 2,
+                    workingArea.Top + (workingArea.Height - this.Height) / 2
+                );
+            }
+            else
+            {
+                MessageBox.Show("두 번째 모니터가 감지되지 않았습니다.");
+            }
         }
 
         private void Frm_Operator_FormClosing(object sender, FormClosingEventArgs e)
@@ -51,8 +83,8 @@ namespace Ki_ADAS
                 return;
             }
 
-            lblStatus.Text = status;
-            lblStatus.ForeColor = color;
+          //  lblStatus.Text = status;
+            //lblStatus.ForeColor = color;
         }
 
         // 진행률 업데이트
@@ -66,7 +98,7 @@ namespace Ki_ADAS
             }
 
             int percentage = (int)((float)currentStep / totalSteps * 100);
-            progressBar.Value = Math.Min(100, Math.Max(0, percentage));
+            //progressBar.Value = Math.Min(100, Math.Max(0, percentage));
         }
 
         // 로그 추가
@@ -110,8 +142,8 @@ namespace Ki_ADAS
             item.SubItems.Add(syncState);
             item.SubItems.Add(result);
 
-            lvProcessLog.Items.Add(item);
-            lvProcessLog.Items[lvProcessLog.Items.Count - 1].EnsureVisible();
+            //lvProcessLog.Items.Add(item);
+            //lvProcessLog.Items[lvProcessLog.Items.Count - 1].EnsureVisible();
         }
 
         // 로그 초기화
@@ -124,8 +156,23 @@ namespace Ki_ADAS
                 return;
             }
 
-            lvProcessLog.Items.Clear();
-            progressBar.Value = 0;
+            //lvProcessLog.Items.Clear();
+           // progressBar.Value = 0;
         }
+
+        private void NavTop_MouseMove(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left) //마우스 왼쪽 클릭 시에만 실행
+            {
+                //폼의 위치를 드래그중인 마우스의 좌표로 이동 
+                Location = new Point(Left - (mousePoint.X - e.X), Top - (mousePoint.Y - e.Y));
+            }
+        }
+
+        private void NavTop_MouseDown(object sender, MouseEventArgs e)
+        {
+            mousePoint = new Point(e.X, e.Y); //현재 마우스 좌표 저장
+        }
+
     }
 }
