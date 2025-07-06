@@ -135,6 +135,10 @@
     <Compile Include="Frm_VEP.Designer.cs">
       <DependentUpon>Frm_VEP.cs</DependentUpon>
     </Compile>
+    <Compile Include="VEPBench\VEPBenchClient.cs" />
+    <Compile Include="VEPBench\VEPBenchProcessor.cs" />
+    <Compile Include="VEPBench\VEPBenchRequest.cs" />
+    <Compile Include="VEPBench\VEPBenchResponse.cs" />
     <Compile Include="VEPProtocol.cs" />
     <EmbeddedResource Include="Frm_Config.resx">
       <DependentUpon>Frm_Config.cs</DependentUpon>
@@ -187,5 +191,6 @@
   <ItemGroup>
     <Content Include="K-Logo.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
