@@ -28,24 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_Operator));
             this.NavTop = new System.Windows.Forms.Panel();
-            this.label9 = new System.Windows.Forms.Label();
-            this.picLogo = new System.Windows.Forms.PictureBox();
+            this.roundLabel3 = new KI_Controls.RoundLabel();
+            this.roundLabel2 = new KI_Controls.RoundLabel();
+            this.roundLabel1 = new KI_Controls.RoundLabel();
+            this.analogClock1 = new Ki_WAT.AnalogClock();
             this.NavBottom = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.lvProcessLog = new System.Windows.Forms.ListView();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.lblStatus = new System.Windows.Forms.Label();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.roundLabel4 = new KI_Controls.RoundLabel();
             this.NavTop.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // NavTop
@@ -53,145 +43,134 @@
             this.NavTop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.NavTop.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.NavTop.Controls.Add(this.label9);
-            this.NavTop.Controls.Add(this.picLogo);
+            this.NavTop.Controls.Add(this.roundLabel3);
+            this.NavTop.Controls.Add(this.roundLabel2);
+            this.NavTop.Controls.Add(this.roundLabel1);
+            this.NavTop.Controls.Add(this.analogClock1);
             this.NavTop.Location = new System.Drawing.Point(1, 2);
-            this.NavTop.Margin = new System.Windows.Forms.Padding(5);
+            this.NavTop.Margin = new System.Windows.Forms.Padding(4);
             this.NavTop.Name = "NavTop";
-            this.NavTop.Size = new System.Drawing.Size(2996, 389);
+            this.NavTop.Size = new System.Drawing.Size(1920, 173);
             this.NavTop.TabIndex = 9;
+            this.NavTop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseDown);
+            this.NavTop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseMove);
             // 
-            // label9
+            // roundLabel3
             // 
-            this.label9.BackColor = System.Drawing.Color.MidnightBlue;
-            this.label9.Font = new System.Drawing.Font("Arial", 30F);
-            this.label9.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.label9.Location = new System.Drawing.Point(128, 62);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(1554, 66);
-            this.label9.TabIndex = 550;
-            this.label9.Text = "-";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.roundLabel3.BackColor = System.Drawing.Color.Black;
+            this.roundLabel3.BackgroundColor = System.Drawing.Color.Black;
+            this.roundLabel3.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundLabel3.BorderRadius = 20;
+            this.roundLabel3.BorderSize = 0;
+            this.roundLabel3.FlatAppearance.BorderSize = 0;
+            this.roundLabel3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundLabel3.Font = new System.Drawing.Font("Arial", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.roundLabel3.ForeColor = System.Drawing.Color.White;
+            this.roundLabel3.Location = new System.Drawing.Point(1663, 28);
+            this.roundLabel3.Name = "roundLabel3";
+            this.roundLabel3.Size = new System.Drawing.Size(215, 114);
+            this.roundLabel3.TabIndex = 8;
+            this.roundLabel3.Text = "9999";
+            this.roundLabel3.TextColor = System.Drawing.Color.White;
+            this.roundLabel3.UseVisualStyleBackColor = false;
             // 
-            // picLogo
+            // roundLabel2
             // 
-            this.picLogo.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.picLogo.Image = ((System.Drawing.Image)(resources.GetObject("picLogo.Image")));
-            this.picLogo.InitialImage = ((System.Drawing.Image)(resources.GetObject("picLogo.InitialImage")));
-            this.picLogo.Location = new System.Drawing.Point(14, 15);
-            this.picLogo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.picLogo.Name = "picLogo";
-            this.picLogo.Size = new System.Drawing.Size(75, 80);
-            this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picLogo.TabIndex = 549;
-            this.picLogo.TabStop = false;
+            this.roundLabel2.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.roundLabel2.BackgroundColor = System.Drawing.Color.LightSteelBlue;
+            this.roundLabel2.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundLabel2.BorderRadius = 20;
+            this.roundLabel2.BorderSize = 0;
+            this.roundLabel2.FlatAppearance.BorderSize = 0;
+            this.roundLabel2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundLabel2.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.roundLabel2.ForeColor = System.Drawing.Color.White;
+            this.roundLabel2.Location = new System.Drawing.Point(243, 88);
+            this.roundLabel2.Name = "roundLabel2";
+            this.roundLabel2.Size = new System.Drawing.Size(1396, 54);
+            this.roundLabel2.TabIndex = 7;
+            this.roundLabel2.Text = "-";
+            this.roundLabel2.TextColor = System.Drawing.Color.White;
+            this.roundLabel2.UseVisualStyleBackColor = false;
+            // 
+            // roundLabel1
+            // 
+            this.roundLabel1.BackColor = System.Drawing.Color.MidnightBlue;
+            this.roundLabel1.BackgroundColor = System.Drawing.Color.MidnightBlue;
+            this.roundLabel1.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundLabel1.BorderRadius = 20;
+            this.roundLabel1.BorderSize = 0;
+            this.roundLabel1.FlatAppearance.BorderSize = 0;
+            this.roundLabel1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundLabel1.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.roundLabel1.ForeColor = System.Drawing.Color.White;
+            this.roundLabel1.Location = new System.Drawing.Point(243, 28);
+            this.roundLabel1.Name = "roundLabel1";
+            this.roundLabel1.Size = new System.Drawing.Size(1396, 54);
+            this.roundLabel1.TabIndex = 6;
+            this.roundLabel1.Text = "-";
+            this.roundLabel1.TextColor = System.Drawing.Color.White;
+            this.roundLabel1.UseVisualStyleBackColor = false;
+            // 
+            // analogClock1
+            // 
+            this.analogClock1.BackColor = System.Drawing.Color.White;
+            this.analogClock1.BorderColor = System.Drawing.Color.LightCoral;
+            this.analogClock1.BorderThickness = 3;
+            this.analogClock1.HourHandColor = System.Drawing.Color.Black;
+            this.analogClock1.Location = new System.Drawing.Point(23, 19);
+            this.analogClock1.MinuteHandColor = System.Drawing.Color.Black;
+            this.analogClock1.Name = "analogClock1";
+            this.analogClock1.NumberFont = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.analogClock1.SecondHandColor = System.Drawing.Color.Red;
+            this.analogClock1.Size = new System.Drawing.Size(187, 114);
+            this.analogClock1.TabIndex = 5;
+            this.analogClock1.Text = "analogClock1";
             // 
             // NavBottom
             // 
             this.NavBottom.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.NavBottom.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.NavBottom.Location = new System.Drawing.Point(-643, 1568);
-            this.NavBottom.Margin = new System.Windows.Forms.Padding(5);
+            this.NavBottom.Location = new System.Drawing.Point(-347, 1627);
+            this.NavBottom.Margin = new System.Windows.Forms.Padding(4);
             this.NavBottom.Name = "NavBottom";
-            this.NavBottom.Size = new System.Drawing.Size(2194, 10);
+            this.NavBottom.Size = new System.Drawing.Size(1920, 8);
             this.NavBottom.TabIndex = 10;
             // 
-            // panel1
+            // roundLabel4
             // 
-            this.panel1.BackColor = System.Drawing.Color.LightSteelBlue;
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Controls.Add(this.lvProcessLog);
-            this.panel1.Controls.Add(this.progressBar);
-            this.panel1.Controls.Add(this.lblStatus);
-            this.panel1.Location = new System.Drawing.Point(27, 239);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1656, 634);
-            this.panel1.TabIndex = 11;
-            // 
-            // lvProcessLog
-            // 
-            this.lvProcessLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6});
-            this.lvProcessLog.FullRowSelect = true;
-            this.lvProcessLog.GridLines = true;
-            this.lvProcessLog.HideSelection = false;
-            this.lvProcessLog.Location = new System.Drawing.Point(-2, 463);
-            this.lvProcessLog.Name = "lvProcessLog";
-            this.lvProcessLog.Size = new System.Drawing.Size(1656, 167);
-            this.lvProcessLog.TabIndex = 2;
-            this.lvProcessLog.UseCompatibleStateImageBehavior = false;
-            this.lvProcessLog.View = System.Windows.Forms.View.Details;
-            // 
-            // progressBar
-            // 
-            this.progressBar.Location = new System.Drawing.Point(-2, -2);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1656, 130);
-            this.progressBar.TabIndex = 1;
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.BackColor = System.Drawing.Color.Transparent;
-            this.lblStatus.Font = new System.Drawing.Font("굴림", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblStatus.ForeColor = System.Drawing.Color.Red;
-            this.lblStatus.Location = new System.Drawing.Point(0, -2);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(1654, 632);
-            this.lblStatus.TabIndex = 0;
-            this.lblStatus.Text = "ADAS 프로세스 대기 중";
-            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "시간";
-            this.columnHeader1.Width = 270;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "유형";
-            this.columnHeader2.Width = 270;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "단계 ID";
-            this.columnHeader3.Width = 270;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "설명";
-            this.columnHeader4.Width = 270;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "동기화 상태";
-            this.columnHeader5.Width = 270;
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "결과";
-            this.columnHeader6.Width = 270;
+            this.roundLabel4.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.roundLabel4.BackgroundColor = System.Drawing.Color.LightSteelBlue;
+            this.roundLabel4.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundLabel4.BorderRadius = 20;
+            this.roundLabel4.BorderSize = 0;
+            this.roundLabel4.FlatAppearance.BorderSize = 0;
+            this.roundLabel4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundLabel4.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.roundLabel4.ForeColor = System.Drawing.Color.White;
+            this.roundLabel4.Location = new System.Drawing.Point(143, 204);
+            this.roundLabel4.Name = "roundLabel4";
+            this.roundLabel4.Size = new System.Drawing.Size(1626, 659);
+            this.roundLabel4.TabIndex = 11;
+            this.roundLabel4.Text = "-";
+            this.roundLabel4.TextColor = System.Drawing.Color.White;
+            this.roundLabel4.UseVisualStyleBackColor = false;
             // 
             // Frm_Operator
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1700, 884);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(1920, 1080);
+            this.Controls.Add(this.roundLabel4);
             this.Controls.Add(this.NavTop);
             this.Controls.Add(this.NavBottom);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Frm_Operator";
             this.Text = "Frm_Operator";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Operator_FormClosing);
+            this.Load += new System.EventHandler(this.Frm_Operator_Load);
             this.NavTop.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
-            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -199,18 +178,11 @@
         #endregion
 
         private System.Windows.Forms.Panel NavTop;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.PictureBox picLogo;
         private System.Windows.Forms.Panel NavBottom;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.ListView lvProcessLog;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private KI_Controls.RoundLabel roundLabel3;
+        private KI_Controls.RoundLabel roundLabel2;
+        private KI_Controls.RoundLabel roundLabel1;
+        private Ki_WAT.AnalogClock analogClock1;
+        private KI_Controls.RoundLabel roundLabel4;
     }
 }

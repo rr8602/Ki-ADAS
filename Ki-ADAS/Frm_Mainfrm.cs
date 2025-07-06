@@ -24,7 +24,7 @@ namespace Ki_ADAS
         public Frm_Manual m_frmManual = new Frm_Manual();
         public Frm_Result m_frmResult = new Frm_Result();
         public Frm_VEP m_frmVEP = new Frm_VEP();
-
+        public Frm_Operator User_Monitor = null;
         private List<Button> m_NavButtons = new List<Button>();
 
         public Frm_Mainfrm()
@@ -55,6 +55,19 @@ namespace Ki_ADAS
             m_NavButtons.Add(BtnVEP);
 
             ShowFrm(Def.FOM_IDX_MAIN);
+
+
+            if (!this.DesignMode)
+            {
+                if (User_Monitor == null || User_Monitor.Text == "")
+                {
+                    User_Monitor = new Frm_Operator();
+                    User_Monitor.Show();
+                }
+       
+
+            }
+
         }
 
         private void InitializeSubForm(Form f)
