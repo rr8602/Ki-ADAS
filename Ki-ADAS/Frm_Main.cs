@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ki_ADAS.VEPBench;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,7 +16,7 @@ namespace Ki_ADAS
     public partial class Frm_Main : Form
     {
         private Frm_Mainfrm m_frmParent = null;
-        private VEPProtocol _vepProtocol;
+        private VEPBenchClient _vepBenchClient;
         private ADASProcess _adasProcess;
         private IniFile _iniFile;
         private const string CONFIG_SECTION = "Network";
@@ -32,8 +34,11 @@ namespace Ki_ADAS
             string iniPath = Path.Combine(Application.StartupPath, "config.ini");
             _iniFile = new IniFile(iniPath);
 
-            _vepProtocol = new VEPProtocol();
-            _adasProcess = new ADASProcess(_vepProtocol);
+            string ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
+            int port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
+
+            _vepBenchClient = new VEPBenchClient(ipAddress, port);
+            _adasProcess = new ADASProcess(_vepBenchClient);
 
             _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
 
@@ -139,6 +144,69 @@ namespace Ki_ADAS
             }
 
             base.OnClosing(e);
+        }
+
+        private void BtnTestModbus_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
+                int port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
+
+                if (_vepBenchClient != null)
+                {
+                    _vepBenchClient.DisConnect();
+                }
+
+                _vepBenchClient = new VEPBenchClient(ipAddress, port);
+                _vepBenchClient.DebugMode = true;
+
+                AddLogMessage("Modbus 서버 연결 테스트 시작...");
+
+                // 연결 테스트
+                bool connected = _vepBenchClient.TestConnection();
+                if (connected)
+                {
+                    AddLogMessage("Modbus 서버 연결 성공!");
+
+                    AddLogMessage("유효성 지시자 읽기 시도...");
+                    ushort validityIndicator = _vepBenchClient.ReadValidityIndicator();
+                    AddLogMessage($"유효성 지시자 값: {validityIndicator}");
+
+                    AddLogMessage("Synchro 영역에 테스트 값 쓰기...");
+                    var synchro = new VEPBenchSynchro
+                    {
+                        Angle1 = 1.5,
+                        Angle2 = 2.5,
+                        Angle3 = 3.5
+                    };
+
+                    _vepBenchClient.WriteSynchroZone(synchro);
+
+                    AddLogMessage("Synchro 영역 읽기...");
+                    var readSynchro = _vepBenchClient.ReadSynchroZone();
+                    AddLogMessage($"읽은 Synchro 값: Angle1={readSynchro.Angle1}, Angle2={readSynchro.Angle2}, Angle3={readSynchro.Angle3}");
+
+                    AddLogMessage("벤치 루프 테스트 시작...");
+                    _vepBenchClient.RunBenchRoop();
+                    AddLogMessage("벤치 루프 테스트 완료");
+                }
+                else
+                {
+                    AddLogMessage("Modbus 서버 연결 실패");
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"Modbus 테스트 중 오류 발생: {ex.Message}");
+            }
+            finally
+            {
+                if (_vepBenchClient != null)
+                {
+                    _vepBenchClient.DisConnect();
+                }
+            }
         }
     }
 }

@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using static Ki_ADAS.VEPProtocol;
+using Ki_ADAS.VEPBench;
 
 namespace Ki_ADAS
 {
     public class ADASProcess
     {
-        private VEPProtocol _vepProtocol;
+        private VEPBenchClient _vepBenchClient;
         private int _currentStep = 0;
         private List<ADASProcessStep> _processSteps;
         private bool _isRunning = false;
@@ -76,13 +76,9 @@ namespace Ki_ADAS
             }
         }
 
-        public ADASProcess(VEPProtocol vepProtocol)
+        public ADASProcess(VEPBenchClient vepBenchClient)
         {
-            _vepProtocol = vepProtocol ?? throw new ArgumentNullException(nameof(vepProtocol));
-
-            _vepProtocol.OnDataReceived += VEPProtocol_OnDataReceived;
-            _vepProtocol.OnConnectionChanged += VEPProtocol_OnConnectionChanged;
-
+            _vepBenchClient = vepBenchClient ?? throw new ArgumentNullException(nameof(vepBenchClient));
             InitializeProcessSteps();
         }
 
@@ -95,49 +91,49 @@ namespace Ki_ADAS
                     213,
                     "카메라 캘리브레이션 요청",
                     "Synchro 3 = 1",
-                    () => _vepProtocol.SetSynchroValue(3, 1)),
+                    () => SetSynchroValue(3, 1)),
 
                 new ADASProcessStep(
                     214,
                     "전면 카메라 타겟 위치 확인",
                     "Synchro 4 = 1",
-                    () => _vepProtocol.SetSynchroValue(4, 1)),
+                    () => SetSynchroValue(4, 1)),
 
                 new ADASProcessStep(
                     213,
                     "타켓을 홈 위치로 이동",
                     "Synchro 3 = 20",
-                    () => _vepProtocol.SetSynchroValue(3, 20)),
+                    () => SetSynchroValue(3, 20)),
 
                 new ADASProcessStep(
                     213,
                     "타켓을 홈 위치로 이동 2단계",
                     "Synchro 3 = 21",
-                    () => _vepProtocol.SetSynchroValue(3, 21)),
+                    () => SetSynchroValue(3, 21)),
 
                 new ADASProcessStep(
                     320,
                     "각도 1 측정값 전송",
                     "Synchro 110 = 각도 1",
-                    () => _vepProtocol.SetSynchroValue(110, GetMeasurementAngle(1))),
+                    () => SetSynchroValue(110, GetMeasurementAngle(1))),
 
                 new ADASProcessStep(
                     321,
                     "각도 2 측정값 전송",
                     "Synchro 111 = 각도 2",
-                    () => _vepProtocol.SetSynchroValue(111, GetMeasurementAngle(2))),
+                    () => SetSynchroValue(111, GetMeasurementAngle(2))),
 
                 new ADASProcessStep(
                     322,
                     "각도 3 측정값 전송",
                     "Synchro 112 = 각도 3",
-                    () => _vepProtocol.SetSynchroValue(112, GetMeasurementAngle(3))),
+                    () => SetSynchroValue(112, GetMeasurementAngle(3))),
 
                 new ADASProcessStep(
                     299,
                     "Synchro 89 첫번째 시도",
                     "Synchro 89 = 1",
-                    () => _vepProtocol.SetSynchroValue(89, 1)),
+                    () => SetSynchroValue(89, 1)),
 
                 new ADASProcessStep(
                     299,
@@ -159,7 +155,7 @@ namespace Ki_ADAS
                 return false;
             }
 
-            return _vepProtocol.SetSynchroValue(89, 2);
+            return SetSynchroValue(89, 2);
         }
 
         private bool ValidateCameraAngles()
@@ -213,71 +209,44 @@ namespace Ki_ADAS
             return random.Next(0, 100);
         }
 
-        // VEP 프로토콜 데이터 수신 처리
-        private void VEPProtocol_OnDataReceived(object sender, VEPDataReceivedEventArgs e)
+        // Synchro 값 설정
+        private bool SetSynchroValue(int syncNumber, int value)
         {
-            switch (e.Response.Command)
+            try
             {
-                case VEPCommand.CameraCalibration:
-                    if (e.Response.Data.Length > 0)
-                    {
-                        if (e.Response.Data[0] == 1)
-                        {
-                            NotifyProcessState("캘리브레이션 완료", ProcessStateType.Success);
-                        }
-                        else
-                        {
-                            NotifyProcessState("캘리브레이션 실패", ProcessStateType.Error);
-                        }
-                    }
+                var synchro = new VEPBenchSynchro();
 
-                    break;
+                // 동기화 값에 따라 알맞은 위치에 설정
+                switch (syncNumber)
+                {
+                    case 110:
+                        synchro.Angle1 = value;
+                        break;
 
-                case VEPCommand.SetSynchro:
-                    if (e.Response.Data.Length > 0)
-                    {
-                        bool success = e.Response.Data[0] == 1;
+                    case 111:
+                        synchro.Angle2 = value;
+                        break;
 
-                        if (success)
-                        {
-                            NotifyProcessState("동기화 값 설정 성공", ProcessStateType.Success);
-                        }
-                        else
-                        {
-                            NotifyProcessState("동기화 값 설정 실패", ProcessStateType.Error);
-                        }
-                    }
-                    
-                    break;
+                    case 112:
+                        synchro.Angle3 = value;
+                        break;
 
-                case VEPCommand.GetSynchro:
-                    if (e.Response.Data.Length > 1)
-                    {
-                        int syncNumber = e.Response.Data[0];
-                        int syncValue = e.Response.Data[1];
+                    default:
+                        ushort[] data = new ushort[3];
+                        data[syncNumber % 3] = (ushort)value;
+                        _vepBenchClient.WriteStatusZone(data);
 
-                        NotifyProcessState($"동기화 값 수신: Synchro {syncNumber} = {syncValue}", ProcessStateType.Info);
-                    }
+                        return true;
+                }
 
-                    break;
-
-                case VEPCommand.AngleMeasurement:
-                    if (e.Response.Data.Length > 0)
-                    {
-                        NotifyProcessState($"각도 측정 결과: {e.Response.Data[0]}", ProcessStateType.Info);
-                    }
-
-                    break;
+                _vepBenchClient.WriteSynchroZone(synchro);
+                NotifyProcessState($"Synchro {syncNumber} = {value} 설정 완료", ProcessStateType.Info);
+                return true;
             }
-        }
-
-        // VEP 프로토콜 연결 상태 변경 처리
-        private void VEPProtocol_OnConnectionChanged(object sender, VEPConnectionEventArgs e)
-        {
-            if (!e.IsConnected && _isRunning)
+            catch (Exception ex)
             {
-                Stop();
-                NotifyProcessState("VEP 서버 연결 끊김", ProcessStateType.Info);
+                NotifyProcessState($"Synchro 값 설정 실패: {ex.Message}", ProcessStateType.Error);
+                return false;
             }
         }
 
@@ -288,13 +257,12 @@ namespace Ki_ADAS
                 if (_isRunning)
                     return false;
 
-                bool connected = _vepProtocol.Connect(ipAddress, port);
-
-                if (!connected)
+                if (_vepBenchClient == null)
                 {
-                    NotifyProcessState("VEP 서버 연결 실패", ProcessStateType.Error);
-                    return false;
+                    _vepBenchClient = new VEPBenchClient(ipAddress, port);
                 }
+
+                _vepBenchClient.Connect();
 
                 _currentStep = 0;
                 _isRunning = true;
@@ -329,7 +297,7 @@ namespace Ki_ADAS
                     catch { }
                 }
 
-                _vepProtocol.DisConnect();
+                _vepBenchClient.DisConnect();
                 NotifyProcessState("프로세스 중지", ProcessStateType.Info);
             }
         }
@@ -342,6 +310,10 @@ namespace Ki_ADAS
                 while (_isRunning && _currentStep < _processSteps.Count)
                 {
                     ProcessNextStep();
+
+                    if (!_isRunning)
+                        break;
+
                     Thread.Sleep(1000);
                 }
 
@@ -382,6 +354,8 @@ namespace Ki_ADAS
                         $"단계 {_currentStep + 1} 실패: {currentStep.Description}",
                         ProcessStateType.Error,
                         currentStep);
+                    
+                    _isRunning = false;
                 }
                 else
                 {
@@ -394,6 +368,8 @@ namespace Ki_ADAS
                     $"단계 {_currentStep + 1} 오류 발생: {ex.Message}",
                     ProcessStateType.Error,
                     currentStep);
+
+                _isRunning = false;
             }
         }
 

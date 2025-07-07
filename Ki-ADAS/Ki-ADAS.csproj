@@ -151,6 +151,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="VEPBench\VEPBenchResponse.cs" />
+    <Compile Include="VEPBench\VEPBenchSynchro.cs" />
     <Compile Include="VEPProtocol.cs" />
     <EmbeddedResource Include="Frm_Config.resx">
       <DependentUpon>Frm_Config.cs</DependentUpon>

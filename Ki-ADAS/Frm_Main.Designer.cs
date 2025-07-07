@@ -49,6 +49,7 @@
             this.GB_GenInfo = new System.Windows.Forms.GroupBox();
             this.BtnStart = new System.Windows.Forms.Button();
             this.BtnStop = new System.Windows.Forms.Button();
+            this.BtnTestModbus = new System.Windows.Forms.Button();
             this.GB_GenInfo.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -307,11 +308,24 @@
             this.BtnStop.UseVisualStyleBackColor = false;
             this.BtnStop.Click += new System.EventHandler(this.BtnStop_Click);
             // 
+            // BtnTestModbus
+            // 
+            this.BtnTestModbus.BackColor = System.Drawing.Color.LightGreen;
+            this.BtnTestModbus.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.BtnTestModbus.Location = new System.Drawing.Point(921, 848);
+            this.BtnTestModbus.Name = "BtnTestModbus";
+            this.BtnTestModbus.Size = new System.Drawing.Size(300, 138);
+            this.BtnTestModbus.TabIndex = 174;
+            this.BtnTestModbus.Text = "Test";
+            this.BtnTestModbus.UseVisualStyleBackColor = false;
+            this.BtnTestModbus.Click += new System.EventHandler(this.BtnTestModbus_Click);
+            // 
             // Frm_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2029, 1179);
+            this.Controls.Add(this.BtnTestModbus);
             this.Controls.Add(this.BtnStop);
             this.Controls.Add(this.BtnStart);
             this.Controls.Add(this.label1);
@@ -354,5 +368,6 @@
         private System.Windows.Forms.GroupBox GB_GenInfo;
         private System.Windows.Forms.Button BtnStart;
         private System.Windows.Forms.Button BtnStop;
+        private System.Windows.Forms.Button BtnTestModbus;
     }
 }
