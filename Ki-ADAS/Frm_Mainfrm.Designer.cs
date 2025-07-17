@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Frm_Mainfrm));
             this.panelNavBar = new System.Windows.Forms.Panel();
+            this.BtnVEP = new System.Windows.Forms.Button();
+            this.BtnResult = new System.Windows.Forms.Button();
             this.BtnManual = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.picLogo = new System.Windows.Forms.PictureBox();
@@ -39,8 +41,6 @@
             this.BtnCalibration = new System.Windows.Forms.Button();
             this.pbLogo = new System.Windows.Forms.PictureBox();
             this.BtnMain = new System.Windows.Forms.Button();
-            this.BtnResult = new System.Windows.Forms.Button();
-            this.BtnVEP = new System.Windows.Forms.Button();
             this.panelNavBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
@@ -67,6 +67,38 @@
             this.panelNavBar.Name = "panelNavBar";
             this.panelNavBar.Size = new System.Drawing.Size(104, 1264);
             this.panelNavBar.TabIndex = 8;
+            // 
+            // BtnVEP
+            // 
+            this.BtnVEP.BackColor = System.Drawing.Color.Gainsboro;
+            this.BtnVEP.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.BtnVEP.Font = new System.Drawing.Font("Verdana", 12F);
+            this.BtnVEP.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.BtnVEP.Location = new System.Drawing.Point(4, 544);
+            this.BtnVEP.Margin = new System.Windows.Forms.Padding(5);
+            this.BtnVEP.Name = "BtnVEP";
+            this.BtnVEP.Size = new System.Drawing.Size(95, 75);
+            this.BtnVEP.TabIndex = 553;
+            this.BtnVEP.Tag = "frmSetting";
+            this.BtnVEP.Text = "VEP";
+            this.BtnVEP.UseVisualStyleBackColor = false;
+            this.BtnVEP.Click += new System.EventHandler(this.BtnVEP_Click);
+            // 
+            // BtnResult
+            // 
+            this.BtnResult.BackColor = System.Drawing.Color.Gainsboro;
+            this.BtnResult.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.BtnResult.Font = new System.Drawing.Font("Verdana", 12F);
+            this.BtnResult.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.BtnResult.Location = new System.Drawing.Point(5, 459);
+            this.BtnResult.Margin = new System.Windows.Forms.Padding(5);
+            this.BtnResult.Name = "BtnResult";
+            this.BtnResult.Size = new System.Drawing.Size(95, 75);
+            this.BtnResult.TabIndex = 552;
+            this.BtnResult.Tag = "frmSetting";
+            this.BtnResult.Text = "Result";
+            this.BtnResult.UseVisualStyleBackColor = false;
+            this.BtnResult.Click += new System.EventHandler(this.BtnResult_Click);
             // 
             // BtnManual
             // 
@@ -198,38 +230,6 @@
             this.BtnMain.Text = "Main";
             this.BtnMain.UseVisualStyleBackColor = false;
             this.BtnMain.Click += new System.EventHandler(this.BtnMain_Click);
-            // 
-            // BtnResult
-            // 
-            this.BtnResult.BackColor = System.Drawing.Color.Gainsboro;
-            this.BtnResult.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.BtnResult.Font = new System.Drawing.Font("Verdana", 12F);
-            this.BtnResult.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.BtnResult.Location = new System.Drawing.Point(5, 459);
-            this.BtnResult.Margin = new System.Windows.Forms.Padding(5);
-            this.BtnResult.Name = "BtnResult";
-            this.BtnResult.Size = new System.Drawing.Size(95, 75);
-            this.BtnResult.TabIndex = 552;
-            this.BtnResult.Tag = "frmSetting";
-            this.BtnResult.Text = "Result";
-            this.BtnResult.UseVisualStyleBackColor = false;
-            this.BtnResult.Click += new System.EventHandler(this.BtnResult_Click);
-            // 
-            // BtnVEP
-            // 
-            this.BtnVEP.BackColor = System.Drawing.Color.Gainsboro;
-            this.BtnVEP.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.BtnVEP.Font = new System.Drawing.Font("Verdana", 12F);
-            this.BtnVEP.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.BtnVEP.Location = new System.Drawing.Point(4, 544);
-            this.BtnVEP.Margin = new System.Windows.Forms.Padding(5);
-            this.BtnVEP.Name = "BtnVEP";
-            this.BtnVEP.Size = new System.Drawing.Size(95, 75);
-            this.BtnVEP.TabIndex = 553;
-            this.BtnVEP.Tag = "frmSetting";
-            this.BtnVEP.Text = "VEP";
-            this.BtnVEP.UseVisualStyleBackColor = false;
-            this.BtnVEP.Click += new System.EventHandler(this.BtnVEP_Click);
             // 
             // Frm_Mainfrm
             // 

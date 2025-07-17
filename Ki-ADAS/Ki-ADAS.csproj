@@ -64,6 +64,10 @@
       <HintPath>..\packages\NModbus4.2.1.0\lib\net40\NModbus4.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=9.0.0.7, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.9.0.7\lib\net462\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -130,8 +134,12 @@
       <DependentUpon>Frm_Result.cs</DependentUpon>
     </Compile>
     <Compile Include="IniFile.cs" />
+    <Compile Include="Language\LanguageManager.cs" />
     <Compile Include="LineProgress.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Language\MultiLanguageForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -144,6 +152,8 @@
     <Compile Include="Frm_VEP.Designer.cs">
       <DependentUpon>Frm_VEP.cs</DependentUpon>
     </Compile>
+    <Compile Include="Language\LanguageResource.cs" />
+    <Compile Include="SettingConfigDb.cs" />
     <Compile Include="VEPBench\VEPBenchClient.cs" />
     <Compile Include="VEPBench\VEPBenchProcessor.cs" />
     <Compile Include="VEPBench\VEPBenchRequest.cs" />

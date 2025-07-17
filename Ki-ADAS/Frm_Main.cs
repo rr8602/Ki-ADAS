@@ -102,8 +102,22 @@ namespace Ki_ADAS
 
                 return;
             }
+            
+            if (m_frmParent != null && m_frmParent.User_Monitor != null)
+            {
+                if (e.Step != null)
+                {
+                    m_frmParent.User_Monitor.UpdateStepDescription(e.Step.Description);
+                }
+
+                if (e.StateType == ADASProcess.ProcessStateType.Success && e.Message == "프로세스 완료")
+                {
+                    m_frmParent.User_Monitor.UpdateStepDescription("테스트 완료");
+                }
+            }
 
             string logMessage = $"[{e.Timestamp:HH:mm:ss}] [{e.StateType}] {e.Message}";
+
             AddLogMessage(logMessage);
 
             UpdateProcessStepDisplay(e);
@@ -159,53 +173,23 @@ namespace Ki_ADAS
                 }
 
                 _vepBenchClient = new VEPBenchClient(ipAddress, port);
-                _vepBenchClient.DebugMode = true;
+                _adasProcess = new ADASProcess(_vepBenchClient);
+                _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
 
-                AddLogMessage("Modbus 서버 연결 테스트 시작...");
+                bool success = _adasProcess.Start(ipAddress, port);
 
-                // 연결 테스트
-                bool connected = _vepBenchClient.TestConnection();
-                if (connected)
+                if (success)
                 {
-                    AddLogMessage("Modbus 서버 연결 성공!");
-
-                    AddLogMessage("유효성 지시자 읽기 시도...");
-                    ushort validityIndicator = _vepBenchClient.ReadValidityIndicator();
-                    AddLogMessage($"유효성 지시자 값: {validityIndicator}");
-
-                    AddLogMessage("Synchro 영역에 테스트 값 쓰기...");
-                    var synchro = new VEPBenchSynchro
-                    {
-                        Angle1 = 1.5,
-                        Angle2 = 2.5,
-                        Angle3 = 3.5
-                    };
-
-                    _vepBenchClient.WriteSynchroZone(synchro);
-
-                    AddLogMessage("Synchro 영역 읽기...");
-                    var readSynchro = _vepBenchClient.ReadSynchroZone();
-                    AddLogMessage($"읽은 Synchro 값: Angle1={readSynchro.Angle1}, Angle2={readSynchro.Angle2}, Angle3={readSynchro.Angle3}");
-
-                    AddLogMessage("벤치 루프 테스트 시작...");
-                    _vepBenchClient.RunBenchRoop();
-                    AddLogMessage("벤치 루프 테스트 완료");
+                    BtnTestModbus.Enabled = false;
                 }
                 else
                 {
-                    AddLogMessage("Modbus 서버 연결 실패");
+                    MessageBox.Show("ADAS 프로세스 시작에 실패했습니다.", "시작 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                AddLogMessage($"Modbus 테스트 중 오류 발생: {ex.Message}");
-            }
-            finally
-            {
-                if (_vepBenchClient != null)
-                {
-                    _vepBenchClient.DisConnect();
-                }
+                MessageBox.Show($"오류 발생: {ex.Message}", "예외 발생", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

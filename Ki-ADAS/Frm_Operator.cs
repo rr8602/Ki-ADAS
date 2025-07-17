@@ -174,5 +174,15 @@ namespace Ki_ADAS
             mousePoint = new Point(e.X, e.Y); //현재 마우스 좌표 저장
         }
 
+        public void UpdateStepDescription(string description)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(UpdateStepDescription), description);
+                return;
+            }
+
+            roundLabel4.Text = description;
+        }
     }
 }

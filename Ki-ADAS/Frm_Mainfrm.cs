@@ -1,4 +1,6 @@
 ﻿using Ki_ADAS;
+using Ki_ADAS.VEPBench;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -64,10 +66,7 @@ namespace Ki_ADAS
                     User_Monitor = new Frm_Operator();
                     User_Monitor.Show();
                 }
-       
-
             }
-
         }
 
         private void InitializeSubForm(Form f)
@@ -152,6 +151,11 @@ namespace Ki_ADAS
                     btn.ForeColor = Color.Black;
                 }
             }
+        }
+
+        public void UpdateApplicationLanguage(Language language)
+        {
+            LanguageResource.CurrentLanguage = language;
         }
 
         private void BtnMain_Click(object sender, EventArgs e)

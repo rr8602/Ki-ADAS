@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Ki_ADAS;
+using Ki_ADAS.VEPBench;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,12 +15,14 @@ namespace Simulator
 {
     public partial class Frm_CameraSimulator : Form
     {
-        private Ki_ADAS.VEPProtocol _vepProtocol;
-        private Ki_ADAS.IniFile _iniFile;
+        private VEPBenchClient _vepBenchClient;
+        private IniFile _iniFile;
         private const string CONFIG_SECTION = "Network";
         private const string VEP_IP_KEY = "VepIp";
         private const string VEP_PORT = "VepPort";
         private Timer _statusTimer;
+        private string _ipAddress;
+        private int _port;
 
         // 카메라 캘리브레이션 상태
         private enum CalibrationStatus
@@ -43,6 +48,7 @@ namespace Simulator
 
         // 시뮬레이션 목적으로 사용할 synchro 값 저장
         private Dictionary<int, int> _synchroValues = new Dictionary<int, int>();
+        private VEPBenchSynchro _synchroZone = new VEPBenchSynchro();
 
         public Frm_CameraSimulator()
         {
@@ -56,14 +62,16 @@ namespace Simulator
             string iniPath = System.IO.Path.Combine(Application.StartupPath, @"..\..\..\..\Excute\config.ini");
             _iniFile = new Ki_ADAS.IniFile(iniPath);
 
+            _ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
+            _port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
+
             // VEP 프로토콜 초기화
-            _vepProtocol = new Ki_ADAS.VEPProtocol();
-            _vepProtocol.OnDataReceived += VepProtocol_OnDataReceived;
-            _vepProtocol.OnConnectionChanged += VepProtocol_OnConnectionChanged;
+            _vepBenchClient = new VEPBenchClient(_ipAddress, _port);
+            _vepBenchClient.DebugMode = true;
 
             // 상태 확인 타이머 설정
             _statusTimer = new Timer();
-            _statusTimer.Interval = 1000; // 1초마다 체크
+            _statusTimer.Interval = 1000;
             _statusTimer.Tick += StatusTimer_Tick;
 
             // 각도 설정 초기화
@@ -104,7 +112,7 @@ namespace Simulator
             }
         }
 
-        private void VepProtocol_OnConnectionChanged(object sender, Ki_ADAS.VEPProtocol.VEPConnectionEventArgs e)
+        private void VepProtocol_OnConnectionChanged(object sender, VEPProtocol.VEPConnectionEventArgs e)
         {
             if (InvokeRequired)
             {
@@ -125,132 +133,6 @@ namespace Simulator
                 AddLogMessage("VEP 서버와 연결 끊김");
                 _statusTimer.Stop();
                 UpdateStatus(CalibrationStatus.NotStarted);
-            }
-        }
-
-        private void VepProtocol_OnDataReceived(object sender, Ki_ADAS.VEPProtocol.VEPDataReceivedEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => VepProtocol_OnDataReceived(sender, e)));
-                return;
-            }
-
-            string message = $"명령 수신: {e.Response.Command}";
-
-            if (e.Response.Data.Length > 0)
-            {
-                message += $", 데이터: {string.Join(", ", e.Response.Data)}";
-            }
-
-            AddLogMessage(message);
-
-            ProcessVepCommand(e.Response);
-        }
-
-        private void ProcessVepCommand(Ki_ADAS.VEPProtocol.VEPResponse response)
-        {
-            switch (response.Command)
-            {
-                case Ki_ADAS.VEPProtocol.VEPCommand.SetSynchro:
-                    if (response.Data.Length >= 2)
-                    {
-                        int synchroNumber = response.Data[0];
-                        int synchroValue = response.Data[1];
-
-                        // Synchro 값 저장
-                        _synchroValues[synchroNumber] = synchroValue;
-                        AddLogMessage($"Synchro {synchroNumber} = {synchroValue}");
-
-                        // Synchro 상태에 따른 처리
-                        ProcessSynchroUpdate(synchroNumber, synchroValue);
-                    }
-                    break;
-
-                case Ki_ADAS.VEPProtocol.VEPCommand.CameraCalibration:
-                    AddLogMessage("카메라 캘리브레이션 요청 수신");
-                    UpdateStatus(CalibrationStatus.Requested);
-                    break;
-
-                case Ki_ADAS.VEPProtocol.VEPCommand.InitCamera:
-                    AddLogMessage("카메라 초기화 요청 수신");
-                    break;
-            }
-        }
-
-        private void ProcessSynchroUpdate(int synchroNumber, int value)
-        {
-            switch (synchroNumber)
-            {
-                case 3:
-                    if (value == 1)
-                    {
-                        AddLogMessage("전면 카메라 캘리브레이션 요청됨");
-                        UpdateStatus(CalibrationStatus.Requested);
-
-                        _vepProtocol.SetSynchroValue(4, 1);
-                    }
-                    else if (value == 20)
-                    {
-                        AddLogMessage("타겟을 홈 위치로 이동");
-
-                        _vepProtocol.SetSynchroValue(3, 21);
-                    }
-                    else if (value == 21)
-                    {
-                        AddLogMessage("타겟을 홈 위치로 이동 2단계");
-
-                        _vepProtocol.SetSynchroValue(110, ConvertAngleToRawValue(_rollAngle));
-                    }
-                    break;
-
-                case 4:
-                    if (value == 1)
-                    {
-                        AddLogMessage("전면 카메라 타겟 위치 확인");
-                        UpdateStatus(CalibrationStatus.InProgress);
-
-                        _vepProtocol.SetSynchroValue(3, 20);
-                    }
-                    break;
-
-                case 110: // 각도 1 (Roll)
-                    AddLogMessage($"Roll 각도 값 요청됨");
-                    int rollValue = ConvertAngleToRawValue(_rollAngle);
-                    AddLogMessage($"Roll 각도 값 전송: {_rollAngle} (raw: {rollValue})");
-
-                    _vepProtocol.SetSynchroValue(111, ConvertAngleToRawValue(_azimuthAngle));
-                    break;
-
-                case 111: // 각도 2 (Azimuth)
-                    AddLogMessage($"Azimuth 각도 값 요청됨");
-                    int azimuthValue = ConvertAngleToRawValue(_azimuthAngle);
-                    AddLogMessage($"Azimuth 각도 값 전송: {_azimuthAngle} (raw: {azimuthValue})");
-
-                    _vepProtocol.SetSynchroValue(112, ConvertAngleToRawValue(_elevationAngle));
-                    break;
-
-                case 112: // 각도 3 (Elevation)
-                    AddLogMessage($"Elevation 각도 값 요청됨");
-                    int elevationValue = ConvertAngleToRawValue(_elevationAngle);
-                    AddLogMessage($"Elevation 각도 값 전송: {_elevationAngle} (raw: {elevationValue})");
-
-                    _vepProtocol.SetSynchroValue(89, 1);
-                    break;
-
-                case 89:
-                    if (value == 1)
-                    {
-                        AddLogMessage("Synchro 89 첫번째 시도");
-
-                        _vepProtocol.SetSynchroValue(89, 2);
-                    }
-                    else if (value == 2)
-                    {
-                        AddLogMessage("Synchro 89 두번째 시도");
-                        ValidateCalibration();
-                    }
-                    break;
             }
         }
 
@@ -306,25 +188,168 @@ namespace Simulator
                 UpdateStatus(CalibrationStatus.Success);
                 AddLogMessage("캘리브레이션 성공: 모든 각도가 허용 범위 내에 있습니다.");
 
-                // 캘리브레이션 결과를 VEP로 전송
-                _vepProtocol.SetSynchroValue(3, 20); // 캘리브레이션 완료 신호 전송
+                ushort[] data= new ushort[3];
+                data[0] = 20;
+                _vepBenchClient.WriteReceptionZone(data);
+                AddLogMessage("응답: Synchro 3 = 20 (캘리브레이션 완료)");
             }
             else
             {
                 UpdateStatus(CalibrationStatus.Failed);
                 AddLogMessage("캘리브레이션 실패: 하나 이상의 각도가 허용 범위를 벗어났습니다.");
+
+                ushort[] data = new ushort[3];
+                data[0] = 1;
+                _vepBenchClient.WriteStatusZone(data);
+                AddLogMessage("응답: Synchro 3 = 1 (캘리브레이션 재시작)");
             }
         }
 
         private void StatusTimer_Tick(object sender, EventArgs e)
         {
-            // 현재 상태 값 갱신
-            lblSynchro3.Text = _synchroValues.ContainsKey(3) ? _synchroValues[3].ToString() : "-";
-            lblSynchro4.Text = _synchroValues.ContainsKey(4) ? _synchroValues[4].ToString() : "-";
-            lblSynchro89.Text = _synchroValues.ContainsKey(89) ? _synchroValues[89].ToString() : "-";
-            lblSynchro110.Text = _synchroValues.ContainsKey(110) ? _synchroValues[110].ToString() : "-";
-            lblSynchro111.Text = _synchroValues.ContainsKey(111) ? _synchroValues[111].ToString() : "-";
-            lblSynchro112.Text = _synchroValues.ContainsKey(112) ? _synchroValues[112].ToString() : "-";
+            if (_vepBenchClient != null && _vepBenchClient.IsConnected)
+            {
+                try
+                {
+                    ushort[] statusData = _vepBenchClient.ReadStatusZone(6);
+
+                    if (statusData != null && statusData.Length >= 3)
+                    {
+                        lblSynchro3.Text = statusData[0].ToString();
+                        lblSynchro4.Text = statusData[1].ToString();
+                        lblSynchro89.Text = statusData[2].ToString();
+                    }
+
+                    VEPBenchSynchro synchro = _vepBenchClient.ReadSynchroZone();
+                    lblSynchro110.Text = synchro.Angle1.ToString();
+                    lblSynchro111.Text = synchro.Angle2.ToString();
+                    lblSynchro112.Text = synchro.Angle3.ToString();
+
+                    ProcessStatusZone(statusData);
+                }
+                catch (Exception ex)
+                {
+                    AddLogMessage($"상태 업데이트 오류: {ex.Message}");
+                }
+            }
+        }
+
+        private void ProcessStatusZone(ushort[] statusData)
+        {
+            if (statusData == null || statusData.Length < 3)
+                return;
+
+            int currentSynchro3Value = 0;
+            _synchroValues.TryGetValue(3, out currentSynchro3Value);
+
+            if (statusData[0] == 1 && currentSynchro3Value != 1)
+            {
+                _synchroValues[3] = 1;
+                AddLogMessage("전면 카메라 캘리브레이션 요청됨 (Synchro 3 = 1)");
+                UpdateStatus(CalibrationStatus.Requested);
+
+                RespondToSynchro3_1();
+            }
+            else if (statusData[0] == 20 && currentSynchro3Value != 20)
+            {
+                _synchroValues[3] = 20;
+                AddLogMessage("타겟을 홈 위치로 이동 (Synchro 3 = 20)");
+
+                RespondToSynchro3_20();
+            }
+            else if (statusData[0] == 21 && currentSynchro3Value != 21)
+            {
+                _synchroValues[3] = 21;
+                AddLogMessage("타겟을 홈 위치로 이동 2단계 (Synchro 3 = 21)");
+
+                SendAngleMeausrements();
+            }
+
+            int currnetSynchro89value = 0;
+            _synchroValues.TryGetValue(89, out currnetSynchro89value);
+
+            if (statusData[2] == 1 && currnetSynchro89value != 1)
+            {
+                _synchroValues[89] = 1;
+                AddLogMessage("Synchro 89 첫번째 시도 (Synchro 89 = 1)");
+            }
+            else if (statusData[2] == 2&& currnetSynchro89value != 2)
+            {
+                _synchroValues[89] = 2;
+                AddLogMessage("Synchro 89 두번째 시도 (Synchro 89 = 2)");
+
+                ValidateCalibration();
+            }
+        }
+
+        private void RespondToSynchro3_1()
+        {
+            try
+            {
+                ushort[] data = new ushort[3];
+                data[1] = 1;
+                _vepBenchClient.WriteStatusZone(data);
+                AddLogMessage("응답: Synchro 4 = 1 (타겟 위치 확인)");
+
+                UpdateStatus(CalibrationStatus.InProgress);
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"응답 오류: {ex.Message}");
+            }
+        }
+
+        private void RespondToSynchro3_20()
+        {
+            try
+            {
+                ushort[] data = new ushort[3];
+                data[0] = 21;
+                _vepBenchClient.WriteStatusZone(data);
+                AddLogMessage("응답: Synchro 3 = 21 (타겟을 홈 위치로 이동)");
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"응답 오류: {ex.Message}");
+            }
+        }
+
+        private void SendAngleMeausrements()
+        {
+            try
+            {
+                _synchroZone = new VEPBenchSynchro();
+                _synchroZone.Angle1 = ConvertAngleToRawValue(_rollAngle);
+                _synchroZone.Angle2 = ConvertAngleToRawValue(_azimuthAngle);
+                _synchroZone.Angle3 = ConvertAngleToRawValue(_elevationAngle);
+
+                _vepBenchClient.WriteSynchroZone(_synchroZone);
+                AddLogMessage($"각도 측정값 전송: Roll={_rollAngle}, Azimuth={_azimuthAngle}, Elevation={_elevationAngle}");
+
+                ushort[] data = new ushort[3];
+                data[2] = 1;
+                _vepBenchClient.WriteStatusZone(data);
+                AddLogMessage("응답: Synchro 89 = 1 (각도 측정 완료)");
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"각도 전송 오류: {ex.Message}");
+            }
+        }
+
+        private void SetSynchro89_2()
+        {
+            try
+            {
+                ushort[] data = new ushort[3];
+                data[2] = 2;
+                _vepBenchClient.WriteStatusZone(data);
+                AddLogMessage("응답: Synchro 89 = 2 (검증 단계)");
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"Synchro 89 = 2 설정 오류: {ex.Message}");
+            }
         }
 
         private void AddLogMessage(string message)
@@ -337,13 +362,17 @@ namespace Simulator
         {
             try
             {
-                string ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
-                int port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
+                AddLogMessage($"VEP 서버에 연결 시도 중: {_ipAddress}:{_port}");
+                _vepBenchClient.Connect();
 
-                AddLogMessage($"VEP 서버에 연결 시도 중: {ipAddress}:{port}");
-                bool connected = _vepProtocol.Connect(ipAddress, port);
-
-                if (!connected)
+                if (_vepBenchClient.IsConnected)
+                {
+                    AddLogMessage("VEP 서버 연결 실패");
+                    btnConnect.Enabled = false;
+                    btnDisconnect.Enabled = true;
+                    _statusTimer.Start();
+                }
+                else
                 {
                     AddLogMessage("VEP 서버 연결 실패");
                 }
@@ -358,8 +387,12 @@ namespace Simulator
         {
             try
             {
-                _vepProtocol.DisConnect();
+                _vepBenchClient.DisConnect();
                 AddLogMessage("VEP 서버 연결 종료");
+                _statusTimer.Stop();
+                btnConnect.Enabled = true;
+                btnDisconnect.Enabled = false;
+                UpdateStatus(CalibrationStatus.NotStarted);
             }
             catch (Exception ex)
             {
@@ -403,21 +436,20 @@ namespace Simulator
         {
             try
             {
-                if (!_vepProtocol.RequestCameraCalibration())
+                if (!_vepBenchClient.IsConnected)
                 {
-                    AddLogMessage("카메라 캘리브레이션 요청 실패");
+                    AddLogMessage("VEP 서버에 연결되어 있지 않습니다.");
                     return;
                 }
 
                 AddLogMessage("카메라 캘리브레이션 프로세스 시작");
 
                 // Synchro 3 = 1 설정 (전면 카메라 캘리브레이션 요청)
-                if (!_vepProtocol.SetSynchroValue(3, 1))
-                {
-                    AddLogMessage("Synchro 3 = 1 설정 실패");
-                    return;
-                }
+                ushort[] data = new ushort[3];
+                data[0] = 1;
+                _vepBenchClient.WriteStatusZone(data);
 
+                _synchroValues[3] = 1;
                 UpdateStatus(CalibrationStatus.Requested);
             }
             catch (Exception ex)

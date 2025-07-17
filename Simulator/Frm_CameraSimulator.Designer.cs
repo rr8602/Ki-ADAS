@@ -49,6 +49,7 @@
             this.lblStatusTitle = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.grpSynchro = new System.Windows.Forms.GroupBox();
+            this.btnStartCalibration = new System.Windows.Forms.Button();
             this.lblSynchro3Title = new System.Windows.Forms.Label();
             this.lblSynchro4Title = new System.Windows.Forms.Label();
             this.lblSynchro89Title = new System.Windows.Forms.Label();
@@ -63,7 +64,6 @@
             this.lblSynchro112 = new System.Windows.Forms.Label();
             this.grpLog = new System.Windows.Forms.GroupBox();
             this.lstLog = new System.Windows.Forms.ListBox();
-            this.btnStartCalibration = new System.Windows.Forms.Button();
             this.grpConnection.SuspendLayout();
             this.grpAngles.SuspendLayout();
             this.grpSimulation.SuspendLayout();
@@ -250,7 +250,7 @@
             this.grpStatus.Controls.Add(this.lblStatus);
             this.grpStatus.Location = new System.Drawing.Point(330, 12);
             this.grpStatus.Name = "grpStatus";
-            this.grpStatus.Size = new System.Drawing.Size(350, 80);
+            this.grpStatus.Size = new System.Drawing.Size(374, 80);
             this.grpStatus.TabIndex = 3;
             this.grpStatus.TabStop = false;
             this.grpStatus.Text = "캘리브레이션 상태";
@@ -271,7 +271,7 @@
             this.lblStatus.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Bold);
             this.lblStatus.Location = new System.Drawing.Point(110, 25);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(220, 40);
+            this.lblStatus.Size = new System.Drawing.Size(258, 40);
             this.lblStatus.TabIndex = 1;
             this.lblStatus.Text = "준비됨";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -293,10 +293,20 @@
             this.grpSynchro.Controls.Add(this.lblSynchro112);
             this.grpSynchro.Location = new System.Drawing.Point(330, 100);
             this.grpSynchro.Name = "grpSynchro";
-            this.grpSynchro.Size = new System.Drawing.Size(350, 310);
+            this.grpSynchro.Size = new System.Drawing.Size(380, 310);
             this.grpSynchro.TabIndex = 4;
             this.grpSynchro.TabStop = false;
             this.grpSynchro.Text = "Synchro 값 모니터링";
+            // 
+            // btnStartCalibration
+            // 
+            this.btnStartCalibration.Location = new System.Drawing.Point(23, 258);
+            this.btnStartCalibration.Name = "btnStartCalibration";
+            this.btnStartCalibration.Size = new System.Drawing.Size(351, 46);
+            this.btnStartCalibration.TabIndex = 6;
+            this.btnStartCalibration.Text = "시작";
+            this.btnStartCalibration.UseVisualStyleBackColor = true;
+            this.btnStartCalibration.Click += new System.EventHandler(this.btnStartCalibration_Click);
             // 
             // lblSynchro3Title
             // 
@@ -357,7 +367,7 @@
             this.lblSynchro3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblSynchro3.Location = new System.Drawing.Point(150, 25);
             this.lblSynchro3.Name = "lblSynchro3";
-            this.lblSynchro3.Size = new System.Drawing.Size(180, 30);
+            this.lblSynchro3.Size = new System.Drawing.Size(224, 30);
             this.lblSynchro3.TabIndex = 1;
             this.lblSynchro3.Text = "-";
             this.lblSynchro3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -367,7 +377,7 @@
             this.lblSynchro4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblSynchro4.Location = new System.Drawing.Point(150, 65);
             this.lblSynchro4.Name = "lblSynchro4";
-            this.lblSynchro4.Size = new System.Drawing.Size(180, 30);
+            this.lblSynchro4.Size = new System.Drawing.Size(224, 30);
             this.lblSynchro4.TabIndex = 3;
             this.lblSynchro4.Text = "-";
             this.lblSynchro4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -377,7 +387,7 @@
             this.lblSynchro89.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblSynchro89.Location = new System.Drawing.Point(150, 105);
             this.lblSynchro89.Name = "lblSynchro89";
-            this.lblSynchro89.Size = new System.Drawing.Size(180, 30);
+            this.lblSynchro89.Size = new System.Drawing.Size(224, 30);
             this.lblSynchro89.TabIndex = 5;
             this.lblSynchro89.Text = "-";
             this.lblSynchro89.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -387,7 +397,7 @@
             this.lblSynchro110.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblSynchro110.Location = new System.Drawing.Point(150, 145);
             this.lblSynchro110.Name = "lblSynchro110";
-            this.lblSynchro110.Size = new System.Drawing.Size(180, 30);
+            this.lblSynchro110.Size = new System.Drawing.Size(224, 30);
             this.lblSynchro110.TabIndex = 7;
             this.lblSynchro110.Text = "-";
             this.lblSynchro110.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -397,7 +407,7 @@
             this.lblSynchro111.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblSynchro111.Location = new System.Drawing.Point(150, 185);
             this.lblSynchro111.Name = "lblSynchro111";
-            this.lblSynchro111.Size = new System.Drawing.Size(180, 30);
+            this.lblSynchro111.Size = new System.Drawing.Size(224, 30);
             this.lblSynchro111.TabIndex = 9;
             this.lblSynchro111.Text = "-";
             this.lblSynchro111.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -407,7 +417,7 @@
             this.lblSynchro112.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblSynchro112.Location = new System.Drawing.Point(150, 225);
             this.lblSynchro112.Name = "lblSynchro112";
-            this.lblSynchro112.Size = new System.Drawing.Size(180, 30);
+            this.lblSynchro112.Size = new System.Drawing.Size(224, 30);
             this.lblSynchro112.TabIndex = 11;
             this.lblSynchro112.Text = "-";
             this.lblSynchro112.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -417,7 +427,7 @@
             this.grpLog.Controls.Add(this.lstLog);
             this.grpLog.Location = new System.Drawing.Point(12, 420);
             this.grpLog.Name = "grpLog";
-            this.grpLog.Size = new System.Drawing.Size(670, 200);
+            this.grpLog.Size = new System.Drawing.Size(698, 200);
             this.grpLog.TabIndex = 5;
             this.grpLog.TabStop = false;
             this.grpLog.Text = "로그";
@@ -428,24 +438,14 @@
             this.lstLog.ItemHeight = 15;
             this.lstLog.Location = new System.Drawing.Point(10, 25);
             this.lstLog.Name = "lstLog";
-            this.lstLog.Size = new System.Drawing.Size(650, 154);
+            this.lstLog.Size = new System.Drawing.Size(682, 154);
             this.lstLog.TabIndex = 0;
-            // 
-            // btnStartCalibration
-            // 
-            this.btnStartCalibration.Location = new System.Drawing.Point(23, 258);
-            this.btnStartCalibration.Name = "btnStartCalibration";
-            this.btnStartCalibration.Size = new System.Drawing.Size(307, 46);
-            this.btnStartCalibration.TabIndex = 6;
-            this.btnStartCalibration.Text = "시작";
-            this.btnStartCalibration.UseVisualStyleBackColor = true;
-            this.btnStartCalibration.Click += new System.EventHandler(this.btnStartCalibration_Click);
             // 
             // Frm_CameraSimulator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 632);
+            this.ClientSize = new System.Drawing.Size(722, 632);
             this.Controls.Add(this.grpLog);
             this.Controls.Add(this.grpSynchro);
             this.Controls.Add(this.grpStatus);

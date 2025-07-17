@@ -149,10 +149,12 @@ namespace Ki_ADAS
         public ushort ReadValidityIndicator()
         {
             CheckConnection();
+
             try
             {
                 var values = _modbusMaster.ReadHoldingRegisters(1, Addr_Validity, 1);
                 LogMessage($"유효성 지시자 읽기: {values[0]}");
+
                 return values[0];
             }
             catch (Exception ex)
@@ -199,6 +201,7 @@ namespace Ki_ADAS
         public void WriteStatusZone(ushort[] data)
         {
             CheckConnection();
+
             try
             {
                 _modbusMaster.WriteMultipleRegisters(1, Addr_StatusZone, data);
@@ -215,6 +218,7 @@ namespace Ki_ADAS
         public void WriteReceptionZone(ushort[] data)
         {
             CheckConnection();
+
             try
             {
                 _modbusMaster.WriteMultipleRegisters(1, Addr_ReceptionZone, data);
@@ -231,6 +235,7 @@ namespace Ki_ADAS
         public ushort[] ReadTransmissionZone(int length = 20)
         {
             CheckConnection();
+
             try
             {
                 var result = _modbusMaster.ReadHoldingRegisters(1, Addr_TransmissionZone, (ushort)length);
@@ -240,21 +245,6 @@ namespace Ki_ADAS
             catch (Exception ex)
             {
                 LogMessage($"전송 영역 읽기 오류: {ex.Message}");
-                throw;
-            }
-        }
-
-        public void WriteSynchroZone(ushort[] data)
-        {
-            CheckConnection();
-            try
-            {
-                _modbusMaster.WriteMultipleRegisters(1, Addr_SynchroZone, data);
-                LogMessage($"동기화 영역 쓰기: {string.Join(", ", data)}");
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"동기화 영역 쓰기 오류: {ex.Message}");
                 throw;
             }
         }
@@ -328,6 +318,7 @@ namespace Ki_ADAS
         public VEPBenchSynchro ReadSynchroZone()
         {
             CheckConnection();
+
             try
             {
                 ushort[] arr = _modbusMaster.ReadHoldingRegisters(1, Addr_SynchroZone, SynchroZoneLength);
@@ -345,6 +336,7 @@ namespace Ki_ADAS
         public void WriteSynchroZone(VEPBenchSynchro s)
         {
             CheckConnection();
+
             try
             {
                 ushort[] arr = s.ToUshortArray();

@@ -25,6 +25,7 @@ namespace Ki_ADAS
         private const double _azimuthThreshold = 1.0; // Azimuth 허용 범위
         private const double _elevationThreshold = 1.0; // Elevation 허용 범위
 
+        private VEPBenchSynchro _synchroValues = new VEPBenchSynchro();
         public event EventHandler<ADASProcessEventArgs> OnProcessStepChanged;
 
         // ADAS 프로세스 상태 타입
@@ -89,55 +90,55 @@ namespace Ki_ADAS
             {
                 new ADASProcessStep(
                     213,
-                    "카메라 캘리브레이션 요청",
+                    LanguageResource.GetMessage("Step_213_1"),
                     "Synchro 3 = 1",
                     () => SetSynchroValue(3, 1)),
 
                 new ADASProcessStep(
                     214,
-                    "전면 카메라 타겟 위치 확인",
+                    LanguageResource.GetMessage("Step_214"),
                     "Synchro 4 = 1",
                     () => SetSynchroValue(4, 1)),
 
                 new ADASProcessStep(
                     213,
-                    "타켓을 홈 위치로 이동",
+                    LanguageResource.GetMessage("Step_213_2"),
                     "Synchro 3 = 20",
                     () => SetSynchroValue(3, 20)),
 
                 new ADASProcessStep(
                     213,
-                    "타켓을 홈 위치로 이동 2단계",
+                    LanguageResource.GetMessage("Step_213_3"),
                     "Synchro 3 = 21",
                     () => SetSynchroValue(3, 21)),
 
                 new ADASProcessStep(
                     320,
-                    "각도 1 측정값 전송",
+                    LanguageResource.GetMessage("Step_320"),
                     "Synchro 110 = 각도 1",
                     () => SetSynchroValue(110, GetMeasurementAngle(1))),
 
                 new ADASProcessStep(
                     321,
-                    "각도 2 측정값 전송",
+                    LanguageResource.GetMessage("Step_321"),
                     "Synchro 111 = 각도 2",
                     () => SetSynchroValue(111, GetMeasurementAngle(2))),
 
                 new ADASProcessStep(
                     322,
-                    "각도 3 측정값 전송",
+                    LanguageResource.GetMessage("Step_322"),
                     "Synchro 112 = 각도 3",
                     () => SetSynchroValue(112, GetMeasurementAngle(3))),
 
                 new ADASProcessStep(
                     299,
-                    "Synchro 89 첫번째 시도",
+                    LanguageResource.GetMessage("Step_299_1"),
                     "Synchro 89 = 1",
                     () => SetSynchroValue(89, 1)),
 
                 new ADASProcessStep(
                     299,
-                    "Synchro 89 두번째 시도",
+                    LanguageResource.GetMessage("Step_299_1"),
                     "Synchro 89 = 2",
                     () => ValidateAnglesAndComplete())
             };
@@ -149,10 +150,33 @@ namespace Ki_ADAS
 
             if (!isValid)
             {
-                NotifyProcessState("카메라 각도 측정값이 허용 범위를 벗어났습니다.", ProcessStateType.Error);
-                _currentStep = 0;
+                NotifyProcessState(LanguageResource.GetMessage("AngleOutOfRange"), ProcessStateType.Error);
 
-                return false;
+                // UI로 재시도 여부 설정으로 수정 필요
+                bool retryCalibration = true;
+
+                if (retryCalibration)
+                {
+                    if (SetSynchroValue(89, 2))
+                    {
+                        NotifyProcessState(LanguageResource.GetMessage("RetryCalibration"), ProcessStateType.Info);
+                        _currentStep = -1;
+                        return true;
+                    }
+
+                    return false;
+                }
+                else
+                {
+                    if (SetSynchroValue(89, 1))
+                    {
+                        NotifyProcessState(LanguageResource.GetMessage("AbortCalibration"), ProcessStateType.Warning);
+                        _isRunning = false;
+                        return true;
+                    }
+
+                    return false;
+                }
             }
 
             return SetSynchroValue(89, 2);
@@ -162,23 +186,29 @@ namespace Ki_ADAS
         {
             if (Math.Abs(_roll) > _rollThreshold)
             {
-                NotifyProcessState($"Roll 각도 검증 실패: {_roll}, 허용범위: ±{_rollThreshold}", ProcessStateType.Warning);
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("AngleValidationFail", LanguageResource.GetMessage("Roll"), _roll, _rollThreshold),
+                    ProcessStateType.Warning);
                 return false;
             }
 
             if (Math.Abs(_azimuth) > _azimuthThreshold)
             {
-                NotifyProcessState($"Azimuth 각도 검증 실패: {_azimuth}, 허용범위: ±{_azimuthThreshold}", ProcessStateType.Warning);
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("AngleValidationFail", LanguageResource.GetMessage("Azimuth"), _azimuth, _azimuthThreshold),
+                    ProcessStateType.Warning);
                 return false;
             }
 
             if (Math.Abs(_elevation) > _elevationThreshold)
             {
-                NotifyProcessState($"Elevation 각도 검증 실패: {_elevation}, 허용범위: ±{_elevationThreshold}", ProcessStateType.Warning);
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("AngleValidationFail", LanguageResource.GetMessage("Elevation"), _elevation, _elevationThreshold),
+                    ProcessStateType.Warning);
                 return false;
             }
 
-            NotifyProcessState("전면 카메라 각도 검증 통과", ProcessStateType.Success);
+            NotifyProcessState(LanguageResource.GetMessage("CameraAngleValidationPass"), ProcessStateType.Success);
             return true;
         }
 
@@ -206,7 +236,7 @@ namespace Ki_ADAS
                     break;
             }
 
-            return random.Next(0, 100);
+            return (int)(angle * 100);
         }
 
         // Synchro 값 설정
@@ -214,21 +244,26 @@ namespace Ki_ADAS
         {
             try
             {
-                var synchro = new VEPBenchSynchro();
+                if (_vepBenchClient == null)
+                {
+                    NotifyProcessState(LanguageResource.GetMessage("VEPBenchNotInitialized"), ProcessStateType.Error);
+
+                    return false;
+                }
 
                 // 동기화 값에 따라 알맞은 위치에 설정
                 switch (syncNumber)
                 {
                     case 110:
-                        synchro.Angle1 = value;
+                        _synchroValues.Angle1 = value;
                         break;
 
                     case 111:
-                        synchro.Angle2 = value;
+                        _synchroValues.Angle2 = value;
                         break;
 
                     case 112:
-                        synchro.Angle3 = value;
+                        _synchroValues.Angle3 = value;
                         break;
 
                     default:
@@ -239,13 +274,20 @@ namespace Ki_ADAS
                         return true;
                 }
 
-                _vepBenchClient.WriteSynchroZone(synchro);
-                NotifyProcessState($"Synchro {syncNumber} = {value} 설정 완료", ProcessStateType.Info);
+                _vepBenchClient.WriteSynchroZone(_synchroValues);
+
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("SynchroSettingComplete", syncNumber, value),
+                    ProcessStateType.Info);
+
                 return true;
             }
             catch (Exception ex)
             {
-                NotifyProcessState($"Synchro 값 설정 실패: {ex.Message}", ProcessStateType.Error);
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("SynchroSettingFail", ex.Message),
+                    ProcessStateType.Error);
+
                 return false;
             }
         }
@@ -267,7 +309,7 @@ namespace Ki_ADAS
                 _currentStep = 0;
                 _isRunning = true;
 
-                NotifyProcessState("프로세스 시작", ProcessStateType.Info);
+                NotifyProcessState(LanguageResource.GetMessage("ProcessStart"), ProcessStateType.Info);
 
                 _processThread = new Thread(ProcessThread);
                 _processThread.IsBackground = true;
@@ -277,7 +319,10 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                NotifyProcessState($"프로세스 시작 실패: {ex.Message}", ProcessStateType.Error);
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("ProcessStartFail", ex.Message),
+                    ProcessStateType.Error);
+
                 return false;
             }
         }
@@ -298,7 +343,8 @@ namespace Ki_ADAS
                 }
 
                 _vepBenchClient.DisConnect();
-                NotifyProcessState("프로세스 중지", ProcessStateType.Info);
+
+                NotifyProcessState(LanguageResource.GetMessage("ProcessStop"), ProcessStateType.Info);
             }
         }
 
@@ -319,12 +365,14 @@ namespace Ki_ADAS
 
                 if (_currentStep >= _processSteps.Count)
                 {
-                    NotifyProcessState("프로세스 완료", ProcessStateType.Success);
+                    NotifyProcessState(LanguageResource.GetMessage("ProcessComplete"), ProcessStateType.Success);
                 }
             }
             catch (Exception ex)
             {
-                NotifyProcessState($"프로세스 실행 중 오류: {ex.Message}", ProcessStateType.Error);
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("ProcessError", ex.Message),
+                    ProcessStateType.Error);
             }
             finally
             {
@@ -340,7 +388,7 @@ namespace Ki_ADAS
             ADASProcessStep currentStep = _processSteps[_currentStep];
 
             NotifyProcessState(
-                $"단계 {_currentStep + 1} / {_processSteps.Count}: {currentStep.Description}",
+                LanguageResource.GetFormattedMessage("StepProgress", _currentStep + 1, _processSteps.Count, currentStep.Description),
                 ProcessStateType.Progress,
                 currentStep);
 
@@ -351,10 +399,10 @@ namespace Ki_ADAS
                 if (!success)
                 {
                     NotifyProcessState(
-                        $"단계 {_currentStep + 1} 실패: {currentStep.Description}",
+                        LanguageResource.GetFormattedMessage("StepFail", _currentStep + 1, currentStep.Description),
                         ProcessStateType.Error,
                         currentStep);
-                    
+
                     _isRunning = false;
                 }
                 else
@@ -365,7 +413,7 @@ namespace Ki_ADAS
             catch (Exception ex)
             {
                 NotifyProcessState(
-                    $"단계 {_currentStep + 1} 오류 발생: {ex.Message}",
+                    LanguageResource.GetFormattedMessage("StepError", _currentStep + 1, ex.Message),
                     ProcessStateType.Error,
                     currentStep);
 
