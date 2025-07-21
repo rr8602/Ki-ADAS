@@ -16,6 +16,7 @@ namespace Ki_ADAS
     public partial class Frm_Main : Form
     {
         private Frm_Mainfrm m_frmParent = null;
+        private Frm_VEP _vep;
         private VEPBenchClient _vepBenchClient;
         private ADASProcess _adasProcess;
         private IniFile _iniFile;

@@ -21,6 +21,17 @@ namespace Ki_ADAS
         public Frm_VEP()
         {
             InitializeComponent();
+
+            benchClient.Connect();
+            benchClient.DebugMode = true;
+
+            benchClient.DescriptionZoneRead += BenchClient_OnDescriptionZoneRead;
+            benchClient.StatusZoneChanged += BenchClient_StatusZoneChanged;
+            benchClient.SynchroZoneChanged += BenchClient_SynchroZoneChanged;
+            benchClient.TransmissionZoneChanged += BenchClient_TransmissionZoneChanged;
+            benchClient.ReceptionZoneChanged += BenchClient_ReceptionZoneChanged;
+
+            benchClient.StartMonitoring();
         }
 
         public void SetParent(Frm_Mainfrm f)
@@ -28,72 +39,132 @@ namespace Ki_ADAS
             m_frmParent = f;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void BenchClient_OnDescriptionZoneRead(object sender, VEPBenchDescriptionZone e)
         {
-            string pji = "123456789012";
-            var benchResp = VEPBenchResponse.CreatePJIResponse(pji);
-
-            ushort[] receptionZone = new ushort[32];
-
-            receptionZone[2] = 123;   
-            receptionZone[3] = 2;
-            receptionZone[6] = 6;     
-            receptionZone[7] = 1 << 8;
-            receptionZone[8] = 0x01;
-
-            Array.Copy(benchResp.Data, 0, receptionZone, 12, benchResp.Data.Length);
-
-            ReceiveBenchData(receptionZone);
-        }
-
-        private void ReceiveBenchData(ushort[] data)
-        {
-            // 1. Reception Zone Description 값 추출 및 바인딩
-            txtAddRZSize.Text = data[2].ToString();
-            txtExchStatus.Text = data[3].ToString();
-            txtFctCode.Text = (data[6] & 0xFF).ToString();
-            txtPCNum.Text = ((data[7] >> 8) & 0xFF).ToString();
-            txtProcessCode.Text = (data[8] & 0xFF).ToString();
-            txtSubFctCode.Text = ((data[8] >> 8) & 0xFF).ToString();
-
-            // 2. PJI 플래그/길이 추출 
-            int flag = data[12] & 0xFF;
-            int length = (data[12] >> 8) & 0xFF;
-
-            txtFlag.Text = flag.ToString();
-            txtLen.Text = length.ToString();
-
-            // 3. PJI 문자열 추출 (Data[13]부터 PJI 문자)
-            char[] chars = new char[length];
-
-            for (int i = 0; i < length; i++)
+            if (InvokeRequired)
             {
-                int wordIdx = 13 + (i / 2);
-                bool isLow = (i % 2 == 0);
-                chars[i] = (char)(isLow ? (data[wordIdx] & 0xFF) : (data[wordIdx] >> 8));
+                BeginInvoke(new Action<object, VEPBenchDescriptionZone>(BenchClient_OnDescriptionZoneRead), sender, e);
+                return;
             }
 
-            string pjiValue = new string(chars);
-
-            txtPJI.Text = pjiValue;
+            txtDesZone.Text = e.ValidityIndicator.ToString();
+            txtStatusZoneAddress.Text = e.StatusZoneAddr.ToString();
+            txtStatusZoneSize.Text = e.StatusZoneSize.ToString();
+            txtSynchroZoneAddress.Text = e.SynchroZoneAddr.ToString();
+            txtSynchroZoneSize.Text = e.SynchroZoneSize.ToString();
+            txtTzAddress.Text = e.TransmissionZoneAddr.ToString();
+            txtTzSize.Text = e.TransmissionZoneSize.ToString();
+            txtReAddress.Text = e.ReceptionZoneAddr.ToString();
+            txtReSize.Text = e.ReceptionZoneSize.ToString();
+            txtAddTzAddress.Text = e.AdditionalTZAddr.ToString();
+            txtAddTzSize.Text = e.AdditionalTZSize.ToString();
+            txtAddReAddress.Text = e.AdditionalRZAddr.ToString();
+            txtAddReSize.Text = e.AdditionalRZSize.ToString();
         }
 
-        private void btnWriteSynchro_Click(object sender, EventArgs e)
+        private void BenchClient_StatusZoneChanged(object sender, VEPBenchStatusZone e)
         {
-            var sync = new VEPBenchSynchro();
-            sync.Angle1 = double.Parse(txtAngle1.Text);
-            sync.Angle2 = double.Parse(txtAngle2.Text);
-            sync.Angle3 = double.Parse(txtAngle3.Text);
-
-            benchClient.WriteSynchroZone(sync);
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => UpdateStatusInfo(
+                    e.VepStatus,
+                    e.VepCycleEnd,
+                    e.BenchCycleEnd,
+                    e.StartCycle,
+                    e.VepCycleInterruption,
+                    e.BenchCycleInterruption)));
+            }
+            else
+            {
+                UpdateStatusInfo(
+                    e.VepStatus,
+                    e.VepCycleEnd,
+                    e.BenchCycleEnd,
+                    e.StartCycle,
+                    e.VepCycleInterruption,
+                    e.BenchCycleInterruption);
+            }
         }
 
-        private void btnReadSynchro_Click(object sender, EventArgs e)
+        private void BenchClient_SynchroZoneChanged(object sender, VEPBenchSynchroZone e)
         {
-            var sync = benchClient.ReadSynchroZone();
-            txtAngle1.Text = sync.Angle1.ToString("F2");
-            txtAngle2.Text = sync.Angle2.ToString("F2");
-            txtAngle3.Text = sync.Angle3.ToString("F2");
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => UpdateSynchroValues(e.Angle1, e.Angle2, e.Angle3)));
+            }
+            else
+            {
+                UpdateSynchroValues(e.Angle1, e.Angle2, e.Angle3);
+            }
+        }
+
+        private void BenchClient_TransmissionZoneChanged(object sender, VEPBenchTransmissionZone e)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => UpdateTransmissionInfo(e.AddTzSize, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode)));
+            }
+            else
+            {
+                UpdateTransmissionInfo(e.AddTzSize, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode);
+            }
+
+            if (e.IsRequest)
+            {
+                Console.WriteLine($"TransmissionZoneChanged 이벤트: 요청 감지 FctCode={e.FctCode}, PCNum={e.PCNum}");
+            }
+        }
+
+        private void BenchClient_ReceptionZoneChanged(object sender, VEPBenchReceptionZone e)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => UpdateReceptionInfo(e.AddReSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode)));
+            }
+            else
+            {
+                UpdateReceptionInfo(e.AddReSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode);
+            }
+
+            string status = e.IsResponseCompleted ? "응답 완료" : "응답 준비";
+            Console.WriteLine($"ReceptionZoneChanged 이벤트: {status}, FctCode={e.FctCode}");
+        }
+
+        public void UpdateStatusInfo(ushort vepStatus, ushort vepCycleEnd, ushort benchCycleEnd, ushort startCycle, ushort vepCycleInt, ushort benchCycleInt)
+        {
+            txtStVepStatus.Text = vepStatus.ToString();
+            txtStVepCycleEnd.Text = vepCycleEnd.ToString();
+            txtStBenchCycleEnd.Text = benchCycleEnd.ToString();
+            txtStStartCycle.Text = startCycle.ToString();
+            txtStVepCycleInt.Text = vepCycleInt.ToString();
+            txtStBenchCycleInt.Text = benchCycleInt.ToString();
+        }
+
+        public void UpdateSynchroValues(double angle, double angle2, double angle3)
+        {
+            txtAngle1.Text = angle.ToString("F2");
+            txtAngle2.Text = angle2.ToString("F2");
+            txtAngle3.Text = angle3.ToString("F2");
+        }
+
+        public void UpdateTransmissionInfo(ushort size, byte fctCode, byte pcNum, byte processCode, byte subFctCode)
+        {
+            txtAddrTzSize.Text = size.ToString();
+            txtTzFctCode.Text = fctCode.ToString();
+            txtTzPCNum.Text = pcNum.ToString();
+            txtTzProcessCode.Text = processCode.ToString();
+            txtTzSubFctCode.Text = subFctCode.ToString();
+            txtTzExchStatus.Text = "2"; // 요청 가능 상태로 초깃값 설정
+        }
+
+        public void UpdateReceptionInfo(ushort size, ushort exchStatus, byte fctCode, byte pcNum, byte processCode, byte subFctCode)
+        {
+            txtAddrReSize.Text = size.ToString();
+            txtReExchStatus.Text = exchStatus.ToString();
+            txtReFctCode.Text = fctCode.ToString();
+            txtRePCNum.Text = pcNum.ToString();
+            txtReProcessCode.Text = processCode.ToString();
+            txtReSubFctCode.Text = subFctCode.ToString();
         }
     }
 }

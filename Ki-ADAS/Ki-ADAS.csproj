@@ -60,9 +60,6 @@
     <Reference Include="NModbus, Version=3.0.81.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NModbus.3.0.81\lib\net46\NModbus.dll</HintPath>
     </Reference>
-    <Reference Include="NModbus4, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NModbus4.2.1.0\lib\net40\NModbus4.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.ConfigurationManager, Version=9.0.0.7, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -155,13 +152,17 @@
     <Compile Include="Language\LanguageResource.cs" />
     <Compile Include="SettingConfigDb.cs" />
     <Compile Include="VEPBench\VEPBenchClient.cs" />
+    <Compile Include="VEPBench\VEPBenchDescriptionZone.cs" />
     <Compile Include="VEPBench\VEPBenchProcessor.cs" />
+    <Compile Include="VEPBench\VEPBenchReceptionZone.cs" />
     <Compile Include="VEPBench\VEPBenchRequest.cs" />
     <Compile Include="RoundLabel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="VEPBench\VEPBenchResponse.cs" />
-    <Compile Include="VEPBench\VEPBenchSynchro.cs" />
+    <Compile Include="VEPBench\VEPBenchStatusZone.cs" />
+    <Compile Include="VEPBench\VEPBenchSynchroZone.cs" />
+    <Compile Include="VEPBench\VEPBenchTransmissionZone.cs" />
     <Compile Include="VEPProtocol.cs" />
     <EmbeddedResource Include="Frm_Config.resx">
       <DependentUpon>Frm_Config.cs</DependentUpon>

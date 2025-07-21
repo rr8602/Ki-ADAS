@@ -25,7 +25,7 @@ namespace Ki_ADAS
         private const double _azimuthThreshold = 1.0; // Azimuth 허용 범위
         private const double _elevationThreshold = 1.0; // Elevation 허용 범위
 
-        private VEPBenchSynchro _synchroValues = new VEPBenchSynchro();
+        private VEPBenchSynchroZone _synchroValues = new VEPBenchSynchroZone();
         public event EventHandler<ADASProcessEventArgs> OnProcessStepChanged;
 
         // ADAS 프로세스 상태 타입
@@ -251,36 +251,43 @@ namespace Ki_ADAS
                     return false;
                 }
 
-                // 동기화 값에 따라 알맞은 위치에 설정
-                switch (syncNumber)
+                if (syncNumber >= 9 && syncNumber < _synchroValues.Size)
                 {
-                    case 110:
-                        _synchroValues.Angle1 = value;
-                        break;
+                    _synchroValues[syncNumber] = (ushort)value;
 
-                    case 111:
-                        _synchroValues.Angle2 = value;
-                        break;
+                    _vepBenchClient.WriteSynchroZone(_synchroValues);
 
-                    case 112:
-                        _synchroValues.Angle3 = value;
-                        break;
+                    NotifyProcessState(
+                        LanguageResource.GetFormattedMessage("SynchroSettingComplete", syncNumber, value),
+                        ProcessStateType.Info);
 
-                    default:
-                        ushort[] data = new ushort[3];
-                        data[syncNumber % 3] = (ushort)value;
-                        _vepBenchClient.WriteStatusZone(data);
+                    return true;
+                }
+                else if (syncNumber == 110 || syncNumber == 111 || syncNumber == 112)
+                {
+                    switch (syncNumber)
+                    {
+                        case 110:
+                            _synchroValues.Angle1 = value / 100.0;
+                            break;
+                        case 111:
+                            _synchroValues.Angle2 = value / 100.0;
+                            break;
+                        case 112:
+                            _synchroValues.Angle3 = value / 100.0;
+                            break;
+                    }
 
-                        return true;
+                    _vepBenchClient.WriteSynchroZone(_synchroValues);
+
+                    NotifyProcessState(
+                        LanguageResource.GetFormattedMessage("SynchroSettingComplete", syncNumber, value),
+                        ProcessStateType.Info);
+
+                    return true;
                 }
 
-                _vepBenchClient.WriteSynchroZone(_synchroValues);
-
-                NotifyProcessState(
-                    LanguageResource.GetFormattedMessage("SynchroSettingComplete", syncNumber, value),
-                    ProcessStateType.Info);
-
-                return true;
+                return false;
             }
             catch (Exception ex)
             {

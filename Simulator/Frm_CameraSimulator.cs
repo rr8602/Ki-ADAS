@@ -48,7 +48,7 @@ namespace Simulator
 
         // 시뮬레이션 목적으로 사용할 synchro 값 저장
         private Dictionary<int, int> _synchroValues = new Dictionary<int, int>();
-        private VEPBenchSynchro _synchroZone = new VEPBenchSynchro();
+        private VEPBenchSynchroZone _synchroZone = new VEPBenchSynchroZone();
 
         public Frm_CameraSimulator()
         {
@@ -220,7 +220,7 @@ namespace Simulator
                         lblSynchro89.Text = statusData[2].ToString();
                     }
 
-                    VEPBenchSynchro synchro = _vepBenchClient.ReadSynchroZone();
+                    VEPBenchSynchroZone synchro = _vepBenchClient.ReadSynchroZone();
                     lblSynchro110.Text = synchro.Angle1.ToString();
                     lblSynchro111.Text = synchro.Angle2.ToString();
                     lblSynchro112.Text = synchro.Angle3.ToString();
@@ -318,7 +318,7 @@ namespace Simulator
         {
             try
             {
-                _synchroZone = new VEPBenchSynchro();
+                _synchroZone = new VEPBenchSynchroZone();
                 _synchroZone.Angle1 = ConvertAngleToRawValue(_rollAngle);
                 _synchroZone.Angle2 = ConvertAngleToRawValue(_azimuthAngle);
                 _synchroZone.Angle3 = ConvertAngleToRawValue(_elevationAngle);

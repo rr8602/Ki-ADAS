@@ -1070,6 +1070,7 @@
             this.BtnLanSave.Tag = "SaveButton";
             this.BtnLanSave.Text = "S A V E";
             this.BtnLanSave.UseVisualStyleBackColor = true;
+            this.BtnLanSave.Click += new System.EventHandler(this.BtnLanSave_Click);
             // 
             // label14
             // 

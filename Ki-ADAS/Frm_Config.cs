@@ -109,17 +109,6 @@ namespace Ki_ADAS
             }
         }
 
-        public void SaveModelSettings()
-        {
-
-        }
-
-        public void SaveConfigSettings()
-        {
-            _iniFile.WriteValue(CONFIG_SECTION, VEP_IP_KEY, TxtVepIp.Text);
-            _iniFile.WriteValue(CONFIG_SECTION, VEP_PORT_KEY, TxtVepPort.Text);
-        }
-
         public void SaveLanguageSettings()
         {
             if (cmb_language.SelectedItem != null)
@@ -194,12 +183,18 @@ namespace Ki_ADAS
 
         private void BtnConfigSave_Click(object sender, EventArgs e)
         {
-            SaveConfigSettings();
+            _iniFile.WriteValue(CONFIG_SECTION, VEP_IP_KEY, TxtVepIp.Text);
+            _iniFile.WriteValue(CONFIG_SECTION, VEP_PORT_KEY, TxtVepPort.Text);
 
             MessageBox.Show(LanguageResource.GetMessage("ConfigSaveSuccess"),
                 LanguageResource.GetMessage("Information"),
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void BtnLanSave_Click(object sender, EventArgs e)
+        {
+            SaveLanguageSettings();
         }
 
         private void cmb_language_SelectedIndexChanged(object sender, EventArgs e)
@@ -222,8 +217,6 @@ namespace Ki_ADAS
                 }
 
                 LanguageManager.ChangeLanguage(selectedLanguage);
-
-                _iniFile.WriteValue(LANGUAGE_SECTION, LANGUAGE_KEY, cmb_language.SelectedIndex.ToString());
             }
         }
 

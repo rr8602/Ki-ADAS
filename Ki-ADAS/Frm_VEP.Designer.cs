@@ -30,91 +30,85 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.txtLen = new System.Windows.Forms.TextBox();
-            this.txtFlag = new System.Windows.Forms.TextBox();
-            this.txtPJI = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.txtAngle1 = new System.Windows.Forms.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label46 = new System.Windows.Forms.Label();
+            this.txtAngle2 = new System.Windows.Forms.TextBox();
+            this.txtAngle3 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtAngle1 = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.label45 = new System.Windows.Forms.Label();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.txtReData = new System.Windows.Forms.RichTextBox();
+            this.txtTzData = new System.Windows.Forms.RichTextBox();
             this.label44 = new System.Windows.Forms.Label();
-            this.txtExchStatus = new System.Windows.Forms.TextBox();
+            this.txtReExchStatus = new System.Windows.Forms.TextBox();
             this.label42 = new System.Windows.Forms.Label();
-            this.txtFctCode = new System.Windows.Forms.TextBox();
+            this.txtReFctCode = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
-            this.txtPCNum = new System.Windows.Forms.TextBox();
+            this.txtRePCNum = new System.Windows.Forms.TextBox();
             this.label40 = new System.Windows.Forms.Label();
-            this.txtProcessCode = new System.Windows.Forms.TextBox();
+            this.txtReProcessCode = new System.Windows.Forms.TextBox();
             this.label39 = new System.Windows.Forms.Label();
-            this.txtSubFctCode = new System.Windows.Forms.TextBox();
+            this.txtReSubFctCode = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
-            this.txtAddRZSize = new System.Windows.Forms.TextBox();
+            this.txtAddrReSize = new System.Windows.Forms.TextBox();
             this.label43 = new System.Windows.Forms.Label();
-            this.textBox25 = new System.Windows.Forms.TextBox();
+            this.txtAddrTzSize = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
-            this.textBox24 = new System.Windows.Forms.TextBox();
+            this.txtTzExchStatus = new System.Windows.Forms.TextBox();
             this.label36 = new System.Windows.Forms.Label();
-            this.textBox23 = new System.Windows.Forms.TextBox();
+            this.txtTzFctCode = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
-            this.textBox22 = new System.Windows.Forms.TextBox();
+            this.txtTzPCNum = new System.Windows.Forms.TextBox();
             this.label34 = new System.Windows.Forms.Label();
-            this.textBox21 = new System.Windows.Forms.TextBox();
+            this.txtTzProcessCode = new System.Windows.Forms.TextBox();
             this.label33 = new System.Windows.Forms.Label();
-            this.textBox20 = new System.Windows.Forms.TextBox();
+            this.txtTzSubFctCode = new System.Windows.Forms.TextBox();
             this.label32 = new System.Windows.Forms.Label();
-            this.textBox19 = new System.Windows.Forms.TextBox();
+            this.txtStVepStatus = new System.Windows.Forms.TextBox();
             this.label31 = new System.Windows.Forms.Label();
-            this.textBox18 = new System.Windows.Forms.TextBox();
+            this.txtStVepCycleInt = new System.Windows.Forms.TextBox();
             this.label30 = new System.Windows.Forms.Label();
-            this.textBox17 = new System.Windows.Forms.TextBox();
+            this.txtStVepCycleEnd = new System.Windows.Forms.TextBox();
             this.label29 = new System.Windows.Forms.Label();
-            this.textBox16 = new System.Windows.Forms.TextBox();
+            this.txtStBenchCycleInt = new System.Windows.Forms.TextBox();
             this.label28 = new System.Windows.Forms.Label();
-            this.textBox15 = new System.Windows.Forms.TextBox();
+            this.txtStBenchCycleEnd = new System.Windows.Forms.TextBox();
             this.label27 = new System.Windows.Forms.Label();
-            this.textBox14 = new System.Windows.Forms.TextBox();
+            this.txtStStartCycle = new System.Windows.Forms.TextBox();
             this.label26 = new System.Windows.Forms.Label();
-            this.textBox13 = new System.Windows.Forms.TextBox();
+            this.txtStatusZoneAddress = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
-            this.textBox12 = new System.Windows.Forms.TextBox();
+            this.txtStatusZoneSize = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
-            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.txtSynchroZoneAddress = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
-            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.txtTzAddress = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.txtTzSize = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.txtReAddress = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
-            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.txtReSize = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.txtAddTzAddress = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.txtAddTzSize = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.txtAddReAddress = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.txtAddReSize = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtSynchroZoneSize = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtDesZone = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.btnWriteSynchro = new System.Windows.Forms.Button();
-            this.btnReadSynchro = new System.Windows.Forms.Button();
-            this.txtAngle3 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtAngle2 = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -122,79 +116,73 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.groupBox1);
-            this.panel1.Controls.Add(this.btnReadSynchro);
-            this.panel1.Controls.Add(this.btnWriteSynchro);
-            this.panel1.Controls.Add(this.txtLen);
-            this.panel1.Controls.Add(this.txtFlag);
-            this.panel1.Controls.Add(this.txtPJI);
-            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.label45);
-            this.panel1.Controls.Add(this.richTextBox2);
-            this.panel1.Controls.Add(this.richTextBox1);
+            this.panel1.Controls.Add(this.txtReData);
+            this.panel1.Controls.Add(this.txtTzData);
             this.panel1.Controls.Add(this.label44);
-            this.panel1.Controls.Add(this.txtExchStatus);
+            this.panel1.Controls.Add(this.txtReExchStatus);
             this.panel1.Controls.Add(this.label42);
-            this.panel1.Controls.Add(this.txtFctCode);
+            this.panel1.Controls.Add(this.txtReFctCode);
             this.panel1.Controls.Add(this.label41);
-            this.panel1.Controls.Add(this.txtPCNum);
+            this.panel1.Controls.Add(this.txtRePCNum);
             this.panel1.Controls.Add(this.label40);
-            this.panel1.Controls.Add(this.txtProcessCode);
+            this.panel1.Controls.Add(this.txtReProcessCode);
             this.panel1.Controls.Add(this.label39);
-            this.panel1.Controls.Add(this.txtSubFctCode);
+            this.panel1.Controls.Add(this.txtReSubFctCode);
             this.panel1.Controls.Add(this.label38);
-            this.panel1.Controls.Add(this.txtAddRZSize);
+            this.panel1.Controls.Add(this.txtAddrReSize);
             this.panel1.Controls.Add(this.label43);
-            this.panel1.Controls.Add(this.textBox25);
+            this.panel1.Controls.Add(this.txtAddrTzSize);
             this.panel1.Controls.Add(this.label37);
-            this.panel1.Controls.Add(this.textBox24);
+            this.panel1.Controls.Add(this.txtTzExchStatus);
             this.panel1.Controls.Add(this.label36);
-            this.panel1.Controls.Add(this.textBox23);
+            this.panel1.Controls.Add(this.txtTzFctCode);
             this.panel1.Controls.Add(this.label35);
-            this.panel1.Controls.Add(this.textBox22);
+            this.panel1.Controls.Add(this.txtTzPCNum);
             this.panel1.Controls.Add(this.label34);
-            this.panel1.Controls.Add(this.textBox21);
+            this.panel1.Controls.Add(this.txtTzProcessCode);
             this.panel1.Controls.Add(this.label33);
-            this.panel1.Controls.Add(this.textBox20);
+            this.panel1.Controls.Add(this.txtTzSubFctCode);
             this.panel1.Controls.Add(this.label32);
-            this.panel1.Controls.Add(this.textBox19);
+            this.panel1.Controls.Add(this.txtStVepStatus);
             this.panel1.Controls.Add(this.label31);
-            this.panel1.Controls.Add(this.textBox18);
+            this.panel1.Controls.Add(this.txtStVepCycleInt);
             this.panel1.Controls.Add(this.label30);
-            this.panel1.Controls.Add(this.textBox17);
+            this.panel1.Controls.Add(this.txtStVepCycleEnd);
             this.panel1.Controls.Add(this.label29);
-            this.panel1.Controls.Add(this.textBox16);
+            this.panel1.Controls.Add(this.txtStBenchCycleInt);
             this.panel1.Controls.Add(this.label28);
-            this.panel1.Controls.Add(this.textBox15);
+            this.panel1.Controls.Add(this.txtStBenchCycleEnd);
             this.panel1.Controls.Add(this.label27);
-            this.panel1.Controls.Add(this.textBox14);
+            this.panel1.Controls.Add(this.txtStStartCycle);
             this.panel1.Controls.Add(this.label26);
-            this.panel1.Controls.Add(this.textBox13);
+            this.panel1.Controls.Add(this.txtStatusZoneAddress);
             this.panel1.Controls.Add(this.label23);
-            this.panel1.Controls.Add(this.textBox12);
+            this.panel1.Controls.Add(this.txtStatusZoneSize);
             this.panel1.Controls.Add(this.label22);
-            this.panel1.Controls.Add(this.textBox11);
+            this.panel1.Controls.Add(this.txtSynchroZoneAddress);
             this.panel1.Controls.Add(this.label21);
-            this.panel1.Controls.Add(this.textBox10);
+            this.panel1.Controls.Add(this.txtTzAddress);
             this.panel1.Controls.Add(this.label20);
-            this.panel1.Controls.Add(this.textBox9);
+            this.panel1.Controls.Add(this.txtTzSize);
             this.panel1.Controls.Add(this.label19);
-            this.panel1.Controls.Add(this.textBox8);
+            this.panel1.Controls.Add(this.txtReAddress);
             this.panel1.Controls.Add(this.label18);
-            this.panel1.Controls.Add(this.textBox7);
+            this.panel1.Controls.Add(this.txtReSize);
             this.panel1.Controls.Add(this.label17);
-            this.panel1.Controls.Add(this.textBox6);
+            this.panel1.Controls.Add(this.txtAddTzAddress);
             this.panel1.Controls.Add(this.label16);
-            this.panel1.Controls.Add(this.textBox5);
+            this.panel1.Controls.Add(this.txtAddTzSize);
             this.panel1.Controls.Add(this.label15);
-            this.panel1.Controls.Add(this.textBox4);
+            this.panel1.Controls.Add(this.txtAddReAddress);
             this.panel1.Controls.Add(this.label14);
-            this.panel1.Controls.Add(this.textBox3);
+            this.panel1.Controls.Add(this.txtAddReSize);
             this.panel1.Controls.Add(this.label13);
-            this.panel1.Controls.Add(this.textBox2);
+            this.panel1.Controls.Add(this.txtSynchroZoneSize);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.label25);
             this.panel1.Controls.Add(this.label24);
-            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.txtDesZone);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label10);
@@ -205,36 +193,60 @@
             this.panel1.Size = new System.Drawing.Size(2018, 1128);
             this.panel1.TabIndex = 14;
             // 
-            // txtLen
+            // groupBox1
             // 
-            this.txtLen.Location = new System.Drawing.Point(1003, 805);
-            this.txtLen.Name = "txtLen";
-            this.txtLen.Size = new System.Drawing.Size(216, 25);
-            this.txtLen.TabIndex = 253;
+            this.groupBox1.Controls.Add(this.label46);
+            this.groupBox1.Controls.Add(this.txtAngle2);
+            this.groupBox1.Controls.Add(this.txtAngle3);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.txtAngle1);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.groupBox1.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.groupBox1.Location = new System.Drawing.Point(1245, 68);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(218, 141);
+            this.groupBox1.TabIndex = 260;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Front Camera";
             // 
-            // txtFlag
+            // label46
             // 
-            this.txtFlag.Location = new System.Drawing.Point(1001, 766);
-            this.txtFlag.Name = "txtFlag";
-            this.txtFlag.Size = new System.Drawing.Size(216, 25);
-            this.txtFlag.TabIndex = 252;
+            this.label46.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label46.Location = new System.Drawing.Point(6, 23);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(114, 24);
+            this.label46.TabIndex = 135;
+            this.label46.Text = "320 : S_00";
+            this.label46.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // txtPJI
+            // txtAngle2
             // 
-            this.txtPJI.Location = new System.Drawing.Point(1001, 726);
-            this.txtPJI.Name = "txtPJI";
-            this.txtPJI.Size = new System.Drawing.Size(216, 25);
-            this.txtPJI.TabIndex = 251;
+            this.txtAngle2.Location = new System.Drawing.Point(125, 63);
+            this.txtAngle2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAngle2.Multiline = true;
+            this.txtAngle2.Name = "txtAngle2";
+            this.txtAngle2.Size = new System.Drawing.Size(91, 24);
+            this.txtAngle2.TabIndex = 259;
             // 
-            // button1
+            // txtAngle3
             // 
-            this.button1.Location = new System.Drawing.Point(1001, 518);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(216, 116);
-            this.button1.TabIndex = 250;
-            this.button1.Text = "Receive";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.txtAngle3.Location = new System.Drawing.Point(126, 108);
+            this.txtAngle3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAngle3.Multiline = true;
+            this.txtAngle3.Name = "txtAngle3";
+            this.txtAngle3.Size = new System.Drawing.Size(90, 24);
+            this.txtAngle3.TabIndex = 257;
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label1.Location = new System.Drawing.Point(6, 106);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(114, 24);
+            this.label1.TabIndex = 256;
+            this.label1.Text = "322 : S_02";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtAngle1
             // 
@@ -245,43 +257,43 @@
             this.txtAngle1.Size = new System.Drawing.Size(90, 24);
             this.txtAngle1.TabIndex = 165;
             // 
-            // label46
+            // label2
             // 
-            this.label46.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label46.Location = new System.Drawing.Point(6, 23);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(114, 24);
-            this.label46.TabIndex = 135;
-            this.label46.Text = "110 : S_00";
-            this.label46.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label2.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label2.Location = new System.Drawing.Point(6, 63);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(114, 24);
+            this.label2.TabIndex = 258;
+            this.label2.Text = "321 : S_01";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label45
             // 
             this.label45.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label45.Location = new System.Drawing.Point(1246, 965);
+            this.label45.Location = new System.Drawing.Point(1057, 960);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(350, 24);
             this.label45.TabIndex = 131;
             this.label45.Text = "140 To 187 : ZoneInfo";
             this.label45.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // richTextBox2
+            // txtReData
             // 
-            this.richTextBox2.Location = new System.Drawing.Point(1237, 998);
-            this.richTextBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(759, 64);
-            this.richTextBox2.TabIndex = 130;
-            this.richTextBox2.Text = "";
+            this.txtReData.Location = new System.Drawing.Point(1013, 998);
+            this.txtReData.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtReData.Name = "txtReData";
+            this.txtReData.Size = new System.Drawing.Size(987, 114);
+            this.txtReData.TabIndex = 130;
+            this.txtReData.Text = "";
             // 
-            // richTextBox1
+            // txtTzData
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(2, 998);
-            this.richTextBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(1215, 64);
-            this.richTextBox1.TabIndex = 129;
-            this.richTextBox1.Text = "";
+            this.txtTzData.Location = new System.Drawing.Point(2, 998);
+            this.txtTzData.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzData.Name = "txtTzData";
+            this.txtTzData.Size = new System.Drawing.Size(1005, 114);
+            this.txtTzData.TabIndex = 129;
+            this.txtTzData.Text = "";
             // 
             // label44
             // 
@@ -293,128 +305,128 @@
             this.label44.Text = "80 To 127 : ZoneInfo";
             this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtExchStatus
+            // txtReExchStatus
             // 
-            this.txtExchStatus.Location = new System.Drawing.Point(1595, 761);
-            this.txtExchStatus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtExchStatus.Multiline = true;
-            this.txtExchStatus.Name = "txtExchStatus";
-            this.txtExchStatus.Size = new System.Drawing.Size(218, 24);
-            this.txtExchStatus.TabIndex = 125;
+            this.txtReExchStatus.Location = new System.Drawing.Point(1406, 756);
+            this.txtReExchStatus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtReExchStatus.Multiline = true;
+            this.txtReExchStatus.Name = "txtReExchStatus";
+            this.txtReExchStatus.Size = new System.Drawing.Size(218, 24);
+            this.txtReExchStatus.TabIndex = 125;
             // 
             // label42
             // 
             this.label42.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label42.Location = new System.Drawing.Point(1241, 761);
+            this.label42.Location = new System.Drawing.Point(1052, 756);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(350, 24);
             this.label42.TabIndex = 124;
             this.label42.Text = "131 : EtatEchange";
             this.label42.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtFctCode
+            // txtReFctCode
             // 
-            this.txtFctCode.Location = new System.Drawing.Point(1595, 800);
-            this.txtFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtFctCode.Multiline = true;
-            this.txtFctCode.Name = "txtFctCode";
-            this.txtFctCode.Size = new System.Drawing.Size(218, 24);
-            this.txtFctCode.TabIndex = 123;
+            this.txtReFctCode.Location = new System.Drawing.Point(1406, 795);
+            this.txtReFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtReFctCode.Multiline = true;
+            this.txtReFctCode.Name = "txtReFctCode";
+            this.txtReFctCode.Size = new System.Drawing.Size(218, 24);
+            this.txtReFctCode.TabIndex = 123;
             // 
             // label41
             // 
             this.label41.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label41.Location = new System.Drawing.Point(1241, 800);
+            this.label41.Location = new System.Drawing.Point(1052, 795);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(350, 24);
             this.label41.TabIndex = 122;
             this.label41.Text = "134 : No FncDest (Low)";
             this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtPCNum
+            // txtRePCNum
             // 
-            this.txtPCNum.Location = new System.Drawing.Point(1595, 842);
-            this.txtPCNum.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtPCNum.Multiline = true;
-            this.txtPCNum.Name = "txtPCNum";
-            this.txtPCNum.Size = new System.Drawing.Size(218, 24);
-            this.txtPCNum.TabIndex = 121;
+            this.txtRePCNum.Location = new System.Drawing.Point(1406, 837);
+            this.txtRePCNum.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtRePCNum.Multiline = true;
+            this.txtRePCNum.Name = "txtRePCNum";
+            this.txtRePCNum.Size = new System.Drawing.Size(218, 24);
+            this.txtRePCNum.TabIndex = 121;
             // 
             // label40
             // 
             this.label40.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label40.Location = new System.Drawing.Point(1241, 842);
+            this.label40.Location = new System.Drawing.Point(1052, 837);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(350, 24);
             this.label40.TabIndex = 120;
             this.label40.Text = "134 : NoPCmet (High)";
             this.label40.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtProcessCode
+            // txtReProcessCode
             // 
-            this.txtProcessCode.Location = new System.Drawing.Point(1595, 882);
-            this.txtProcessCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtProcessCode.Multiline = true;
-            this.txtProcessCode.Name = "txtProcessCode";
-            this.txtProcessCode.Size = new System.Drawing.Size(218, 24);
-            this.txtProcessCode.TabIndex = 119;
+            this.txtReProcessCode.Location = new System.Drawing.Point(1406, 877);
+            this.txtReProcessCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtReProcessCode.Multiline = true;
+            this.txtReProcessCode.Name = "txtReProcessCode";
+            this.txtReProcessCode.Size = new System.Drawing.Size(218, 24);
+            this.txtReProcessCode.TabIndex = 119;
             // 
             // label39
             // 
             this.label39.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label39.Location = new System.Drawing.Point(1241, 882);
+            this.label39.Location = new System.Drawing.Point(1052, 877);
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(350, 24);
             this.label39.TabIndex = 118;
             this.label39.Text = "136 : CodeTrait (Low)";
             this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtSubFctCode
+            // txtReSubFctCode
             // 
-            this.txtSubFctCode.Location = new System.Drawing.Point(1595, 925);
-            this.txtSubFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtSubFctCode.Multiline = true;
-            this.txtSubFctCode.Name = "txtSubFctCode";
-            this.txtSubFctCode.Size = new System.Drawing.Size(218, 24);
-            this.txtSubFctCode.TabIndex = 117;
+            this.txtReSubFctCode.Location = new System.Drawing.Point(1406, 920);
+            this.txtReSubFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtReSubFctCode.Multiline = true;
+            this.txtReSubFctCode.Name = "txtReSubFctCode";
+            this.txtReSubFctCode.Size = new System.Drawing.Size(218, 24);
+            this.txtReSubFctCode.TabIndex = 117;
             // 
             // label38
             // 
             this.label38.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label38.Location = new System.Drawing.Point(1241, 925);
+            this.label38.Location = new System.Drawing.Point(1052, 920);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(350, 24);
             this.label38.TabIndex = 116;
             this.label38.Text = "136 : codeFonction (High)";
             this.label38.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtAddRZSize
+            // txtAddrReSize
             // 
-            this.txtAddRZSize.Location = new System.Drawing.Point(1595, 721);
-            this.txtAddRZSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtAddRZSize.Multiline = true;
-            this.txtAddRZSize.Name = "txtAddRZSize";
-            this.txtAddRZSize.Size = new System.Drawing.Size(218, 24);
-            this.txtAddRZSize.TabIndex = 115;
+            this.txtAddrReSize.Location = new System.Drawing.Point(1406, 716);
+            this.txtAddrReSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAddrReSize.Multiline = true;
+            this.txtAddrReSize.Name = "txtAddrReSize";
+            this.txtAddrReSize.Size = new System.Drawing.Size(218, 24);
+            this.txtAddrReSize.TabIndex = 115;
             // 
             // label43
             // 
             this.label43.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label43.Location = new System.Drawing.Point(1241, 721);
+            this.label43.Location = new System.Drawing.Point(1052, 716);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(350, 24);
             this.label43.TabIndex = 114;
             this.label43.Text = "130 : Size Zone Data";
             this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox25
+            // txtAddrTzSize
             // 
-            this.textBox25.Location = new System.Drawing.Point(389, 721);
-            this.textBox25.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox25.Multiline = true;
-            this.textBox25.Name = "textBox25";
-            this.textBox25.Size = new System.Drawing.Size(218, 24);
-            this.textBox25.TabIndex = 103;
+            this.txtAddrTzSize.Location = new System.Drawing.Point(389, 721);
+            this.txtAddrTzSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAddrTzSize.Multiline = true;
+            this.txtAddrTzSize.Name = "txtAddrTzSize";
+            this.txtAddrTzSize.Size = new System.Drawing.Size(218, 24);
+            this.txtAddrTzSize.TabIndex = 103;
             // 
             // label37
             // 
@@ -426,14 +438,14 @@
             this.label37.Text = "70 : Size Zone Data";
             this.label37.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox24
+            // txtTzExchStatus
             // 
-            this.textBox24.Location = new System.Drawing.Point(389, 761);
-            this.textBox24.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox24.Multiline = true;
-            this.textBox24.Name = "textBox24";
-            this.textBox24.Size = new System.Drawing.Size(218, 24);
-            this.textBox24.TabIndex = 101;
+            this.txtTzExchStatus.Location = new System.Drawing.Point(389, 761);
+            this.txtTzExchStatus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzExchStatus.Multiline = true;
+            this.txtTzExchStatus.Name = "txtTzExchStatus";
+            this.txtTzExchStatus.Size = new System.Drawing.Size(218, 24);
+            this.txtTzExchStatus.TabIndex = 101;
             // 
             // label36
             // 
@@ -445,14 +457,14 @@
             this.label36.Text = "71 : EtatEchange";
             this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox23
+            // txtTzFctCode
             // 
-            this.textBox23.Location = new System.Drawing.Point(389, 805);
-            this.textBox23.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox23.Multiline = true;
-            this.textBox23.Name = "textBox23";
-            this.textBox23.Size = new System.Drawing.Size(218, 24);
-            this.textBox23.TabIndex = 99;
+            this.txtTzFctCode.Location = new System.Drawing.Point(389, 805);
+            this.txtTzFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzFctCode.Multiline = true;
+            this.txtTzFctCode.Name = "txtTzFctCode";
+            this.txtTzFctCode.Size = new System.Drawing.Size(218, 24);
+            this.txtTzFctCode.TabIndex = 99;
             // 
             // label35
             // 
@@ -464,14 +476,14 @@
             this.label35.Text = "74 : No FncDest (Low)";
             this.label35.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox22
+            // txtTzPCNum
             // 
-            this.textBox22.Location = new System.Drawing.Point(389, 848);
-            this.textBox22.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox22.Multiline = true;
-            this.textBox22.Name = "textBox22";
-            this.textBox22.Size = new System.Drawing.Size(218, 24);
-            this.textBox22.TabIndex = 97;
+            this.txtTzPCNum.Location = new System.Drawing.Point(389, 848);
+            this.txtTzPCNum.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzPCNum.Multiline = true;
+            this.txtTzPCNum.Name = "txtTzPCNum";
+            this.txtTzPCNum.Size = new System.Drawing.Size(218, 24);
+            this.txtTzPCNum.TabIndex = 97;
             // 
             // label34
             // 
@@ -483,14 +495,14 @@
             this.label34.Text = "74 : NoPCFmet (High)";
             this.label34.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox21
+            // txtTzProcessCode
             // 
-            this.textBox21.Location = new System.Drawing.Point(389, 888);
-            this.textBox21.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox21.Multiline = true;
-            this.textBox21.Name = "textBox21";
-            this.textBox21.Size = new System.Drawing.Size(218, 24);
-            this.textBox21.TabIndex = 95;
+            this.txtTzProcessCode.Location = new System.Drawing.Point(389, 888);
+            this.txtTzProcessCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzProcessCode.Multiline = true;
+            this.txtTzProcessCode.Name = "txtTzProcessCode";
+            this.txtTzProcessCode.Size = new System.Drawing.Size(218, 24);
+            this.txtTzProcessCode.TabIndex = 95;
             // 
             // label33
             // 
@@ -502,14 +514,14 @@
             this.label33.Text = "76 : CodeTrait (Low)";
             this.label33.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox20
+            // txtTzSubFctCode
             // 
-            this.textBox20.Location = new System.Drawing.Point(389, 930);
-            this.textBox20.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox20.Multiline = true;
-            this.textBox20.Name = "textBox20";
-            this.textBox20.Size = new System.Drawing.Size(218, 24);
-            this.textBox20.TabIndex = 93;
+            this.txtTzSubFctCode.Location = new System.Drawing.Point(389, 930);
+            this.txtTzSubFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzSubFctCode.Multiline = true;
+            this.txtTzSubFctCode.Name = "txtTzSubFctCode";
+            this.txtTzSubFctCode.Size = new System.Drawing.Size(218, 24);
+            this.txtTzSubFctCode.TabIndex = 93;
             // 
             // label32
             // 
@@ -521,14 +533,14 @@
             this.label32.Text = "76 : CodeFonction (High)";
             this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox19
+            // txtStVepStatus
             // 
-            this.textBox19.Location = new System.Drawing.Point(1001, 68);
-            this.textBox19.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox19.Multiline = true;
-            this.textBox19.Name = "textBox19";
-            this.textBox19.Size = new System.Drawing.Size(218, 24);
-            this.textBox19.TabIndex = 91;
+            this.txtStVepStatus.Location = new System.Drawing.Point(1001, 68);
+            this.txtStVepStatus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStVepStatus.Multiline = true;
+            this.txtStVepStatus.Name = "txtStVepStatus";
+            this.txtStVepStatus.Size = new System.Drawing.Size(218, 24);
+            this.txtStVepStatus.TabIndex = 91;
             // 
             // label31
             // 
@@ -537,17 +549,17 @@
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(350, 24);
             this.label31.TabIndex = 90;
-            this.label31.Text = "18 : Prog.Status";
+            this.label31.Text = "18 : VEP Status";
             this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox18
+            // txtStVepCycleInt
             // 
-            this.textBox18.Location = new System.Drawing.Point(1001, 112);
-            this.textBox18.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox18.Multiline = true;
-            this.textBox18.Name = "textBox18";
-            this.textBox18.Size = new System.Drawing.Size(218, 24);
-            this.textBox18.TabIndex = 89;
+            this.txtStVepCycleInt.Location = new System.Drawing.Point(1001, 112);
+            this.txtStVepCycleInt.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStVepCycleInt.Multiline = true;
+            this.txtStVepCycleInt.Name = "txtStVepCycleInt";
+            this.txtStVepCycleInt.Size = new System.Drawing.Size(218, 24);
+            this.txtStVepCycleInt.TabIndex = 89;
             // 
             // label30
             // 
@@ -556,17 +568,17 @@
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(350, 24);
             this.label30.TabIndex = 88;
-            this.label30.Text = "19 : VEP PC cycle stop";
+            this.label30.Text = "19 : VEP Cycle Interruption";
             this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox17
+            // txtStVepCycleEnd
             // 
-            this.textBox17.Location = new System.Drawing.Point(1001, 154);
-            this.textBox17.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox17.Multiline = true;
-            this.textBox17.Name = "textBox17";
-            this.textBox17.Size = new System.Drawing.Size(218, 24);
-            this.textBox17.TabIndex = 87;
+            this.txtStVepCycleEnd.Location = new System.Drawing.Point(1001, 154);
+            this.txtStVepCycleEnd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStVepCycleEnd.Multiline = true;
+            this.txtStVepCycleEnd.Name = "txtStVepCycleEnd";
+            this.txtStVepCycleEnd.Size = new System.Drawing.Size(218, 24);
+            this.txtStVepCycleEnd.TabIndex = 87;
             // 
             // label29
             // 
@@ -575,17 +587,17 @@
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(350, 24);
             this.label29.TabIndex = 86;
-            this.label29.Text = "20 : VEP PC seq end";
+            this.label29.Text = "20 : VEP Cycle End";
             this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox16
+            // txtStBenchCycleInt
             // 
-            this.textBox16.Location = new System.Drawing.Point(1001, 201);
-            this.textBox16.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox16.Multiline = true;
-            this.textBox16.Name = "textBox16";
-            this.textBox16.Size = new System.Drawing.Size(218, 24);
-            this.textBox16.TabIndex = 85;
+            this.txtStBenchCycleInt.Location = new System.Drawing.Point(1001, 201);
+            this.txtStBenchCycleInt.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStBenchCycleInt.Multiline = true;
+            this.txtStBenchCycleInt.Name = "txtStBenchCycleInt";
+            this.txtStBenchCycleInt.Size = new System.Drawing.Size(218, 24);
+            this.txtStBenchCycleInt.TabIndex = 85;
             // 
             // label28
             // 
@@ -594,17 +606,17 @@
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(350, 24);
             this.label28.TabIndex = 84;
-            this.label28.Text = "21 : Bench cycle stop";
+            this.label28.Text = "21 : Bench Cycle Interruption";
             this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox15
+            // txtStBenchCycleEnd
             // 
-            this.textBox15.Location = new System.Drawing.Point(1001, 242);
-            this.textBox15.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox15.Multiline = true;
-            this.textBox15.Name = "textBox15";
-            this.textBox15.Size = new System.Drawing.Size(218, 24);
-            this.textBox15.TabIndex = 83;
+            this.txtStBenchCycleEnd.Location = new System.Drawing.Point(1001, 242);
+            this.txtStBenchCycleEnd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStBenchCycleEnd.Multiline = true;
+            this.txtStBenchCycleEnd.Name = "txtStBenchCycleEnd";
+            this.txtStBenchCycleEnd.Size = new System.Drawing.Size(218, 24);
+            this.txtStBenchCycleEnd.TabIndex = 83;
             // 
             // label27
             // 
@@ -613,17 +625,17 @@
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(350, 24);
             this.label27.TabIndex = 82;
-            this.label27.Text = "22 : Bench seq end";
+            this.label27.Text = "22 : Bench Cycle End";
             this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox14
+            // txtStStartCycle
             // 
-            this.textBox14.Location = new System.Drawing.Point(1001, 289);
-            this.textBox14.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox14.Multiline = true;
-            this.textBox14.Name = "textBox14";
-            this.textBox14.Size = new System.Drawing.Size(218, 24);
-            this.textBox14.TabIndex = 81;
+            this.txtStStartCycle.Location = new System.Drawing.Point(1001, 289);
+            this.txtStStartCycle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStStartCycle.Multiline = true;
+            this.txtStStartCycle.Name = "txtStStartCycle";
+            this.txtStStartCycle.Size = new System.Drawing.Size(218, 24);
+            this.txtStStartCycle.TabIndex = 81;
             // 
             // label26
             // 
@@ -632,17 +644,17 @@
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(350, 24);
             this.label26.TabIndex = 80;
-            this.label26.Text = "23 : Cycle Start";
+            this.label26.Text = "23 : Start Cycle";
             this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox13
+            // txtStatusZoneAddress
             // 
-            this.textBox13.Location = new System.Drawing.Point(390, 108);
-            this.textBox13.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox13.Multiline = true;
-            this.textBox13.Name = "textBox13";
-            this.textBox13.Size = new System.Drawing.Size(218, 24);
-            this.textBox13.TabIndex = 79;
+            this.txtStatusZoneAddress.Location = new System.Drawing.Point(390, 108);
+            this.txtStatusZoneAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStatusZoneAddress.Multiline = true;
+            this.txtStatusZoneAddress.Name = "txtStatusZoneAddress";
+            this.txtStatusZoneAddress.Size = new System.Drawing.Size(218, 24);
+            this.txtStatusZoneAddress.TabIndex = 79;
             // 
             // label23
             // 
@@ -654,14 +666,14 @@
             this.label23.Text = "1 : Status zone address";
             this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox12
+            // txtStatusZoneSize
             // 
-            this.textBox12.Location = new System.Drawing.Point(390, 149);
-            this.textBox12.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox12.Multiline = true;
-            this.textBox12.Name = "textBox12";
-            this.textBox12.Size = new System.Drawing.Size(218, 24);
-            this.textBox12.TabIndex = 77;
+            this.txtStatusZoneSize.Location = new System.Drawing.Point(390, 149);
+            this.txtStatusZoneSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtStatusZoneSize.Multiline = true;
+            this.txtStatusZoneSize.Name = "txtStatusZoneSize";
+            this.txtStatusZoneSize.Size = new System.Drawing.Size(218, 24);
+            this.txtStatusZoneSize.TabIndex = 77;
             // 
             // label22
             // 
@@ -673,14 +685,14 @@
             this.label22.Text = "2 : Status zone size";
             this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox11
+            // txtSynchroZoneAddress
             // 
-            this.textBox11.Location = new System.Drawing.Point(390, 196);
-            this.textBox11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox11.Multiline = true;
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(218, 24);
-            this.textBox11.TabIndex = 75;
+            this.txtSynchroZoneAddress.Location = new System.Drawing.Point(390, 196);
+            this.txtSynchroZoneAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtSynchroZoneAddress.Multiline = true;
+            this.txtSynchroZoneAddress.Name = "txtSynchroZoneAddress";
+            this.txtSynchroZoneAddress.Size = new System.Drawing.Size(218, 24);
+            this.txtSynchroZoneAddress.TabIndex = 75;
             // 
             // label21
             // 
@@ -692,14 +704,14 @@
             this.label21.Text = "3 : Synchro zone address";
             this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox10
+            // txtTzAddress
             // 
-            this.textBox10.Location = new System.Drawing.Point(390, 284);
-            this.textBox10.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox10.Multiline = true;
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(218, 24);
-            this.textBox10.TabIndex = 73;
+            this.txtTzAddress.Location = new System.Drawing.Point(390, 284);
+            this.txtTzAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzAddress.Multiline = true;
+            this.txtTzAddress.Name = "txtTzAddress";
+            this.txtTzAddress.Size = new System.Drawing.Size(218, 24);
+            this.txtTzAddress.TabIndex = 73;
             // 
             // label20
             // 
@@ -708,17 +720,17 @@
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(350, 24);
             this.label20.TabIndex = 72;
-            this.label20.Text = "10 :  Emission zone address";
+            this.label20.Text = "10 :  Transmission zone address";
             this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox9
+            // txtTzSize
             // 
-            this.textBox9.Location = new System.Drawing.Point(389, 330);
-            this.textBox9.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox9.Multiline = true;
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(218, 24);
-            this.textBox9.TabIndex = 71;
+            this.txtTzSize.Location = new System.Drawing.Point(389, 330);
+            this.txtTzSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtTzSize.Multiline = true;
+            this.txtTzSize.Name = "txtTzSize";
+            this.txtTzSize.Size = new System.Drawing.Size(218, 24);
+            this.txtTzSize.TabIndex = 71;
             // 
             // label19
             // 
@@ -727,17 +739,17 @@
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(350, 24);
             this.label19.TabIndex = 70;
-            this.label19.Text = "11 : Emission zone size";
+            this.label19.Text = "11 : Transmission zone size";
             this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox8
+            // txtReAddress
             // 
-            this.textBox8.Location = new System.Drawing.Point(389, 375);
-            this.textBox8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox8.Multiline = true;
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(218, 24);
-            this.textBox8.TabIndex = 69;
+            this.txtReAddress.Location = new System.Drawing.Point(389, 375);
+            this.txtReAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtReAddress.Multiline = true;
+            this.txtReAddress.Name = "txtReAddress";
+            this.txtReAddress.Size = new System.Drawing.Size(218, 24);
+            this.txtReAddress.TabIndex = 69;
             // 
             // label18
             // 
@@ -746,17 +758,17 @@
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(350, 24);
             this.label18.TabIndex = 68;
-            this.label18.Text = "2 : Reception zone address";
+            this.label18.Text = "12 : Reception zone address";
             this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox7
+            // txtReSize
             // 
-            this.textBox7.Location = new System.Drawing.Point(389, 421);
-            this.textBox7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox7.Multiline = true;
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(218, 24);
-            this.textBox7.TabIndex = 67;
+            this.txtReSize.Location = new System.Drawing.Point(389, 421);
+            this.txtReSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtReSize.Multiline = true;
+            this.txtReSize.Name = "txtReSize";
+            this.txtReSize.Size = new System.Drawing.Size(218, 24);
+            this.txtReSize.TabIndex = 67;
             // 
             // label17
             // 
@@ -768,33 +780,33 @@
             this.label17.Text = "13 : Reception zone size";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox6
+            // txtAddTzAddress
             // 
-            this.textBox6.Location = new System.Drawing.Point(390, 469);
-            this.textBox6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox6.Multiline = true;
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(218, 24);
-            this.textBox6.TabIndex = 65;
+            this.txtAddTzAddress.Location = new System.Drawing.Point(390, 469);
+            this.txtAddTzAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAddTzAddress.Multiline = true;
+            this.txtAddTzAddress.Name = "txtAddTzAddress";
+            this.txtAddTzAddress.Size = new System.Drawing.Size(218, 24);
+            this.txtAddTzAddress.TabIndex = 65;
             // 
             // label16
             // 
             this.label16.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label16.Location = new System.Drawing.Point(35, 469);
+            this.label16.Location = new System.Drawing.Point(3, 469);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(350, 24);
+            this.label16.Size = new System.Drawing.Size(382, 24);
             this.label16.TabIndex = 64;
-            this.label16.Text = "14 : Add out zone address";
+            this.label16.Text = "14 : Add transmission zone address";
             this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox5
+            // txtAddTzSize
             // 
-            this.textBox5.Location = new System.Drawing.Point(389, 518);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox5.Multiline = true;
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(218, 24);
-            this.textBox5.TabIndex = 63;
+            this.txtAddTzSize.Location = new System.Drawing.Point(389, 518);
+            this.txtAddTzSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAddTzSize.Multiline = true;
+            this.txtAddTzSize.Name = "txtAddTzSize";
+            this.txtAddTzSize.Size = new System.Drawing.Size(218, 24);
+            this.txtAddTzSize.TabIndex = 63;
             // 
             // label15
             // 
@@ -803,17 +815,17 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(350, 24);
             this.label15.TabIndex = 62;
-            this.label15.Text = "15 : Add out zone size";
+            this.label15.Text = "15 : Add Transmission zone size";
             this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox4
+            // txtAddReAddress
             // 
-            this.textBox4.Location = new System.Drawing.Point(390, 565);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox4.Multiline = true;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(218, 24);
-            this.textBox4.TabIndex = 61;
+            this.txtAddReAddress.Location = new System.Drawing.Point(390, 565);
+            this.txtAddReAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAddReAddress.Multiline = true;
+            this.txtAddReAddress.Name = "txtAddReAddress";
+            this.txtAddReAddress.Size = new System.Drawing.Size(218, 24);
+            this.txtAddReAddress.TabIndex = 61;
             // 
             // label14
             // 
@@ -822,17 +834,17 @@
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(350, 24);
             this.label14.TabIndex = 60;
-            this.label14.Text = "16 : Add recep zone address";
+            this.label14.Text = "16 : Add reception zone address";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox3
+            // txtAddReSize
             // 
-            this.textBox3.Location = new System.Drawing.Point(389, 612);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(218, 24);
-            this.textBox3.TabIndex = 59;
+            this.txtAddReSize.Location = new System.Drawing.Point(390, 617);
+            this.txtAddReSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtAddReSize.Multiline = true;
+            this.txtAddReSize.Name = "txtAddReSize";
+            this.txtAddReSize.Size = new System.Drawing.Size(218, 24);
+            this.txtAddReSize.TabIndex = 59;
             // 
             // label13
             // 
@@ -841,17 +853,17 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(350, 24);
             this.label13.TabIndex = 58;
-            this.label13.Text = "7 : Add reception zone size";
+            this.label13.Text = "17 : Add reception zone size";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox2
+            // txtSynchroZoneSize
             // 
-            this.textBox2.Location = new System.Drawing.Point(390, 242);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(218, 24);
-            this.textBox2.TabIndex = 57;
+            this.txtSynchroZoneSize.Location = new System.Drawing.Point(390, 242);
+            this.txtSynchroZoneSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtSynchroZoneSize.Multiline = true;
+            this.txtSynchroZoneSize.Name = "txtSynchroZoneSize";
+            this.txtSynchroZoneSize.Size = new System.Drawing.Size(218, 24);
+            this.txtSynchroZoneSize.TabIndex = 57;
             // 
             // label12
             // 
@@ -867,10 +879,10 @@
             // 
             this.label25.BackColor = System.Drawing.Color.LightGray;
             this.label25.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label25.Font = new System.Drawing.Font("굴림", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label25.Location = new System.Drawing.Point(1240, 656);
+            this.label25.Font = new System.Drawing.Font("굴림", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label25.Location = new System.Drawing.Point(1013, 656);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(763, 48);
+            this.label25.Size = new System.Drawing.Size(990, 48);
             this.label25.TabIndex = 31;
             this.label25.Text = "Description of the reception zone : ";
             this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -882,19 +894,19 @@
             this.label24.Font = new System.Drawing.Font("굴림", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label24.Location = new System.Drawing.Point(11, 656);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(1206, 48);
+            this.label24.Size = new System.Drawing.Size(996, 48);
             this.label24.TabIndex = 30;
             this.label24.Text = "Description of the transmission zone :";
             this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox1
+            // txtDesZone
             // 
-            this.textBox1.Location = new System.Drawing.Point(390, 68);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(218, 24);
-            this.textBox1.TabIndex = 5;
+            this.txtDesZone.Location = new System.Drawing.Point(390, 68);
+            this.txtDesZone.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtDesZone.Multiline = true;
+            this.txtDesZone.Name = "txtDesZone";
+            this.txtDesZone.Size = new System.Drawing.Size(218, 24);
+            this.txtDesZone.TabIndex = 5;
             // 
             // label11
             // 
@@ -948,86 +960,11 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // btnWriteSynchro
-            // 
-            this.btnWriteSynchro.Location = new System.Drawing.Point(1566, 517);
-            this.btnWriteSynchro.Name = "btnWriteSynchro";
-            this.btnWriteSynchro.Size = new System.Drawing.Size(216, 116);
-            this.btnWriteSynchro.TabIndex = 254;
-            this.btnWriteSynchro.Text = "Write";
-            this.btnWriteSynchro.UseVisualStyleBackColor = true;
-            this.btnWriteSynchro.Click += new System.EventHandler(this.btnWriteSynchro_Click);
-            // 
-            // btnReadSynchro
-            // 
-            this.btnReadSynchro.Location = new System.Drawing.Point(1788, 517);
-            this.btnReadSynchro.Name = "btnReadSynchro";
-            this.btnReadSynchro.Size = new System.Drawing.Size(216, 116);
-            this.btnReadSynchro.TabIndex = 255;
-            this.btnReadSynchro.Text = "Read";
-            this.btnReadSynchro.UseVisualStyleBackColor = true;
-            this.btnReadSynchro.Click += new System.EventHandler(this.btnReadSynchro_Click);
-            // 
-            // txtAngle3
-            // 
-            this.txtAngle3.Location = new System.Drawing.Point(126, 108);
-            this.txtAngle3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtAngle3.Multiline = true;
-            this.txtAngle3.Name = "txtAngle3";
-            this.txtAngle3.Size = new System.Drawing.Size(90, 24);
-            this.txtAngle3.TabIndex = 257;
-            // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label1.Location = new System.Drawing.Point(6, 106);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(114, 24);
-            this.label1.TabIndex = 256;
-            this.label1.Text = "112 : S_02";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtAngle2
-            // 
-            this.txtAngle2.Location = new System.Drawing.Point(125, 63);
-            this.txtAngle2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtAngle2.Multiline = true;
-            this.txtAngle2.Name = "txtAngle2";
-            this.txtAngle2.Size = new System.Drawing.Size(91, 24);
-            this.txtAngle2.TabIndex = 259;
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label2.Location = new System.Drawing.Point(6, 63);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(114, 24);
-            this.label2.TabIndex = 258;
-            this.label2.Text = "111 : S_01";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label46);
-            this.groupBox1.Controls.Add(this.txtAngle2);
-            this.groupBox1.Controls.Add(this.txtAngle3);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.txtAngle1);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.groupBox1.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.groupBox1.Location = new System.Drawing.Point(1245, 68);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(218, 141);
-            this.groupBox1.TabIndex = 260;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Front Camera";
-            // 
             // Frm_VEP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2026, 1228);
+            this.ClientSize = new System.Drawing.Size(1620, 1137);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Frm_VEP";
@@ -1046,82 +983,76 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtDesZone;
         private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.TextBox textBox19;
+        private System.Windows.Forms.TextBox txtStVepStatus;
         private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.TextBox textBox18;
+        private System.Windows.Forms.TextBox txtStVepCycleInt;
         private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.TextBox textBox17;
+        private System.Windows.Forms.TextBox txtStVepCycleEnd;
         private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.TextBox textBox16;
+        private System.Windows.Forms.TextBox txtStBenchCycleInt;
         private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.TextBox textBox15;
+        private System.Windows.Forms.TextBox txtStBenchCycleEnd;
         private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.TextBox textBox14;
+        private System.Windows.Forms.TextBox txtStStartCycle;
         private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.TextBox textBox13;
+        private System.Windows.Forms.TextBox txtStatusZoneAddress;
         private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.TextBox textBox12;
+        private System.Windows.Forms.TextBox txtStatusZoneSize;
         private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.TextBox textBox11;
+        private System.Windows.Forms.TextBox txtSynchroZoneAddress;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.TextBox txtTzAddress;
         private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox txtTzSize;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox txtReAddress;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox txtReSize;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox txtAddTzAddress;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox txtAddTzSize;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox txtAddReAddress;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox txtAddReSize;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtSynchroZoneSize;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.TextBox txtExchStatus;
+        private System.Windows.Forms.TextBox txtReExchStatus;
         private System.Windows.Forms.Label label42;
-        private System.Windows.Forms.TextBox txtFctCode;
+        private System.Windows.Forms.TextBox txtReFctCode;
         private System.Windows.Forms.Label label41;
-        private System.Windows.Forms.TextBox txtPCNum;
+        private System.Windows.Forms.TextBox txtRePCNum;
         private System.Windows.Forms.Label label40;
-        private System.Windows.Forms.TextBox txtProcessCode;
+        private System.Windows.Forms.TextBox txtReProcessCode;
         private System.Windows.Forms.Label label39;
-        private System.Windows.Forms.TextBox txtSubFctCode;
+        private System.Windows.Forms.TextBox txtReSubFctCode;
         private System.Windows.Forms.Label label38;
-        private System.Windows.Forms.TextBox txtAddRZSize;
+        private System.Windows.Forms.TextBox txtAddrReSize;
         private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.TextBox textBox25;
+        private System.Windows.Forms.TextBox txtAddrTzSize;
         private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.TextBox textBox24;
+        private System.Windows.Forms.TextBox txtTzExchStatus;
         private System.Windows.Forms.Label label36;
-        private System.Windows.Forms.TextBox textBox23;
+        private System.Windows.Forms.TextBox txtTzFctCode;
         private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.TextBox textBox22;
+        private System.Windows.Forms.TextBox txtTzPCNum;
         private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.TextBox textBox21;
+        private System.Windows.Forms.TextBox txtTzProcessCode;
         private System.Windows.Forms.Label label33;
-        private System.Windows.Forms.TextBox textBox20;
+        private System.Windows.Forms.TextBox txtTzSubFctCode;
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox txtTzData;
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Label label45;
-        private System.Windows.Forms.RichTextBox richTextBox2;
+        private System.Windows.Forms.RichTextBox txtReData;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.TextBox txtAngle1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox txtLen;
-        private System.Windows.Forms.TextBox txtFlag;
-        private System.Windows.Forms.TextBox txtPJI;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.Button btnReadSynchro;
-        private System.Windows.Forms.Button btnWriteSynchro;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox txtAngle2;
         private System.Windows.Forms.Label label2;
