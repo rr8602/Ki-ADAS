@@ -301,34 +301,6 @@ namespace Ki_ADAS
             },
             
             // 메시지
-            {"AngleOutOfRange", new Dictionary<Language, string>
-                {
-                    {Language.English, "Camera angle measurement is out of allowed range."},
-                    {Language.Korean, "카메라 각도 측정값이 허용 범위를 벗어났습니다."},
-                    {Language.Portuguese, "A medição do ângulo da câmera está fora do intervalo permitido."}
-                }
-            },
-            {"RetryCalibration", new Dictionary<Language, string>
-                {
-                    {Language.English, "Restarting from the beginning for calibration retry."},
-                    {Language.Korean, "보정 재시도를 위해 처음부터 다시 시작합니다."},
-                    {Language.Portuguese, "Reiniciando do início para nova tentativa de calibração."}
-                }
-            },
-            {"AbortCalibration", new Dictionary<Language, string>
-                {
-                    {Language.English, "Aborting calibration and terminating the process."},
-                    {Language.Korean, "보정을 중단하고 프로세스를 종료합니다."},
-                    {Language.Portuguese, "Abortando calibração e encerrando o processo."}
-                }
-            },
-            {"AngleValidationFail", new Dictionary<Language, string>
-                {
-                    {Language.English, "{0} angle validation failed: {1}, allowed range: ±{2}"},
-                    {Language.Korean, "{0} 각도 검증 실패: {1}, 허용범위: ±{2}"},
-                    {Language.Portuguese, "Validação do ângulo {0} falhou: {1}, intervalo permitido: ±{2}"}
-                }
-            },
             {"CameraAngleValidationPass", new Dictionary<Language, string>
                 {
                     {Language.English, "Front camera angle validation passed"},
@@ -343,18 +315,32 @@ namespace Ki_ADAS
                     {Language.Portuguese, "VEPBenchClient não foi inicializado"}
                 }
             },
-            {"SynchroSettingComplete", new Dictionary<Language, string>
+            {"AngleReadComplete", new Dictionary<Language, string>
                 {
-                    {Language.English, "Synchro {0} = {1} setting completed"},
-                    {Language.Korean, "Synchro {0} = {1} 설정 완료"},
-                    {Language.Portuguese, "Configuração de Synchro {0} = {1} concluída"}
+                    {Language.English, "Angle Read Complete"},
+                    {Language.Korean, "각도 읽기 완료"},
+                    {Language.Portuguese, "Angle Read Complete"}
                 }
             },
-            {"SynchroSettingFail", new Dictionary<Language, string>
+            {"SynchroReadComplete", new Dictionary<Language, string>
                 {
-                    {Language.English, "Failed to set Synchro value: {0}"},
-                    {Language.Korean, "Synchro 값 설정 실패: {0}"},
-                    {Language.Portuguese, "Falha ao definir valor do Synchro: {0}"}
+                    {Language.English, "Synchro {0} = {1} reading completed"},
+                    {Language.Korean, "Synchro {0} = {1} 읽기 완료"},
+                    {Language.Portuguese, "Sincro {0} = {1} leitura completa"}
+                }
+            },
+            {"SynchroReadFail", new Dictionary<Language, string>
+                {
+                    {Language.English, "Failed to read Synchro value: {0}"},
+                    {Language.Korean, "Synchro 값 읽기 실패: {0}"},
+                    {Language.Portuguese, "Sincro {0} = {1} leitura falhada"}
+                }
+            },
+            {"SensorTypeDetectionFail", new Dictionary<Language, string>
+                {
+                    {Language.English, "SensorType Detection Fail"},
+                    {Language.Korean, "센서타입 발견 실패"},
+                    {Language.Portuguese, "Falha de detecção de tipo sensor"}
                 }
             },
             {"ProcessStart", new Dictionary<Language, string>

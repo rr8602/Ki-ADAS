@@ -14,18 +14,24 @@ namespace Ki_ADAS
         private VEPBenchClient _vepBenchClient;
         private int _currentStep = 0;
         private List<ADASProcessStep> _processSteps;
+        private List<ADASProcessStep> _frontCameraSteps;
+        private List<ADASProcessStep> _rightRearRadarSteps;
+        private List<ADASProcessStep> _leftRearRadarSteps;
+        private List<ADASProcessStep> _currentSensorSteps;
+        private int _currentSensorStepIndex;
         private bool _isRunning = false;
         private Thread _processThread;
 
         // 각도 측정값과 허용 범위 저장 변수
-        private double _roll;
-        private double _azimuth;
-        private double _elevation;
+        private double _frontCameraAngle1; // Roll
+        private double _frontCameraAngle2; // Azimuth
+        private double _frontCameraAngle3; // Elevation
+        private double _rightRearRadarAngle; // RH Rear Corner Radar
+        private double _leftRearRadarAngle; // LH Rear Corner Radar
         private const double _rollThreshold = 1.0; // Roll 허용 범위
         private const double _azimuthThreshold = 1.0; // Azimuth 허용 범위
         private const double _elevationThreshold = 1.0; // Elevation 허용 범위
 
-        private VEPBenchSynchroZone _synchroValues = new VEPBenchSynchroZone();
         public event EventHandler<ADASProcessEventArgs> OnProcessStepChanged;
 
         // ADAS 프로세스 상태 타입
@@ -84,163 +90,424 @@ namespace Ki_ADAS
         }
 
         // 프로세스 단계 초기화
-        private void InitializeProcessSteps()
+        public void InitializeProcessSteps()
         {
-            _processSteps = new List<ADASProcessStep>
-            {
-                new ADASProcessStep(
-                    213,
-                    LanguageResource.GetMessage("Step_213_1"),
-                    "Synchro 3 = 1",
-                    () => SetSynchroValue(3, 1)),
+            _processSteps = new List<ADASProcessStep>();
 
-                new ADASProcessStep(
-                    214,
-                    LanguageResource.GetMessage("Step_214"),
-                    "Synchro 4 = 1",
-                    () => SetSynchroValue(4, 1)),
-
-                new ADASProcessStep(
-                    213,
-                    LanguageResource.GetMessage("Step_213_2"),
-                    "Synchro 3 = 20",
-                    () => SetSynchroValue(3, 20)),
-
-                new ADASProcessStep(
-                    213,
-                    LanguageResource.GetMessage("Step_213_3"),
-                    "Synchro 3 = 21",
-                    () => SetSynchroValue(3, 21)),
-
-                new ADASProcessStep(
-                    320,
-                    LanguageResource.GetMessage("Step_320"),
-                    "Synchro 110 = 각도 1",
-                    () => SetSynchroValue(110, GetMeasurementAngle(1))),
-
-                new ADASProcessStep(
-                    321,
-                    LanguageResource.GetMessage("Step_321"),
-                    "Synchro 111 = 각도 2",
-                    () => SetSynchroValue(111, GetMeasurementAngle(2))),
-
-                new ADASProcessStep(
-                    322,
-                    LanguageResource.GetMessage("Step_322"),
-                    "Synchro 112 = 각도 3",
-                    () => SetSynchroValue(112, GetMeasurementAngle(3))),
-
-                new ADASProcessStep(
-                    299,
-                    LanguageResource.GetMessage("Step_299_1"),
-                    "Synchro 89 = 1",
-                    () => SetSynchroValue(89, 1)),
-
-                new ADASProcessStep(
-                    299,
-                    LanguageResource.GetMessage("Step_299_1"),
-                    "Synchro 89 = 2",
-                    () => ValidateAnglesAndComplete())
-            };
-        }
-
-        private bool ValidateAnglesAndComplete()
-        {
-            bool isValid = ValidateCameraAngles();
-
-            if (!isValid)
-            {
-                NotifyProcessState(LanguageResource.GetMessage("AngleOutOfRange"), ProcessStateType.Error);
-
-                // UI로 재시도 여부 설정으로 수정 필요
-                bool retryCalibration = true;
-
-                if (retryCalibration)
-                {
-                    if (SetSynchroValue(89, 2))
+            // 1. 홈 포지션/초기화
+            _processSteps.Add(new ADASProcessStep(
+                1, "홈 포지션 및 초기화", "초기화", () => {
+                    try
                     {
-                        NotifyProcessState(LanguageResource.GetMessage("RetryCalibration"), ProcessStateType.Info);
-                        _currentStep = -1;
+                        var statusZone = _vepBenchClient.ReadStatusZone();
+                        statusZone.StartCycle = 0;
+                        statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Undefined;
+                        _vepBenchClient.WriteStatusZone(statusZone);
+
+                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+
+                        for (int i = 0; i < synchroZone.Size; i++)
+                            synchroZone.SetValue(i, 0);
+
+                        _vepBenchClient.WriteSynchroZone(synchroZone);
+
+                        NotifyProcessState("홈 포지션 및 초기화 완료", ProcessStateType.Info);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        NotifyProcessState($"초기화 실패: {ex.Message}", ProcessStateType.Error);
+                        return false;
+                    }
+                }));
+
+            // 2. 신호등(입구) 제어 (시뮬레이션)
+            _processSteps.Add(new ADASProcessStep(
+                2, "입구 신호등 초록색", "신호등", () => {
+                    NotifyProcessState("입구 신호등 초록색", ProcessStateType.Info);
+                    return true;
+                }));
+
+            // 3. 차량 감지 및 바코드 스캔 (시뮬레이션)
+            _processSteps.Add(new ADASProcessStep(
+                3, "차량 감지 및 바코드 스캔", "바코드", () => {
+                    NotifyProcessState("차량 감지 및 바코드 스캔 완료", ProcessStateType.Info);
+                    return true;
+                }));
+
+            // 4. 사이클 시작
+            _processSteps.Add(new ADASProcessStep(
+                4, "사이클 시작", "StartCycle", () => {
+                    try
+                    {
+                        var statusZone = _vepBenchClient.ReadStatusZone();
+                        statusZone.StartCycle = 1;
+                        _vepBenchClient.WriteStatusZone(statusZone);
+                        NotifyProcessState("사이클 시작", ProcessStateType.Info);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        NotifyProcessState($"사이클 시작 실패: {ex.Message}", ProcessStateType.Error);
+                        return false;
+                    }
+                }));
+
+            // 5. PJI(PII) 요청
+            _processSteps.Add(new ADASProcessStep(
+                5, "PJI 요청", "PJI", () => {
+                    try
+                    {
+                        var statusZone = _vepBenchClient.ReadStatusZone();
+                        statusZone.StartCycle = 0;
+                        statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Working;
+                        _vepBenchClient.WriteStatusZone(statusZone);
+
+                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+
+                        // 랜덤 타겟 선택
+                        int[] targets = { VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX };
+                        int selected = targets[new Random().Next(targets.Length)];
+                        synchroZone.SetValue(selected, 1);
+                        _vepBenchClient.WriteSynchroZone(synchroZone);
+
+                        NotifyProcessState("PJI 요청 및 타겟 선택", ProcessStateType.Info);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        NotifyProcessState($"PJI 요청 실패: {ex.Message}", ProcessStateType.Error);
+                        return false;
+                    }
+                }));
+
+            // 6. VEP 상태 확인
+            _processSteps.Add(new ADASProcessStep(
+                6, "VEP 상태 확인", "VEPStatus", () => {
+                    var statusZone = _vepBenchClient.ReadStatusZone();
+
+                    if (statusZone.VepStatus == VEPBenchStatusZone.VepStatus_Working)
+                    {
+                        NotifyProcessState("VEP 작업 중", ProcessStateType.Info);
                         return true;
                     }
 
+                    NotifyProcessState("VEP 미작동", ProcessStateType.Warning);
                     return false;
-                }
-                else
+                }));
+
+            // 7. 타겟(FrontCamera/RearRadar) 선택 및 테스트 포지션 이동
+            _processSteps.Add(new ADASProcessStep(
+                7, "타겟 선택 및 테스트 포지션 이동", "타겟", () => {
+                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                    string target = "알 수 없음";
+
+                    if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
+                        target = "전방 카메라";
+                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
+                        target = "우측 후방 레이더";
+                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
+                        target = "좌측 후방 레이더";
+
+                    NotifyProcessState($"{target} 타겟 선택 및 테스트 포지션 이동", ProcessStateType.Info);
+                    return true;
+                }));
+
+            // 8. 센서별 보정/측정 단계
+            _processSteps.Add(new ADASProcessStep(
+                8, "센서별 보정/측정 단계", "SensorType", () =>
                 {
-                    if (SetSynchroValue(89, 1))
+                    int sensorType = DetermineSensorType();
+                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+
+                    switch (sensorType)
                     {
-                        NotifyProcessState(LanguageResource.GetMessage("AbortCalibration"), ProcessStateType.Warning);
-                        _isRunning = false;
-                        return true;
+                        case VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX:
+                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
+                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            NotifyProcessState("전방 카메라 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
+                            InitializeFrontCameraSteps();
+                            _currentSensorSteps = _frontCameraSteps;
+                            break;
+                        case VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX:
+                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
+                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            NotifyProcessState("우측 후방 레이더 타겟(VEP Synchro 52 = 1) 설정", ProcessStateType.Info);
+                            InitializeRightRearRadarSteps();
+                            _currentSensorSteps = _rightRearRadarSteps;
+                            break;
+                        case VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX:
+                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX, 1);
+                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            NotifyProcessState("좌측 후방 레이더 타겟(VEP Synchro 54 = 1) 설정", ProcessStateType.Info);
+                            InitializeLeftRearRadarSteps();
+                            _currentSensorSteps = _leftRearRadarSteps;
+                            break;
+                        default:
+                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
+                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            NotifyProcessState("기본값(전방 카메라) 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
+                            InitializeFrontCameraSteps();
+                            _currentSensorSteps = _frontCameraSteps;
+                            break;
                     }
 
-                    return false;
-                }
-            }
+                    _currentSensorStepIndex = 0;
 
-            return SetSynchroValue(89, 2);
+                    return true;
+                }));
+
+            // 9. 결과 판정 및 완료
+            _processSteps.Add(new ADASProcessStep(
+                99, "테스트 결과 판정 및 완료", "결과", () => {
+                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                    int result = synchroZone.GetValue(1);
+
+                    if (result == 20)
+                    {
+                        NotifyProcessState("테스트 완료 (OK)", ProcessStateType.Success);
+                        return true;
+                    }
+                    else if (result == 21)
+                    {
+                        NotifyProcessState("테스트 실패 (NOK)", ProcessStateType.Error);
+                        return false;
+                    }
+                    else
+                    {
+                        NotifyProcessState($"테스트 결과 미정 (Synchro 1 = {result})", ProcessStateType.Warning);
+                        return false;
+                    }
+                }));
         }
 
-        private bool ValidateCameraAngles()
+        private int DetermineSensorType()
         {
-            if (Math.Abs(_roll) > _rollThreshold)
+            try
+            {
+                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+
+                if (synchroZone.GetValue(3) == 1)
+                    return 3;
+
+                if (synchroZone.GetValue(51) == 1)
+                    return 51;
+
+                if (synchroZone.GetValue(53) == 1)
+                    return 53;
+
+                return 3;
+            }
+            catch (Exception ex)
             {
                 NotifyProcessState(
-                    LanguageResource.GetFormattedMessage("AngleValidationFail", LanguageResource.GetMessage("Roll"), _roll, _rollThreshold),
-                    ProcessStateType.Warning);
-                return false;
-            }
+                    LanguageResource.GetFormattedMessage("SensorTypeDetectionFail", ex.Message),
+                    ProcessStateType.Error);
 
-            if (Math.Abs(_azimuth) > _azimuthThreshold)
-            {
-                NotifyProcessState(
-                    LanguageResource.GetFormattedMessage("AngleValidationFail", LanguageResource.GetMessage("Azimuth"), _azimuth, _azimuthThreshold),
-                    ProcessStateType.Warning);
-                return false;
+                return 3; // 기본값으로 Front Camera 사용
             }
-
-            if (Math.Abs(_elevation) > _elevationThreshold)
-            {
-                NotifyProcessState(
-                    LanguageResource.GetFormattedMessage("AngleValidationFail", LanguageResource.GetMessage("Elevation"), _elevation, _elevationThreshold),
-                    ProcessStateType.Warning);
-                return false;
-            }
-
-            NotifyProcessState(LanguageResource.GetMessage("CameraAngleValidationPass"), ProcessStateType.Success);
-            return true;
         }
 
-        // 테스트를 위한 임의의 각도 생성
-        private int GetMeasurementAngle(int angleType)
+        public void InitializeFrontCameraSteps()
         {
-            Random random = new Random();
-            double angle = 0;
+            _frontCameraSteps = new List<ADASProcessStep>();
 
-            switch (angleType)
-            {
-                case 1:
-                    _roll = (random.NextDouble() * 2 - 1) * 1.5; // -1.5 ~ 1.5
-                    angle = _roll;
-                    break;
+            _frontCameraSteps.Add(new ADASProcessStep(
+                213,
+                "전방 카메라 - 초기화",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 1",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1));
 
-                case 2:
-                    _azimuth = (random.NextDouble() * 2 - 1) * 1.5; // -1.5 ~ 1.5
-                    angle = _azimuth;
-                    break;
+            _frontCameraSteps.Add(new ADASProcessStep(
+                214,
+                "전방 카메라 - 준비 완료",
+                $"Synchro {VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX} = 1",
+                () => ReadSynchroValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX) == 1));
 
-                case 3:
-                    _elevation = (random.NextDouble() * 2 - 1) * 1.5; // -1.5 ~ 1.5
-                    angle = _elevation;
-                    break;
-            }
+            _frontCameraSteps.Add(new ADASProcessStep(
+                213,
+                "전방 카메라 - 보정 완료",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 20",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 20));
 
-            return (int)(angle * 100);
+            _frontCameraSteps.Add(new ADASProcessStep(
+                213,
+                "전방 카메라 - 보정 실패",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 21",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 21));
+
+            _frontCameraSteps.Add(new ADASProcessStep(
+                320,
+                "Roll 각도 측정",
+                $"Synchro {VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX} = FrontCameraAngle",
+                () => {
+                    _frontCameraAngle1 = ReadSynchroValue(VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX) / 100.0;
+                    return true;
+                }));
+
+            _frontCameraSteps.Add(new ADASProcessStep(
+                321,
+                "Azimuth 각도 측정",
+                $"Synchro {VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX} = FrontCameraAngle",
+                () => {
+                    _frontCameraAngle2 = ReadSynchroValue(VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX) / 100.0;
+                    return true;
+                }));
+
+            _frontCameraSteps.Add(new ADASProcessStep(
+                322,
+                "Elevation 각도 측정",
+                $"Synchro {VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX} = FrontCameraAngle",
+                () => {
+                    _frontCameraAngle3 = ReadSynchroValue(VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX) / 100.0;
+                    return true;
+                }));
+
+            _frontCameraSteps.Add(new ADASProcessStep(
+                299,
+                "추가 시도 확인 1",
+                "Synchro 89 = 1",
+                () =>
+                {
+                    NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
+
+                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_FRONT_CAMERA_INDEX) == 1;
+                }));
+
+            _frontCameraSteps.Add(new ADASProcessStep(
+                299,
+                "추가 시도 확인 2",
+                "Synchro 89 = 2",
+                () => {
+                    _currentSensorStepIndex = 0;
+                    NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
+
+                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_FRONT_CAMERA_INDEX) == 2;
+                }));
+        }
+
+        public void InitializeRightRearRadarSteps()
+        {
+            _rightRearRadarSteps = new List<ADASProcessStep>();
+
+            _rightRearRadarSteps.Add(new ADASProcessStep(
+                261,
+                "우측 후방 레이더 - 초기화",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1));
+
+            _rightRearRadarSteps.Add(new ADASProcessStep(
+                262,
+                "우측 후방 레이더 - 보정 위치 확인",
+                $"Synchro {VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX) == 1));
+
+            _rightRearRadarSteps.Add(new ADASProcessStep(
+                261,
+                "우측 후방 레이더 - 보정 완료",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 20",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 20));
+
+            _rightRearRadarSteps.Add(new ADASProcessStep(
+                261,
+                "우측 후방 레이더 - 보정 실패",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 21",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 21));
+
+            _rightRearRadarSteps.Add(new ADASProcessStep(
+                293,
+                "추가 시도 확인 1",
+                "Synchro 83 = 1",
+                () =>
+                {
+                    NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
+
+                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 1;
+                }));
+
+            _rightRearRadarSteps.Add(new ADASProcessStep(
+                293,
+                "추가 시도 확인 2",
+                "Synchro 83 = 2",
+                () => {
+                    _currentSensorStepIndex = 0;
+                    NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
+
+                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 2;
+                }));
+
+            _rightRearRadarSteps.Add(new ADASProcessStep(
+                325,
+                "우측 후방 레이더 각도 측정",
+                $"Synchro {VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX} = RearRightRadarAngle",
+                () => {
+                    _rightRearRadarAngle = ReadSynchroValue(VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX) / 100.0;
+                    return true;
+                }));
+        }
+
+        public void InitializeLeftRearRadarSteps()
+        {
+            _leftRearRadarSteps = new List<ADASProcessStep>();
+
+            _leftRearRadarSteps.Add(new ADASProcessStep(
+                263,
+                "좌측 후방 레이더 - 초기화",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1));
+
+            _leftRearRadarSteps.Add(new ADASProcessStep(
+                264,
+                "좌측 후방 레이더 - 보정 위치 확인",
+                $"Synchro {VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX) == 1));
+
+            _leftRearRadarSteps.Add(new ADASProcessStep(
+                263,
+                "좌측 후방 레이더 - 보정 완료",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 20",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 20));
+
+            _leftRearRadarSteps.Add(new ADASProcessStep(
+                263,
+                "좌측 후방 레이더 - 보정 실패",
+                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 21",
+                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 21));
+
+            _leftRearRadarSteps.Add(new ADASProcessStep(
+                292,
+                "추가 시도 확인 1",
+                "Synchro 82 = 1",
+                () =>
+                {
+                    NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
+
+                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 1;
+                }));
+
+            _leftRearRadarSteps.Add(new ADASProcessStep(
+                292,
+                "추가 시도 확인 2",
+                "Synchro 82 = 2",
+                () => {
+                    _currentSensorStepIndex = 0;
+                    NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
+
+                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 2;
+                }));
+
+            _leftRearRadarSteps.Add(new ADASProcessStep(
+                326,
+                "좌측 후방 레이더 각도 측정",
+                $"Synchro {VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX} = RearLeftRadarAngle",
+                () => {
+                    _leftRearRadarAngle = ReadSynchroValue(VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX) / 100.0;
+                    return true;
+                }));
         }
 
         // Synchro 값 설정
-        private bool SetSynchroValue(int syncNumber, int value)
+        private int ReadSynchroValue(int syncNumber)
         {
             try
             {
@@ -248,54 +515,95 @@ namespace Ki_ADAS
                 {
                     NotifyProcessState(LanguageResource.GetMessage("VEPBenchNotInitialized"), ProcessStateType.Error);
 
-                    return false;
+                    return -1;
                 }
 
-                if (syncNumber >= 9 && syncNumber < _synchroValues.Size)
+                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+
+                if (syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX ||
+                    syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX ||
+                    syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX)
                 {
-                    _synchroValues[syncNumber] = (ushort)value;
+                    double angle = 0;
+                    string angleName = "";
 
-                    _vepBenchClient.WriteSynchroZone(_synchroValues);
-
-                    NotifyProcessState(
-                        LanguageResource.GetFormattedMessage("SynchroSettingComplete", syncNumber, value),
-                        ProcessStateType.Info);
-
-                    return true;
-                }
-                else if (syncNumber == 110 || syncNumber == 111 || syncNumber == 112)
-                {
                     switch (syncNumber)
                     {
-                        case 110:
-                            _synchroValues.Angle1 = value / 100.0;
+                        case VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX: // Roll
+                            angle = synchroZone.FrontCameraAngle1;
+                            _frontCameraAngle1 = angle;
+                            angleName = "Roll";
                             break;
-                        case 111:
-                            _synchroValues.Angle2 = value / 100.0;
+
+                        case VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX: // Azimuth
+                            angle = synchroZone.FrontCameraAngle2;
+                            _frontCameraAngle2 = angle;
+                            angleName = "Azimuth";
                             break;
-                        case 112:
-                            _synchroValues.Angle3 = value / 100.0;
+
+                        case VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX: // Elevation
+                            angle = synchroZone.FrontCameraAngle3;
+                            _frontCameraAngle3 = angle;
+                            angleName = "Elevation";
                             break;
                     }
 
-                    _vepBenchClient.WriteSynchroZone(_synchroValues);
-
                     NotifyProcessState(
-                        LanguageResource.GetFormattedMessage("SynchroSettingComplete", syncNumber, value),
+                        LanguageResource.GetFormattedMessage("AngleReadComplete", angleName, angle),
                         ProcessStateType.Info);
 
-                    return true;
+                    return (int)(angle * 100);
+                }
+                // 우측 후방 레이더 각도 처리
+                else if (syncNumber == VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX)
+                {
+                    double angle = synchroZone.RearRightRadarAngle;
+                    _rightRearRadarAngle = angle;
+
+                    NotifyProcessState(
+                        LanguageResource.GetFormattedMessage("AngleReadComplete", "우측 후방 레이더", angle),
+                        ProcessStateType.Info);
+
+                    return (int)(angle * 100);
+                }
+                // 좌측 후방 레이더 각도 처리
+                else if (syncNumber == VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX)
+                {
+                    double angle = synchroZone.RearLeftRadarAngle;
+                    _leftRearRadarAngle = angle;
+
+                    NotifyProcessState(
+                        LanguageResource.GetFormattedMessage("AngleReadComplete", "좌측 후방 레이더", angle),
+                        ProcessStateType.Info);
+
+                    return (int)(angle * 100);
                 }
 
-                return false;
+                // 일반 Synchro 값 처리
+                if (syncNumber < synchroZone.Size)
+                {
+                    ushort value = synchroZone.GetValue(syncNumber);
+
+                    NotifyProcessState(
+                        LanguageResource.GetFormattedMessage("SynchroReadComplete", syncNumber, value),
+                        ProcessStateType.Info);
+
+                    return value;
+                }
+
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("SynchroReadFail", syncNumber, "Index out of range"),
+                    ProcessStateType.Warning);
+
+                return -1;
             }
             catch (Exception ex)
             {
                 NotifyProcessState(
-                    LanguageResource.GetFormattedMessage("SynchroSettingFail", ex.Message),
+                    LanguageResource.GetFormattedMessage("SynchroReadFail", ex.Message),
                     ProcessStateType.Error);
 
-                return false;
+                return -1;
             }
         }
 
@@ -360,9 +668,31 @@ namespace Ki_ADAS
         {
             try
             {
-                while (_isRunning && _currentStep < _processSteps.Count)
+                while (_isRunning)
                 {
-                    ProcessNextStep();
+                    if (_currentStep < _processSteps.Count)
+                    {
+                        if (_processSteps[_currentStep].StepId == 8 && _currentSensorSteps != null)
+                        {
+                            while (_isRunning && _currentSensorStepIndex < _currentSensorSteps.Count)
+                            {
+                                ProcessSensorStep();
+
+                                if (!_isRunning) break;
+                                Thread.Sleep(1000);
+                            }
+
+                            _currentStep++;
+                        }
+                        else
+                        {
+                            ProcessNextStep();
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
 
                     if (!_isRunning)
                         break;
@@ -383,6 +713,47 @@ namespace Ki_ADAS
             }
             finally
             {
+                _isRunning = false;
+            }
+        }
+
+        private void ProcessSensorStep()
+        {
+            if (!_isRunning || _currentSensorSteps == null || _currentSensorStepIndex >= _currentSensorSteps.Count)
+                return;
+
+            ADASProcessStep currentStep = _currentSensorSteps[_currentSensorStepIndex];
+
+            NotifyProcessState(
+                LanguageResource.GetFormattedMessage("StepProgress", _currentSensorStepIndex + 1, _currentSensorSteps.Count, currentStep.Description),
+                ProcessStateType.Progress,
+                currentStep);
+
+            try
+            {
+                bool success = currentStep.Execute();
+
+                if (!success)
+                {
+                    NotifyProcessState(
+                        LanguageResource.GetFormattedMessage("StepFail", _currentSensorStepIndex + 1, currentStep.Description),
+                        ProcessStateType.Error,
+                        currentStep);
+
+                    _isRunning = false;
+                }
+                else
+                {
+                    _currentSensorStepIndex++;
+                }
+            }
+            catch (Exception ex)
+            {
+                NotifyProcessState(
+                    LanguageResource.GetFormattedMessage("StepError", _currentSensorStepIndex + 1, ex.Message),
+                    ProcessStateType.Error,
+                    currentStep);
+
                 _isRunning = false;
             }
         }

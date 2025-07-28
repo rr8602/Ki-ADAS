@@ -151,6 +151,12 @@
     </Compile>
     <Compile Include="Language\LanguageResource.cs" />
     <Compile Include="SettingConfigDb.cs" />
+    <Compile Include="Simulator\HomePositionSimulator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Simulator\HomePositionSimulator.Designer.cs">
+      <DependentUpon>HomePositionSimulator.cs</DependentUpon>
+    </Compile>
     <Compile Include="VEPBench\VEPBenchClient.cs" />
     <Compile Include="VEPBench\VEPBenchDescriptionZone.cs" />
     <Compile Include="VEPBench\VEPBenchProcessor.cs" />
@@ -197,6 +203,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Simulator\HomePositionSimulator.resx">
+      <DependentUpon>HomePositionSimulator.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

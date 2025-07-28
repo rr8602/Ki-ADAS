@@ -28,10 +28,9 @@ namespace Ki_ADAS
         private const ushort Addr_Validity = 0;
         private const ushort Addr_StatusZone = 18;
         private const ushort Addr_StartCycle = 23;
-        private const ushort Addr_SynchroZone = 28;
-        private const ushort SynchroZoneLength = 40;
-        private const ushort Addr_TransmissionZone = 68;
-        private const ushort Addr_ReceptionZone = 128;
+        private const ushort Addr_SynchroZone = 210;
+        private const ushort Addr_TransmissionZone = 400;
+        private const ushort Addr_ReceptionZone = 460;
 
         public bool IsConnected => _isConnected && _tcpClient != null && _tcpClient.Connected;
 
@@ -177,6 +176,7 @@ namespace Ki_ADAS
                     {
                         _tcpClient.Close();
                     }
+
                     _tcpClient.Dispose();
                     _tcpClient = null;
                 }
@@ -249,7 +249,7 @@ namespace Ki_ADAS
             }, token);
         }
 
-        // 주기적 Read 중지
+        // Read 중지
         public void StopMonitoring()
         {
             if (_cancellationTokenSouce != null)
@@ -345,18 +345,24 @@ namespace Ki_ADAS
         {
             try
             {
-                var synchroZone = ReadSynchroZone();
+                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => ReadSynchroZone(start, count));
 
                 bool isChanged = _lastSynchroZone == null ||
-                    _lastSynchroZone.Angle1 != synchroZone.Angle1 ||
-                    _lastSynchroZone.Angle2 != synchroZone.Angle2 ||
-                    _lastSynchroZone.Angle3 != synchroZone.Angle3;
+                    _lastSynchroZone.FrontCameraAngle1 != synchroZone.FrontCameraAngle1 ||
+                    _lastSynchroZone.FrontCameraAngle2 != synchroZone.FrontCameraAngle2 ||
+                    _lastSynchroZone.FrontCameraAngle3 != synchroZone.FrontCameraAngle3 ||
+                    _lastSynchroZone.RearRightRadarAngle != synchroZone.RearRightRadarAngle ||
+                    _lastSynchroZone.RearLeftRadarAngle != synchroZone.RearLeftRadarAngle;
 
                 if (isChanged)
                 {
                     _lastSynchroZone = synchroZone;
                     OnSynchroZoneChanged(synchroZone);
-                    LogMessage($"동기화 영역 변경 감지: Angle1={synchroZone.Angle1}, Angle2={synchroZone.Angle2}, Angle3={synchroZone.Angle3}");
+                    LogMessage($"동기화 영역 변경 감지: FrontCameraAngle (Roll) = {synchroZone.FrontCameraAngle1}, " +
+                        $"FrontCameraAngle (Azimuth) ={ synchroZone.FrontCameraAngle2}, " +
+                        $"FrontCameraAngle (Elevation) ={synchroZone.FrontCameraAngle3}, " +
+                        $"RearRightRadarAngle={synchroZone.RearRightRadarAngle}, " +
+                        $"RearLeftRadarAngle={synchroZone.RearLeftRadarAngle}");
                 }
             }
             catch (Exception ex)
@@ -480,7 +486,6 @@ namespace Ki_ADAS
             }
         }
 
-        // status, synchro 등은 읽기/쓰기 모두 가능
         public VEPBenchStatusZone ReadStatusZone()
         {
             CheckConnection();
@@ -682,16 +687,21 @@ namespace Ki_ADAS
             return result;
         }
 
-        public VEPBenchSynchroZone ReadSynchroZone()
+        public ushort[] ReadSynchroZone(int startIndex, int count)
         {
             CheckConnection();
 
+            ushort modbusStartAddr = (ushort)(Addr_SynchroZone + startIndex);
+
+            if (count < 1 || count > 123)
+                throw new ArgumentOutOfRangeException(nameof(count), "numberOfPoints must be between 1 and 123 inclusive.");
+
             try
             {
-                ushort[] arr = _modbusMaster.ReadHoldingRegisters(1, Addr_SynchroZone, SynchroZoneLength);
-                var synchro = VEPBenchSynchroZone.FormUshortArray(arr);
-                LogMessage($"동기화 영역 읽기: Angle1={synchro.Angle1}, Angle2={synchro.Angle2}, Angle3={synchro.Angle3}");
-                return synchro;
+                ushort[] registers = _modbusMaster.ReadHoldingRegisters(1, modbusStartAddr, (ushort)count);
+                LogMessage($"동기화 영역 부분 읽기: Start={modbusStartAddr}, Count={count}, Data={string.Join(",", registers)}");
+
+                return registers;
             }
             catch (Exception ex)
             {
@@ -707,8 +717,26 @@ namespace Ki_ADAS
             try
             {
                 ushort[] arr = s.ToUshortArray();
-                _modbusMaster.WriteMultipleRegisters(1, Addr_SynchroZone, arr);
-                LogMessage($"동기화 영역 쓰기: Angle1={s.Angle1}, Angle2={s.Angle2}, Angle3={s.Angle3}");
+
+                if (arr.Length >= VEPBenchSynchroZone.SYNCHRO_SIZE_PART1)
+                {
+                    ushort[] part1 = new ushort[VEPBenchSynchroZone.SYNCHRO_SIZE_PART1];
+                    Array.Copy(arr, 0, part1, 0, VEPBenchSynchroZone.SYNCHRO_SIZE_PART1);
+                    _modbusMaster.WriteMultipleRegisters(1, Addr_SynchroZone, part1);
+                }
+
+                if (VEPBenchSynchroZone.SYNCHRO_SIZE_PART2 > 0 && arr.Length > VEPBenchSynchroZone.SYNCHRO_SIZE_PART1)
+                {
+                    ushort[] part2 = new ushort[VEPBenchSynchroZone.SYNCHRO_SIZE_PART2];
+                    Array.Copy(arr, VEPBenchSynchroZone.SYNCHRO_SIZE_PART1, part2, 0, VEPBenchSynchroZone.SYNCHRO_SIZE_PART2);
+                    _modbusMaster.WriteMultipleRegisters(1, (ushort)(Addr_SynchroZone + VEPBenchSynchroZone.SYNCHRO_SIZE_PART1), part2);
+                }
+
+                LogMessage($"동기화 영역 쓰기: FrontCameraAngle (Roll) = {s.FrontCameraAngle1}, " +
+                        $"FrontCameraAngle (Azimuth) ={s.FrontCameraAngle2}, " +
+                        $"FrontCameraAngle (Elevation) ={s.FrontCameraAngle3}, " +
+                        $"RearRightRadarAngle={s.RearRightRadarAngle}, " +
+                        $"RearLeftRadarAngle={s.RearLeftRadarAngle}");
             }
             catch (Exception ex)
             {

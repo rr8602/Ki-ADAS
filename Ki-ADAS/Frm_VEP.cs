@@ -30,8 +30,6 @@ namespace Ki_ADAS
             benchClient.SynchroZoneChanged += BenchClient_SynchroZoneChanged;
             benchClient.TransmissionZoneChanged += BenchClient_TransmissionZoneChanged;
             benchClient.ReceptionZoneChanged += BenchClient_ReceptionZoneChanged;
-
-            benchClient.StartMonitoring();
         }
 
         public void SetParent(Frm_Mainfrm f)
@@ -90,11 +88,21 @@ namespace Ki_ADAS
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new Action(() => UpdateSynchroValues(e.Angle1, e.Angle2, e.Angle3)));
+                BeginInvoke(new Action(() => UpdateSynchroValues(
+                    e.FrontCameraAngle1,
+                    e.FrontCameraAngle2,
+                    e.FrontCameraAngle3,
+                    e.RearRightRadarAngle,
+                    e.RearLeftRadarAngle)));
             }
             else
             {
-                UpdateSynchroValues(e.Angle1, e.Angle2, e.Angle3);
+                UpdateSynchroValues(
+                    e.FrontCameraAngle1,
+                    e.FrontCameraAngle2,
+                    e.FrontCameraAngle3,
+                    e.RearRightRadarAngle,
+                    e.RearLeftRadarAngle);
             }
         }
 
@@ -140,11 +148,13 @@ namespace Ki_ADAS
             txtStBenchCycleInt.Text = benchCycleInt.ToString();
         }
 
-        public void UpdateSynchroValues(double angle, double angle2, double angle3)
+        public void UpdateSynchroValues(double frontCameraAngle1, double frontCameraAngle2, double frontCameraAngle3, double rearRightRadarAngle, double rearLeftRadarAngle)
         {
-            txtAngle1.Text = angle.ToString("F2");
-            txtAngle2.Text = angle2.ToString("F2");
-            txtAngle3.Text = angle3.ToString("F2");
+            txtFrontCameraAngle1.Text = frontCameraAngle1.ToString("F2");
+            txtFrontCameraAngle2.Text = frontCameraAngle2.ToString("F2");
+            txtFrontCameraAngle3.Text = frontCameraAngle3.ToString("F2");
+            txtRearRightRadarAngle.Text = rearRightRadarAngle.ToString("F2");
+            txtRearLeftRadarAngle.Text = rearLeftRadarAngle.ToString("F2");
         }
 
         public void UpdateTransmissionInfo(ushort size, byte fctCode, byte pcNum, byte processCode, byte subFctCode)

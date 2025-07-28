@@ -8,6 +8,9 @@ namespace Ki_ADAS.VEPBench
 {
     public class VEPBenchTransmissionZone
     {
+        private static VEPBenchTransmissionZone _instance;
+        private static readonly object _lock = new object();
+
         // 상대 주소값
         public const int Offset_Reserved1 = 0;
         public const int Offset_Reserved2 = 1;
@@ -42,7 +45,24 @@ namespace Ki_ADAS.VEPBench
         public ushort[] Data { get; set; }
         public int TotalSize => Offset_DataStart + (Data?.Length ?? 0);
 
-        public VEPBenchTransmissionZone(int dataSize = 48)
+        public static VEPBenchTransmissionZone Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                            _instance = new VEPBenchTransmissionZone();
+                    }
+                }
+
+                return _instance;
+            }
+        }
+
+        private VEPBenchTransmissionZone(int dataSize = 48)
         {
             ExchStatus = ExchStatus_Response;
             AddTzSize = 0;
@@ -59,7 +79,7 @@ namespace Ki_ADAS.VEPBench
                 throw new ArgumentException("Invalid register array.");
 
             int dataSize = registers.Length - Offset_DataStart;
-            var zone = new VEPBenchTransmissionZone(dataSize);
+            var zone = Instance;
 
             zone.AddTzSize = registers[Offset_AddTSize];
             zone.ExchStatus = registers[Offset_ExchStatus];

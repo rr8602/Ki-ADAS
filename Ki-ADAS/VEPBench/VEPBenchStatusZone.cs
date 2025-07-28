@@ -8,6 +8,9 @@ namespace Ki_ADAS.VEPBench
 {
     public class VEPBenchStatusZone
     {
+        private static VEPBenchStatusZone _instance;
+        private static readonly object _lock = new object();
+
         public const int Offset_VepStatus = 0;
         public const int Offset_VepCycleInterruption = 1;
         public const int Offset_VepCycleEnd = 2;
@@ -26,6 +29,23 @@ namespace Ki_ADAS.VEPBench
         public ushort BenchCycleEnd { get; set; }
         public ushort StartCycle { get; set; }
 
+        public static VEPBenchStatusZone Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                            _instance = new VEPBenchStatusZone();
+                    }
+                }
+
+                return _instance;
+            }
+        }
+
         public VEPBenchStatusZone()
         {
             VepStatus = VepStatus_Waiting;
@@ -38,15 +58,18 @@ namespace Ki_ADAS.VEPBench
 
         public static VEPBenchStatusZone FromRegisters(ushort[] registers)
         {
-            return new VEPBenchStatusZone
-            {
-                VepStatus = registers[Offset_VepStatus],
-                VepCycleInterruption = registers[Offset_VepCycleInterruption],
-                VepCycleEnd = registers[Offset_VepCycleEnd],
-                BenchCycleInterruption = registers[Offset_BenchCycleInterruption],
-                BenchCycleEnd = registers[Offset_BenchCycleEnd],
-                StartCycle = registers[Offset_StartCycle]
-            };
+            if (registers == null || registers.Length < 6)
+                throw new ArgumentException("Invalid register array.");
+
+            var status = Instance;
+            status.VepStatus = registers[Offset_VepStatus];
+            status.VepCycleInterruption = registers[Offset_VepCycleInterruption];
+            status.VepCycleEnd = registers[Offset_VepCycleEnd];
+            status.BenchCycleInterruption = registers[Offset_BenchCycleInterruption];
+            status.BenchCycleEnd = registers[Offset_BenchCycleEnd];
+            status.StartCycle = registers[Offset_StartCycle];
+
+            return status;
         }
 
         public ushort[] ToRegisters()

@@ -32,10 +32,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label46 = new System.Windows.Forms.Label();
-            this.txtAngle2 = new System.Windows.Forms.TextBox();
-            this.txtAngle3 = new System.Windows.Forms.TextBox();
+            this.txtFrontCameraAngle2 = new System.Windows.Forms.TextBox();
+            this.txtFrontCameraAngle3 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtAngle1 = new System.Windows.Forms.TextBox();
+            this.txtFrontCameraAngle1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label45 = new System.Windows.Forms.Label();
             this.txtReData = new System.Windows.Forms.RichTextBox();
@@ -109,12 +109,22 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtRearRightRadarAngle = new System.Windows.Forms.TextBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtRearLeftRadarAngle = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.groupBox3);
+            this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.label45);
             this.panel1.Controls.Add(this.txtReData);
@@ -196,10 +206,10 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label46);
-            this.groupBox1.Controls.Add(this.txtAngle2);
-            this.groupBox1.Controls.Add(this.txtAngle3);
+            this.groupBox1.Controls.Add(this.txtFrontCameraAngle2);
+            this.groupBox1.Controls.Add(this.txtFrontCameraAngle3);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.txtAngle1);
+            this.groupBox1.Controls.Add(this.txtFrontCameraAngle1);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.groupBox1.ForeColor = System.Drawing.Color.RoyalBlue;
@@ -217,26 +227,28 @@
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(114, 24);
             this.label46.TabIndex = 135;
-            this.label46.Text = "320 : S_00";
+            this.label46.Text = "110 : S_00";
             this.label46.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // txtAngle2
+            // txtFrontCameraAngle2
             // 
-            this.txtAngle2.Location = new System.Drawing.Point(125, 63);
-            this.txtAngle2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtAngle2.Multiline = true;
-            this.txtAngle2.Name = "txtAngle2";
-            this.txtAngle2.Size = new System.Drawing.Size(91, 24);
-            this.txtAngle2.TabIndex = 259;
+            this.txtFrontCameraAngle2.Location = new System.Drawing.Point(125, 63);
+            this.txtFrontCameraAngle2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontCameraAngle2.Multiline = true;
+            this.txtFrontCameraAngle2.Name = "txtFrontCameraAngle2";
+            this.txtFrontCameraAngle2.ReadOnly = true;
+            this.txtFrontCameraAngle2.Size = new System.Drawing.Size(91, 24);
+            this.txtFrontCameraAngle2.TabIndex = 259;
             // 
-            // txtAngle3
+            // txtFrontCameraAngle3
             // 
-            this.txtAngle3.Location = new System.Drawing.Point(126, 108);
-            this.txtAngle3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtAngle3.Multiline = true;
-            this.txtAngle3.Name = "txtAngle3";
-            this.txtAngle3.Size = new System.Drawing.Size(90, 24);
-            this.txtAngle3.TabIndex = 257;
+            this.txtFrontCameraAngle3.Location = new System.Drawing.Point(126, 108);
+            this.txtFrontCameraAngle3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontCameraAngle3.Multiline = true;
+            this.txtFrontCameraAngle3.Name = "txtFrontCameraAngle3";
+            this.txtFrontCameraAngle3.ReadOnly = true;
+            this.txtFrontCameraAngle3.Size = new System.Drawing.Size(90, 24);
+            this.txtFrontCameraAngle3.TabIndex = 257;
             // 
             // label1
             // 
@@ -245,17 +257,18 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(114, 24);
             this.label1.TabIndex = 256;
-            this.label1.Text = "322 : S_02";
+            this.label1.Text = "112 : S_02";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // txtAngle1
+            // txtFrontCameraAngle1
             // 
-            this.txtAngle1.Location = new System.Drawing.Point(126, 23);
-            this.txtAngle1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtAngle1.Multiline = true;
-            this.txtAngle1.Name = "txtAngle1";
-            this.txtAngle1.Size = new System.Drawing.Size(90, 24);
-            this.txtAngle1.TabIndex = 165;
+            this.txtFrontCameraAngle1.Location = new System.Drawing.Point(126, 23);
+            this.txtFrontCameraAngle1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontCameraAngle1.Multiline = true;
+            this.txtFrontCameraAngle1.Name = "txtFrontCameraAngle1";
+            this.txtFrontCameraAngle1.ReadOnly = true;
+            this.txtFrontCameraAngle1.Size = new System.Drawing.Size(90, 24);
+            this.txtFrontCameraAngle1.TabIndex = 165;
             // 
             // label2
             // 
@@ -264,7 +277,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(114, 24);
             this.label2.TabIndex = 258;
-            this.label2.Text = "321 : S_01";
+            this.label2.Text = "111 : S_01";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label45
@@ -282,6 +295,7 @@
             this.txtReData.Location = new System.Drawing.Point(1013, 998);
             this.txtReData.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtReData.Name = "txtReData";
+            this.txtReData.ReadOnly = true;
             this.txtReData.Size = new System.Drawing.Size(987, 114);
             this.txtReData.TabIndex = 130;
             this.txtReData.Text = "";
@@ -291,6 +305,7 @@
             this.txtTzData.Location = new System.Drawing.Point(2, 998);
             this.txtTzData.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzData.Name = "txtTzData";
+            this.txtTzData.ReadOnly = true;
             this.txtTzData.Size = new System.Drawing.Size(1005, 114);
             this.txtTzData.TabIndex = 129;
             this.txtTzData.Text = "";
@@ -311,6 +326,7 @@
             this.txtReExchStatus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtReExchStatus.Multiline = true;
             this.txtReExchStatus.Name = "txtReExchStatus";
+            this.txtReExchStatus.ReadOnly = true;
             this.txtReExchStatus.Size = new System.Drawing.Size(218, 24);
             this.txtReExchStatus.TabIndex = 125;
             // 
@@ -330,6 +346,7 @@
             this.txtReFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtReFctCode.Multiline = true;
             this.txtReFctCode.Name = "txtReFctCode";
+            this.txtReFctCode.ReadOnly = true;
             this.txtReFctCode.Size = new System.Drawing.Size(218, 24);
             this.txtReFctCode.TabIndex = 123;
             // 
@@ -349,6 +366,7 @@
             this.txtRePCNum.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtRePCNum.Multiline = true;
             this.txtRePCNum.Name = "txtRePCNum";
+            this.txtRePCNum.ReadOnly = true;
             this.txtRePCNum.Size = new System.Drawing.Size(218, 24);
             this.txtRePCNum.TabIndex = 121;
             // 
@@ -368,6 +386,7 @@
             this.txtReProcessCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtReProcessCode.Multiline = true;
             this.txtReProcessCode.Name = "txtReProcessCode";
+            this.txtReProcessCode.ReadOnly = true;
             this.txtReProcessCode.Size = new System.Drawing.Size(218, 24);
             this.txtReProcessCode.TabIndex = 119;
             // 
@@ -387,6 +406,7 @@
             this.txtReSubFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtReSubFctCode.Multiline = true;
             this.txtReSubFctCode.Name = "txtReSubFctCode";
+            this.txtReSubFctCode.ReadOnly = true;
             this.txtReSubFctCode.Size = new System.Drawing.Size(218, 24);
             this.txtReSubFctCode.TabIndex = 117;
             // 
@@ -406,6 +426,7 @@
             this.txtAddrReSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtAddrReSize.Multiline = true;
             this.txtAddrReSize.Name = "txtAddrReSize";
+            this.txtAddrReSize.ReadOnly = true;
             this.txtAddrReSize.Size = new System.Drawing.Size(218, 24);
             this.txtAddrReSize.TabIndex = 115;
             // 
@@ -425,6 +446,7 @@
             this.txtAddrTzSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtAddrTzSize.Multiline = true;
             this.txtAddrTzSize.Name = "txtAddrTzSize";
+            this.txtAddrTzSize.ReadOnly = true;
             this.txtAddrTzSize.Size = new System.Drawing.Size(218, 24);
             this.txtAddrTzSize.TabIndex = 103;
             // 
@@ -444,6 +466,7 @@
             this.txtTzExchStatus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzExchStatus.Multiline = true;
             this.txtTzExchStatus.Name = "txtTzExchStatus";
+            this.txtTzExchStatus.ReadOnly = true;
             this.txtTzExchStatus.Size = new System.Drawing.Size(218, 24);
             this.txtTzExchStatus.TabIndex = 101;
             // 
@@ -463,6 +486,7 @@
             this.txtTzFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzFctCode.Multiline = true;
             this.txtTzFctCode.Name = "txtTzFctCode";
+            this.txtTzFctCode.ReadOnly = true;
             this.txtTzFctCode.Size = new System.Drawing.Size(218, 24);
             this.txtTzFctCode.TabIndex = 99;
             // 
@@ -482,6 +506,7 @@
             this.txtTzPCNum.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzPCNum.Multiline = true;
             this.txtTzPCNum.Name = "txtTzPCNum";
+            this.txtTzPCNum.ReadOnly = true;
             this.txtTzPCNum.Size = new System.Drawing.Size(218, 24);
             this.txtTzPCNum.TabIndex = 97;
             // 
@@ -501,6 +526,7 @@
             this.txtTzProcessCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzProcessCode.Multiline = true;
             this.txtTzProcessCode.Name = "txtTzProcessCode";
+            this.txtTzProcessCode.ReadOnly = true;
             this.txtTzProcessCode.Size = new System.Drawing.Size(218, 24);
             this.txtTzProcessCode.TabIndex = 95;
             // 
@@ -520,6 +546,7 @@
             this.txtTzSubFctCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzSubFctCode.Multiline = true;
             this.txtTzSubFctCode.Name = "txtTzSubFctCode";
+            this.txtTzSubFctCode.ReadOnly = true;
             this.txtTzSubFctCode.Size = new System.Drawing.Size(218, 24);
             this.txtTzSubFctCode.TabIndex = 93;
             // 
@@ -539,6 +566,7 @@
             this.txtStVepStatus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStVepStatus.Multiline = true;
             this.txtStVepStatus.Name = "txtStVepStatus";
+            this.txtStVepStatus.ReadOnly = true;
             this.txtStVepStatus.Size = new System.Drawing.Size(218, 24);
             this.txtStVepStatus.TabIndex = 91;
             // 
@@ -558,6 +586,7 @@
             this.txtStVepCycleInt.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStVepCycleInt.Multiline = true;
             this.txtStVepCycleInt.Name = "txtStVepCycleInt";
+            this.txtStVepCycleInt.ReadOnly = true;
             this.txtStVepCycleInt.Size = new System.Drawing.Size(218, 24);
             this.txtStVepCycleInt.TabIndex = 89;
             // 
@@ -577,6 +606,7 @@
             this.txtStVepCycleEnd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStVepCycleEnd.Multiline = true;
             this.txtStVepCycleEnd.Name = "txtStVepCycleEnd";
+            this.txtStVepCycleEnd.ReadOnly = true;
             this.txtStVepCycleEnd.Size = new System.Drawing.Size(218, 24);
             this.txtStVepCycleEnd.TabIndex = 87;
             // 
@@ -596,6 +626,7 @@
             this.txtStBenchCycleInt.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStBenchCycleInt.Multiline = true;
             this.txtStBenchCycleInt.Name = "txtStBenchCycleInt";
+            this.txtStBenchCycleInt.ReadOnly = true;
             this.txtStBenchCycleInt.Size = new System.Drawing.Size(218, 24);
             this.txtStBenchCycleInt.TabIndex = 85;
             // 
@@ -615,6 +646,7 @@
             this.txtStBenchCycleEnd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStBenchCycleEnd.Multiline = true;
             this.txtStBenchCycleEnd.Name = "txtStBenchCycleEnd";
+            this.txtStBenchCycleEnd.ReadOnly = true;
             this.txtStBenchCycleEnd.Size = new System.Drawing.Size(218, 24);
             this.txtStBenchCycleEnd.TabIndex = 83;
             // 
@@ -634,6 +666,7 @@
             this.txtStStartCycle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStStartCycle.Multiline = true;
             this.txtStStartCycle.Name = "txtStStartCycle";
+            this.txtStStartCycle.ReadOnly = true;
             this.txtStStartCycle.Size = new System.Drawing.Size(218, 24);
             this.txtStStartCycle.TabIndex = 81;
             // 
@@ -653,6 +686,7 @@
             this.txtStatusZoneAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStatusZoneAddress.Multiline = true;
             this.txtStatusZoneAddress.Name = "txtStatusZoneAddress";
+            this.txtStatusZoneAddress.ReadOnly = true;
             this.txtStatusZoneAddress.Size = new System.Drawing.Size(218, 24);
             this.txtStatusZoneAddress.TabIndex = 79;
             // 
@@ -672,6 +706,7 @@
             this.txtStatusZoneSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtStatusZoneSize.Multiline = true;
             this.txtStatusZoneSize.Name = "txtStatusZoneSize";
+            this.txtStatusZoneSize.ReadOnly = true;
             this.txtStatusZoneSize.Size = new System.Drawing.Size(218, 24);
             this.txtStatusZoneSize.TabIndex = 77;
             // 
@@ -691,6 +726,7 @@
             this.txtSynchroZoneAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtSynchroZoneAddress.Multiline = true;
             this.txtSynchroZoneAddress.Name = "txtSynchroZoneAddress";
+            this.txtSynchroZoneAddress.ReadOnly = true;
             this.txtSynchroZoneAddress.Size = new System.Drawing.Size(218, 24);
             this.txtSynchroZoneAddress.TabIndex = 75;
             // 
@@ -710,6 +746,7 @@
             this.txtTzAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzAddress.Multiline = true;
             this.txtTzAddress.Name = "txtTzAddress";
+            this.txtTzAddress.ReadOnly = true;
             this.txtTzAddress.Size = new System.Drawing.Size(218, 24);
             this.txtTzAddress.TabIndex = 73;
             // 
@@ -729,6 +766,7 @@
             this.txtTzSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTzSize.Multiline = true;
             this.txtTzSize.Name = "txtTzSize";
+            this.txtTzSize.ReadOnly = true;
             this.txtTzSize.Size = new System.Drawing.Size(218, 24);
             this.txtTzSize.TabIndex = 71;
             // 
@@ -748,6 +786,7 @@
             this.txtReAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtReAddress.Multiline = true;
             this.txtReAddress.Name = "txtReAddress";
+            this.txtReAddress.ReadOnly = true;
             this.txtReAddress.Size = new System.Drawing.Size(218, 24);
             this.txtReAddress.TabIndex = 69;
             // 
@@ -767,6 +806,7 @@
             this.txtReSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtReSize.Multiline = true;
             this.txtReSize.Name = "txtReSize";
+            this.txtReSize.ReadOnly = true;
             this.txtReSize.Size = new System.Drawing.Size(218, 24);
             this.txtReSize.TabIndex = 67;
             // 
@@ -786,6 +826,7 @@
             this.txtAddTzAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtAddTzAddress.Multiline = true;
             this.txtAddTzAddress.Name = "txtAddTzAddress";
+            this.txtAddTzAddress.ReadOnly = true;
             this.txtAddTzAddress.Size = new System.Drawing.Size(218, 24);
             this.txtAddTzAddress.TabIndex = 65;
             // 
@@ -805,6 +846,7 @@
             this.txtAddTzSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtAddTzSize.Multiline = true;
             this.txtAddTzSize.Name = "txtAddTzSize";
+            this.txtAddTzSize.ReadOnly = true;
             this.txtAddTzSize.Size = new System.Drawing.Size(218, 24);
             this.txtAddTzSize.TabIndex = 63;
             // 
@@ -824,6 +866,7 @@
             this.txtAddReAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtAddReAddress.Multiline = true;
             this.txtAddReAddress.Name = "txtAddReAddress";
+            this.txtAddReAddress.ReadOnly = true;
             this.txtAddReAddress.Size = new System.Drawing.Size(218, 24);
             this.txtAddReAddress.TabIndex = 61;
             // 
@@ -843,6 +886,7 @@
             this.txtAddReSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtAddReSize.Multiline = true;
             this.txtAddReSize.Name = "txtAddReSize";
+            this.txtAddReSize.ReadOnly = true;
             this.txtAddReSize.Size = new System.Drawing.Size(218, 24);
             this.txtAddReSize.TabIndex = 59;
             // 
@@ -862,6 +906,7 @@
             this.txtSynchroZoneSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtSynchroZoneSize.Multiline = true;
             this.txtSynchroZoneSize.Name = "txtSynchroZoneSize";
+            this.txtSynchroZoneSize.ReadOnly = true;
             this.txtSynchroZoneSize.Size = new System.Drawing.Size(218, 24);
             this.txtSynchroZoneSize.TabIndex = 57;
             // 
@@ -905,6 +950,7 @@
             this.txtDesZone.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtDesZone.Multiline = true;
             this.txtDesZone.Name = "txtDesZone";
+            this.txtDesZone.ReadOnly = true;
             this.txtDesZone.Size = new System.Drawing.Size(218, 24);
             this.txtDesZone.TabIndex = 5;
             // 
@@ -960,6 +1006,72 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.txtRearRightRadarAngle);
+            this.groupBox2.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.groupBox2.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.groupBox2.Location = new System.Drawing.Point(1245, 215);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(218, 51);
+            this.groupBox2.TabIndex = 261;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Rear Right Radar";
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label3.Location = new System.Drawing.Point(6, 23);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(114, 24);
+            this.label3.TabIndex = 135;
+            this.label3.Text = "115 : S_03";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtRearRightRadarAngle
+            // 
+            this.txtRearRightRadarAngle.Location = new System.Drawing.Point(126, 23);
+            this.txtRearRightRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtRearRightRadarAngle.Multiline = true;
+            this.txtRearRightRadarAngle.Name = "txtRearRightRadarAngle";
+            this.txtRearRightRadarAngle.ReadOnly = true;
+            this.txtRearRightRadarAngle.Size = new System.Drawing.Size(90, 24);
+            this.txtRearRightRadarAngle.TabIndex = 165;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.txtRearLeftRadarAngle);
+            this.groupBox3.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.groupBox3.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.groupBox3.Location = new System.Drawing.Point(1245, 272);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(218, 53);
+            this.groupBox3.TabIndex = 261;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Rear Left Radar";
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label6.Location = new System.Drawing.Point(6, 23);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(114, 24);
+            this.label6.TabIndex = 135;
+            this.label6.Text = "116 : S_04";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtRearLeftRadarAngle
+            // 
+            this.txtRearLeftRadarAngle.Location = new System.Drawing.Point(126, 23);
+            this.txtRearLeftRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtRearLeftRadarAngle.Multiline = true;
+            this.txtRearLeftRadarAngle.Name = "txtRearLeftRadarAngle";
+            this.txtRearLeftRadarAngle.ReadOnly = true;
+            this.txtRearLeftRadarAngle.Size = new System.Drawing.Size(90, 24);
+            this.txtRearLeftRadarAngle.TabIndex = 165;
+            // 
             // Frm_VEP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -973,6 +1085,10 @@
             this.panel1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1051,12 +1167,18 @@
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.RichTextBox txtReData;
         private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.TextBox txtAngle1;
+        private System.Windows.Forms.TextBox txtFrontCameraAngle1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox txtAngle2;
+        private System.Windows.Forms.TextBox txtFrontCameraAngle2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtAngle3;
+        private System.Windows.Forms.TextBox txtFrontCameraAngle3;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtRearLeftRadarAngle;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtRearRightRadarAngle;
     }
 }

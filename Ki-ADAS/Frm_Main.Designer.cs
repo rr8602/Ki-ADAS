@@ -310,9 +310,9 @@
             // 
             // BtnTestModbus
             // 
-            this.BtnTestModbus.BackColor = System.Drawing.Color.LightGreen;
+            this.BtnTestModbus.BackColor = System.Drawing.Color.Teal;
             this.BtnTestModbus.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.BtnTestModbus.Location = new System.Drawing.Point(921, 848);
+            this.BtnTestModbus.Location = new System.Drawing.Point(921, 1017);
             this.BtnTestModbus.Name = "BtnTestModbus";
             this.BtnTestModbus.Size = new System.Drawing.Size(300, 138);
             this.BtnTestModbus.TabIndex = 174;
