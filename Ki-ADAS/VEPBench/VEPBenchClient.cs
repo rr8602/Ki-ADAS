@@ -377,19 +377,25 @@ namespace Ki_ADAS
             {
                 var txZone = ReadTransmissionZone();
 
-                bool isChanged = _lastTransmissionZone == null ||
+                // 요청 상태가 2(요청 가능)인 경우에만 처리
+                if (txZone.ExchStatus == 2)
+                {
+                    bool isChanged = _lastTransmissionZone == null ||
                     _lastTransmissionZone.AddTzSize != txZone.AddTzSize ||
                     _lastTransmissionZone.ExchStatus != txZone.ExchStatus ||
                     !_lastTransmissionZone.Data.SequenceEqual(txZone.Data);
 
-                if (isChanged)
-                {
-                    _lastTransmissionZone = txZone;
-                    OnTransmissionZoneChanged(txZone);
-
-                    if (txZone.IsRequest)
+                    if (isChanged)
                     {
-                        LogMessage($"Transmission Zone 요청 감지: FctCode={txZone.GetFctCodeString()}, PCNum={txZone.PCNum}");
+                        _lastTransmissionZone = txZone;
+                        OnTransmissionZoneChanged(txZone);
+
+                        if (txZone.IsRequest)
+                        {
+                            LogMessage($"Transmission Zone 요청 감지: FctCode={txZone.GetFctCodeString()}, PCNum={txZone.PCNum}");
+                        }
+
+                        txZone.ExchStatus = 1; // 요청 없음 상태로 설정
                     }
                 }
             }
@@ -403,23 +409,22 @@ namespace Ki_ADAS
         {
             try
             {
-                var receptionZone = ReadReceptionZone();
-
-                bool isChanged = _lastReceptionZone == null ||
-                    _lastReceptionZone.AddReSize != receptionZone.AddReSize ||
-                    _lastReceptionZone.ExchStatus != receptionZone.ExchStatus ||
-                    !_lastReceptionZone.Data.SequenceEqual(receptionZone.Data);
-
-                if (isChanged)
+                if (_lastReceptionZone != null)
                 {
-                    _lastReceptionZone = receptionZone;
-                    OnReceptionZoneChanged(receptionZone);
-                    LogMessage($"수신 영역 변경 감지: AddReSize={receptionZone.AddReSize}, ExchStatus={receptionZone.ExchStatus}");
+                    ushort[] data = _lastReceptionZone.ToRegisters();
+                    WriteReceptionZone(data);
+                    _lastReceptionZone.ExchStatus = 2; // 응답 완료 상태로 설정
+
+                    LogMessage($"수신 영역 응답 작성(Write): {string.Join(", ", data)}");
+                }
+                else
+                {
+                    LogMessage("수신 영역 응답 데이터가 없습니다.");
                 }
             }
             catch (Exception ex)
             {
-                LogMessage($"수신 영역 폴링 오류: {ex.Message}");
+                LogMessage($"수신 영역 응답 작성(Write) 오류: {ex.Message}");
             }
         }
 
@@ -573,6 +578,7 @@ namespace Ki_ADAS
             }
         }
 
+        // VEP가 Bench의 ReceptionZone을 읽어야 하는건데, 이 함수는 차후에 삭제 가능성 있음
         public VEPBenchReceptionZone ReadReceptionZone(int length = 20)
         {
             CheckConnection();
