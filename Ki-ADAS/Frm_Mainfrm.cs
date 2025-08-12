@@ -158,28 +158,6 @@ namespace Ki_ADAS
             LanguageResource.CurrentLanguage = language;
         }
 
-        public void ShowResultForm(
-            string barcode,
-            DateTime meaDate,
-            double frontCameraAngle1,
-            double frontCameraAngle2,
-            double frontCameraAngle3,
-            double rearRightRadarAngle,
-            double rearLeftRadarAngle)
-        {
-            var frmResult = new Frm_Result(
-                    barcode,
-                    meaDate,
-                    frontCameraAngle1,
-                    frontCameraAngle2,
-                    frontCameraAngle3,
-                    rearRightRadarAngle,
-                    rearLeftRadarAngle
-                );
-
-            frmResult.ShowDialog();
-        }
-
         private void BtnMain_Click(object sender, EventArgs e)
         {
             ChangeButtonColor((Button)sender);

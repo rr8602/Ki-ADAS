@@ -376,6 +376,7 @@ namespace Ki_ADAS
             this.grpOptions.TabIndex = 20;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "옵션 선택";
+            this.grpOptions.Visible = false;
             // 
             // radioRearLeftRadar
             // 
@@ -530,6 +531,7 @@ namespace Ki_ADAS
             this.grpTargetSelection.TabIndex = 2;
             this.grpTargetSelection.TabStop = false;
             this.grpTargetSelection.Text = "타겟 보정 위치";
+            this.grpTargetSelection.Visible = false;
             // 
             // radioCalFrontCamera
             // 

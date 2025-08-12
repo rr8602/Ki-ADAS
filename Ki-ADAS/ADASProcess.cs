@@ -32,6 +32,8 @@ namespace Ki_ADAS
         private const double _azimuthThreshold = 1.0; // Azimuth 허용 범위
         private const double _elevationThreshold = 1.0; // Elevation 허용 범위
 
+        private bool[] isTest = new bool[3]; // 각 센서별 테스트 계획 여부
+
         public event EventHandler<ADASProcessEventArgs> OnProcessStepChanged;
 
         // ADAS 프로세스 상태 타입
@@ -83,6 +85,8 @@ namespace Ki_ADAS
             }
         }
 
+        public ADASProcess() { }
+
         public ADASProcess(VEPBenchClient vepBenchClient)
         {
             _vepBenchClient = vepBenchClient ?? throw new ArgumentNullException(nameof(vepBenchClient));
@@ -106,10 +110,13 @@ namespace Ki_ADAS
 
                         var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
 
+                        // SynchroZone 초기화
                         for (int i = 0; i < synchroZone.Size; i++)
                             synchroZone.SetValue(i, 0);
 
                         _vepBenchClient.WriteSynchroZone(synchroZone);
+
+
 
                         NotifyProcessState("홈 포지션 및 초기화 완료", ProcessStateType.Info);
                         return true;
@@ -165,10 +172,25 @@ namespace Ki_ADAS
 
                         var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
 
-                        // 랜덤 타겟 선택
-                        int[] targets = { VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX };
-                        int selected = targets[new Random().Next(targets.Length)];
-                        synchroZone.SetValue(selected, 1);
+                        if (isTest[0] == true)
+                        {
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 1);
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
+                        }
+                        else if (isTest[1] == true)
+                        {
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 1);
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
+                        }
+                        else if (isTest[2] == true)
+                        {
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
+                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 1);
+                        }
+
                         _vepBenchClient.WriteSynchroZone(synchroZone);
 
                         NotifyProcessState("PJI 요청 및 타겟 선택", ProcessStateType.Info);

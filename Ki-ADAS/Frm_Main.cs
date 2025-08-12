@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 
 namespace Ki_ADAS
@@ -18,6 +19,7 @@ namespace Ki_ADAS
     {
         private Frm_Mainfrm m_frmParent = null;
         private Frm_VEP _vep;
+        private Frm_Config _frmConfig;
         private VEPBenchClient _vepBenchClient;
         private ADASProcess _adasProcess;
         private IniFile _iniFile;
@@ -42,6 +44,7 @@ namespace Ki_ADAS
             port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
 
             _vepBenchClient = new VEPBenchClient(ipAddress, port);
+            _frmConfig = new Frm_Config();
 
             BtnStop.Enabled = false;
         }
@@ -51,10 +54,66 @@ namespace Ki_ADAS
             m_frmParent = f;
         }
 
+        private void LoadAllBarcodeFromXmlFiles()
+        {
+            try
+            {
+                string appPath = Application.StartupPath;
+                string[] xmlFiles = Directory.GetFiles(appPath, "test_result_*.xml");
+
+                seqList.Items.Clear();
+
+                if (xmlFiles.Length > 0)
+                {
+                    foreach (string xmlFile in xmlFiles)
+                    {
+                        XElement root = XElement.Load(xmlFile);
+                        var results = root.Descendants("TestResults");
+
+                        foreach (var result in results)
+                        {
+                            string barcode = result.Element("Barcode")?.Value;
+
+                            if (!string.IsNullOrEmpty(barcode))
+                            {
+                                bool isDuplicate = false;
+
+                                foreach (ListViewItem item in seqList.Items)
+                                {
+                                    if (item.Text == barcode)
+                                    {
+                                        isDuplicate = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!isDuplicate)
+                                {
+                                    seqList.Items.Add(new ListViewItem(barcode));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"XML 파일 로드 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void BtnStart_Click(object sender, EventArgs e)
         {
             try
             {
+                if (seqList.SelectedItems.Count == 0)
+                {
+                    MessageBox.Show("테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                string selectedBarcode = seqList.SelectedItems[0].Text;
+
                 /*_adasProcess = new ADASProcess(_vepBenchClient);
                 _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
                 _adasProcess.InitializeProcessSteps();
@@ -75,8 +134,7 @@ namespace Ki_ADAS
                     // ADAS 프로세스 재초기화
                     _adasProcess = new ADASProcess(_vepBenchClient);
                     _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
-                }
-*/
+                }*/
                 // 임시 HomePositionSimulator 실행 부분 (나중에 삭제)
                 bool connected = _vepBenchClient.TestConnection();
 
@@ -91,12 +149,10 @@ namespace Ki_ADAS
                     _vepBenchClient.DebugMode = false;
                     _vepBenchClient.StartMonitoring();
 
-                    seqList.Items.Clear();
-
                     if (MessageBox.Show("홈 포지션 시뮬레이터를 지금 실행하시겠습니까?",
                         "시뮬레이터 실행", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        HomePositionSimulator simulator = new HomePositionSimulator(_vepBenchClient);
+                        HomePositionSimulator simulator = new HomePositionSimulator(_vepBenchClient, _frmConfig);
                         simulator.ShowDialog();
                     }
                 }
@@ -188,8 +244,6 @@ namespace Ki_ADAS
 
             AddLogMessage(logMessage);
 
-            UpdateProcessStepDisplay(e);
-
             if (e.StateType == ADASProcess.ProcessStateType.Success && e.Message == "프로세스 완료")
             {
                 BtnStart.Enabled = true;
@@ -208,14 +262,6 @@ namespace Ki_ADAS
         {
             lb_Message.Items.Add($"[{DateTime.Now:HH:mm:ss}] {message}");
             lb_Message.SelectedIndex = lb_Message.Items.Count - 1;
-        }
-
-        private void UpdateProcessStepDisplay(ADASProcess.ADASProcessEventArgs e)
-        {
-            if (e.Step != null)
-            {
-                seqList.Items.Add(new ListViewItem(new string[] { e.Step.StepId.ToString(), e.Step.Description, e.Step.SynchroState }));
-            }
         }
 
         private void Frm_Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -259,6 +305,11 @@ namespace Ki_ADAS
             {
                 MessageBox.Show($"오류 발생: {ex.Message}", "예외 발생", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void Frm_Main_Load(object sender, EventArgs e)
+        {
+            LoadAllBarcodeFromXmlFiles();
         }
     }
 }

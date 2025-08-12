@@ -52,7 +52,6 @@ namespace Ki_ADAS
             db = new SettingConfigDb();
             db.SetupDatabaseConnection();
 
-
             LoadModelList();
         }
 
@@ -523,14 +522,17 @@ namespace Ki_ADAS
                                         Fr_AlignmentAxeOffset = ?,
                                         Fr_Vv = ?,
                                         Fr_StCt = ?,
+                                        Fr_IsTest = ?,
                                         R_X = ?,
                                         R_Y = ?,
                                         R_Z = ?,
                                         R_Angle = ?,
+                                        R_IsTest = ?,
                                         L_X = ?,
                                         L_Y = ?,
                                         L_Z = ?,
-                                        L_Angle = ?
+                                        L_Angle = ?,
+                                        L_IsTest = ?
                                         WHERE Name = ?";
 
                         using (OleDbCommand cmd = new OleDbCommand(query, con, transaction))
@@ -547,16 +549,19 @@ namespace Ki_ADAS
                             cmd.Parameters.AddWithValue("Fr_AlignmentAxeOffset", txtOffset.Text.Trim());
                             cmd.Parameters.AddWithValue("Fr_Vv", txtVv.Text.Trim());
                             cmd.Parameters.AddWithValue("Fr_StCt", txtStCt.Text.Trim());
+                            cmd.Parameters.AddWithValue("Fr_IsTest", chkIsFrontCameraTest.Checked);
 
                             cmd.Parameters.AddWithValue("R_X", txtRX.Text.Trim());
                             cmd.Parameters.AddWithValue("R_Y", txtRY.Text.Trim());
                             cmd.Parameters.AddWithValue("R_Z", txtRZ.Text.Trim());
                             cmd.Parameters.AddWithValue("R_Angle", txtRAngle.Text.Trim());
+                            cmd.Parameters.AddWithValue("R_IsTest", chkIsRearRightRadar.Checked);
 
                             cmd.Parameters.AddWithValue("L_X", txtLX.Text.Trim());
                             cmd.Parameters.AddWithValue("L_Y", txtLY.Text.Trim());
                             cmd.Parameters.AddWithValue("L_Z", txtLZ.Text.Trim());
                             cmd.Parameters.AddWithValue("L_Angle", txtLAngle.Text.Trim());
+                            cmd.Parameters.AddWithValue("L_IsTest", chkIsRearLeftRadar.Checked);
 
                             cmd.Parameters.AddWithValue("Name", modelName);
 
@@ -631,18 +636,21 @@ namespace Ki_ADAS
                                 txtOffset.Text = GetSafeString(reader, "Fr_AlignmentAxeOffset");
                                 txtVv.Text = GetSafeString(reader, "Fr_Vv");
                                 txtStCt.Text = GetSafeString(reader, "Fr_StCt");
+                                chkIsFrontCameraTest.Checked = GetSafeBool(reader, "Fr_IsTest");
 
                                 // Rear Right Radar 섹션
                                 txtRX.Text = GetSafeString(reader, "R_X");
                                 txtRY.Text = GetSafeString(reader, "R_Y");
                                 txtRZ.Text = GetSafeString(reader, "R_Z");
                                 txtRAngle.Text = GetSafeString(reader, "R_Angle");
+                                chkIsRearRightRadar.Checked = GetSafeBool(reader, "R_IsTest");
 
                                 // Rear Left Radar 섹션
                                 txtLX.Text = GetSafeString(reader, "L_X");
                                 txtLY.Text = GetSafeString(reader, "L_Y");
                                 txtLZ.Text = GetSafeString(reader, "L_Z");
                                 txtLAngle.Text = GetSafeString(reader, "L_Angle");
+                                chkIsRearLeftRadar.Checked = GetSafeBool(reader, "L_IsTest");
                             }
                             else
                             {
@@ -687,6 +695,62 @@ namespace Ki_ADAS
             return string.Empty;
         }
 
+        private bool GetSafeBool(OleDbDataReader reader, string columnName)
+        {
+            int ordinal;
+
+            try
+            {
+                ordinal = reader.GetOrdinal(columnName);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (!reader.IsDBNull(ordinal))
+            {
+                return Convert.ToBoolean(reader.GetValue(ordinal));
+            }
+
+            return false;
+        }
+
+        public DataTable GetModelData()
+        {
+            DataTable modelData = new DataTable();
+
+            try
+            {
+                if (db == null)
+                {
+                    db = new SettingConfigDb();
+                    db.SetupDatabaseConnection();
+                }
+
+                using (OleDbConnection con = new OleDbConnection(db.connectionString))
+                {
+                    con.Open();
+
+                    string query = "SELECT * FROM Model ORDER BY Name";
+
+                    using (OleDbDataAdapter adapter = new OleDbDataAdapter(query, con))
+                    {
+                        adapter.Fill(modelData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
+                    LanguageResource.GetMessage("Error"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+
+            return modelData;
+        }
+
         private void ClearAllFields()
         {
             // 상단 필드
@@ -703,18 +767,21 @@ namespace Ki_ADAS
             txtOffset.Text = string.Empty;
             txtVv.Text = string.Empty;
             txtStCt.Text = string.Empty;
+            chkIsFrontCameraTest.Checked = false;
 
             // Rear Right Radar 섹션
             txtRX.Text = string.Empty;
             txtRY.Text = string.Empty;
             txtRZ.Text = string.Empty;
             txtRAngle.Text = string.Empty;
+            chkIsRearRightRadar.Checked = false;
 
-            // Rear Right Radar 섹션
+            // Rear Left Radar 섹션
             txtLX.Text = string.Empty;
             txtLY.Text = string.Empty;
             txtLZ.Text = string.Empty;
             txtLAngle.Text = string.Empty;
+            chkIsRearLeftRadar.Checked = false;
         }
     }
 }

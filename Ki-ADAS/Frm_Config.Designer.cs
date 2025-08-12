@@ -34,6 +34,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtRAngle = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.txtRX = new System.Windows.Forms.TextBox();
@@ -51,7 +52,6 @@
             this.label22 = new System.Windows.Forms.Label();
             this.txtLZ = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBox12 = new System.Windows.Forms.TextBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.textBox14 = new System.Windows.Forms.TextBox();
             this.txtStCt = new System.Windows.Forms.TextBox();
@@ -110,6 +110,10 @@
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.BtnLanSave = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.chkIsFrontCameraTest = new System.Windows.Forms.CheckBox();
+            this.chkIsRearRightRadar = new System.Windows.Forms.CheckBox();
+            this.chkIsRearLeftRadar = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -182,7 +186,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.chkIsRearRightRadar);
             this.groupBox2.Controls.Add(this.txtRAngle);
+            this.groupBox2.Controls.Add(this.label24);
             this.groupBox2.Controls.Add(this.label19);
             this.groupBox2.Controls.Add(this.label16);
             this.groupBox2.Controls.Add(this.txtRX);
@@ -206,6 +212,19 @@
             this.txtRAngle.Name = "txtRAngle";
             this.txtRAngle.Size = new System.Drawing.Size(234, 51);
             this.txtRAngle.TabIndex = 254;
+            // 
+            // label24
+            // 
+            this.label24.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label24.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label24.ForeColor = System.Drawing.Color.Aqua;
+            this.label24.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label24.Location = new System.Drawing.Point(546, 49);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(287, 51);
+            this.label24.TabIndex = 247;
+            this.label24.Text = "IsTest";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label19
             // 
@@ -285,6 +304,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkIsRearLeftRadar);
+            this.groupBox3.Controls.Add(this.label25);
             this.groupBox3.Controls.Add(this.txtLAngle);
             this.groupBox3.Controls.Add(this.label20);
             this.groupBox3.Controls.Add(this.txtLY);
@@ -388,7 +409,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox12);
+            this.groupBox1.Controls.Add(this.chkIsFrontCameraTest);
             this.groupBox1.Controls.Add(this.textBox13);
             this.groupBox1.Controls.Add(this.textBox14);
             this.groupBox1.Controls.Add(this.txtStCt);
@@ -420,14 +441,6 @@
             this.groupBox1.TabIndex = 218;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Front Camera";
-            // 
-            // textBox12
-            // 
-            this.textBox12.Location = new System.Drawing.Point(1372, 232);
-            this.textBox12.Multiline = true;
-            this.textBox12.Name = "textBox12";
-            this.textBox12.Size = new System.Drawing.Size(234, 51);
-            this.textBox12.TabIndex = 246;
             // 
             // textBox13
             // 
@@ -463,7 +476,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(287, 51);
             this.label11.TabIndex = 242;
-            this.label11.Text = "Spare";
+            this.label11.Text = "IsTest";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label12
@@ -1085,6 +1098,43 @@
             this.label14.Text = "PLC IP";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label25
+            // 
+            this.label25.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label25.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.ForeColor = System.Drawing.Color.Aqua;
+            this.label25.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label25.Location = new System.Drawing.Point(546, 49);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(287, 51);
+            this.label25.TabIndex = 263;
+            this.label25.Text = "IsTest";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // chkIsFrontCameraTest
+            // 
+            this.chkIsFrontCameraTest.Location = new System.Drawing.Point(1482, 243);
+            this.chkIsFrontCameraTest.Name = "chkIsFrontCameraTest";
+            this.chkIsFrontCameraTest.Size = new System.Drawing.Size(20, 33);
+            this.chkIsFrontCameraTest.TabIndex = 247;
+            this.chkIsFrontCameraTest.UseVisualStyleBackColor = true;
+            // 
+            // chkIsRearRightRadar
+            // 
+            this.chkIsRearRightRadar.Location = new System.Drawing.Point(945, 60);
+            this.chkIsRearRightRadar.Name = "chkIsRearRightRadar";
+            this.chkIsRearRightRadar.Size = new System.Drawing.Size(20, 33);
+            this.chkIsRearRightRadar.TabIndex = 255;
+            this.chkIsRearRightRadar.UseVisualStyleBackColor = true;
+            // 
+            // chkIsRearLeftRadar
+            // 
+            this.chkIsRearLeftRadar.Location = new System.Drawing.Point(945, 60);
+            this.chkIsRearLeftRadar.Name = "chkIsRearLeftRadar";
+            this.chkIsRearLeftRadar.Size = new System.Drawing.Size(20, 33);
+            this.chkIsRearLeftRadar.TabIndex = 264;
+            this.chkIsRearLeftRadar.UseVisualStyleBackColor = true;
+            // 
             // Frm_Config
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -1116,7 +1166,6 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -1162,11 +1211,9 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox textBox12;
         private System.Windows.Forms.TextBox textBox13;
         private System.Windows.Forms.TextBox textBox14;
         private System.Windows.Forms.TextBox txtStCt;
-        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label15;
@@ -1203,5 +1250,11 @@
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TextBox txtLZ;
         private System.Windows.Forms.TextBox txtModel;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.CheckBox chkIsRearRightRadar;
+        private System.Windows.Forms.CheckBox chkIsRearLeftRadar;
+        private System.Windows.Forms.CheckBox chkIsFrontCameraTest;
     }
 }

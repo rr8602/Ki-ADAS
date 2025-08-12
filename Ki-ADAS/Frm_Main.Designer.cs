@@ -214,7 +214,7 @@
             this.seqList.Size = new System.Drawing.Size(913, 781);
             this.seqList.TabIndex = 170;
             this.seqList.UseCompatibleStateImageBehavior = false;
-            this.seqList.View = System.Windows.Forms.View.Details;
+            this.seqList.View = System.Windows.Forms.View.List;
             // 
             // label29
             // 
@@ -341,6 +341,7 @@
             this.Name = "Frm_Main";
             this.Text = "Frm_Main";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Main_FormClosing);
+            this.Load += new System.EventHandler(this.Frm_Main_Load);
             this.GB_GenInfo.ResumeLayout(false);
             this.ResumeLayout(false);
 

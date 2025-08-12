@@ -150,6 +150,7 @@
       <DependentUpon>Frm_VEP.cs</DependentUpon>
     </Compile>
     <Compile Include="Language\LanguageResource.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="SettingConfigDb.cs" />
     <Compile Include="Simulator\HomePositionSimulator.cs">
       <SubType>Form</SubType>
@@ -157,6 +158,7 @@
     <Compile Include="Simulator\HomePositionSimulator.Designer.cs">
       <DependentUpon>HomePositionSimulator.cs</DependentUpon>
     </Compile>
+    <Compile Include="snap7.net.cs" />
     <Compile Include="VEPBench\VEPBenchClient.cs" />
     <Compile Include="VEPBench\VEPBenchDescriptionZone.cs" />
     <Compile Include="VEPBench\VEPBenchProcessor.cs" />

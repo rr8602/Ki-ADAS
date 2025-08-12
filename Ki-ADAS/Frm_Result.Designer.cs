@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblElevation = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.lblAzimuth = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.lblRoll = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -38,18 +42,14 @@
             this.lblRearLeftRadarAngle = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.lblBarcode = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.seqList = new System.Windows.Forms.ListView();
-            this.lblAzimuth = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.lblElevation = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
             this.cButton2 = new KI_Controls.CButton();
             this.cButton1 = new KI_Controls.CButton();
             this.roundLabel2 = new KI_Controls.RoundLabel();
             this.roundLabel1 = new KI_Controls.RoundLabel();
-            this.lblBarcode = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -73,6 +73,42 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Front Camera Angle";
+            // 
+            // lblElevation
+            // 
+            this.lblElevation.BackColor = System.Drawing.Color.White;
+            this.lblElevation.Location = new System.Drawing.Point(256, 215);
+            this.lblElevation.Name = "lblElevation";
+            this.lblElevation.Size = new System.Drawing.Size(440, 59);
+            this.lblElevation.TabIndex = 5;
+            this.lblElevation.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(6, 215);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(244, 59);
+            this.label13.TabIndex = 4;
+            this.label13.Text = "Elevation";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblAzimuth
+            // 
+            this.lblAzimuth.BackColor = System.Drawing.Color.White;
+            this.lblAzimuth.Location = new System.Drawing.Point(256, 138);
+            this.lblAzimuth.Name = "lblAzimuth";
+            this.lblAzimuth.Size = new System.Drawing.Size(440, 59);
+            this.lblAzimuth.TabIndex = 3;
+            this.lblAzimuth.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(6, 138);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(244, 59);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Azimuth";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblRoll
             // 
@@ -173,6 +209,16 @@
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             // 
+            // lblBarcode
+            // 
+            this.lblBarcode.BackColor = System.Drawing.Color.White;
+            this.lblBarcode.Font = new System.Drawing.Font("굴림", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblBarcode.Location = new System.Drawing.Point(926, 38);
+            this.lblBarcode.Name = "lblBarcode";
+            this.lblBarcode.Size = new System.Drawing.Size(486, 101);
+            this.lblBarcode.TabIndex = 10;
+            this.lblBarcode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(447, 96);
@@ -191,7 +237,7 @@
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(255, 42);
             this.dateTimePicker1.TabIndex = 2;
-            this.dateTimePicker1.Value = new System.DateTime(2025, 6, 12, 0, 0, 0, 0);
+            this.dateTimePicker1.Value = new System.DateTime(2025, 8, 12, 12, 1, 22, 0);
             // 
             // seqList
             // 
@@ -209,43 +255,7 @@
             this.seqList.Size = new System.Drawing.Size(654, 843);
             this.seqList.TabIndex = 159;
             this.seqList.UseCompatibleStateImageBehavior = false;
-            this.seqList.View = System.Windows.Forms.View.Details;
-            // 
-            // lblAzimuth
-            // 
-            this.lblAzimuth.BackColor = System.Drawing.Color.White;
-            this.lblAzimuth.Location = new System.Drawing.Point(256, 138);
-            this.lblAzimuth.Name = "lblAzimuth";
-            this.lblAzimuth.Size = new System.Drawing.Size(440, 59);
-            this.lblAzimuth.TabIndex = 3;
-            this.lblAzimuth.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(6, 138);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(244, 59);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Azimuth";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lblElevation
-            // 
-            this.lblElevation.BackColor = System.Drawing.Color.White;
-            this.lblElevation.Location = new System.Drawing.Point(256, 215);
-            this.lblElevation.Name = "lblElevation";
-            this.lblElevation.Size = new System.Drawing.Size(440, 59);
-            this.lblElevation.TabIndex = 5;
-            this.lblElevation.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(6, 215);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(244, 59);
-            this.label13.TabIndex = 4;
-            this.label13.Text = "Elevation";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.seqList.View = System.Windows.Forms.View.List;
             // 
             // cButton2
             // 
@@ -333,16 +343,6 @@
             this.roundLabel1.TextColor = System.Drawing.Color.White;
             this.roundLabel1.UseVisualStyleBackColor = false;
             // 
-            // lblBarcode
-            // 
-            this.lblBarcode.BackColor = System.Drawing.Color.White;
-            this.lblBarcode.Font = new System.Drawing.Font("굴림", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblBarcode.Location = new System.Drawing.Point(926, 38);
-            this.lblBarcode.Name = "lblBarcode";
-            this.lblBarcode.Size = new System.Drawing.Size(486, 101);
-            this.lblBarcode.TabIndex = 10;
-            this.lblBarcode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // Frm_Result
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -357,6 +357,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Frm_Result";
             this.Text = "ㄱ";
+            this.Load += new System.EventHandler(this.Frm_Result_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
