@@ -43,13 +43,13 @@
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.lblBarcode = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.seqList = new System.Windows.Forms.ListView();
-            this.cButton2 = new KI_Controls.CButton();
-            this.cButton1 = new KI_Controls.CButton();
+            this.btnPJISearch = new KI_Controls.CButton();
+            this.btnDateSearch = new KI_Controls.CButton();
             this.roundLabel2 = new KI_Controls.RoundLabel();
             this.roundLabel1 = new KI_Controls.RoundLabel();
+            this.txtPji = new System.Windows.Forms.TextBox();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.seqList = new System.Windows.Forms.ListView();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -195,11 +195,11 @@
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.lblBarcode);
-            this.groupBox4.Controls.Add(this.cButton2);
-            this.groupBox4.Controls.Add(this.cButton1);
+            this.groupBox4.Controls.Add(this.btnPJISearch);
+            this.groupBox4.Controls.Add(this.btnDateSearch);
             this.groupBox4.Controls.Add(this.roundLabel2);
             this.groupBox4.Controls.Add(this.roundLabel1);
-            this.groupBox4.Controls.Add(this.textBox1);
+            this.groupBox4.Controls.Add(this.txtPji);
             this.groupBox4.Controls.Add(this.dateTimePicker1);
             this.groupBox4.Location = new System.Drawing.Point(33, 29);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -219,89 +219,53 @@
             this.lblBarcode.TabIndex = 10;
             this.lblBarcode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox1
+            // btnPJISearch
             // 
-            this.textBox1.Location = new System.Drawing.Point(447, 96);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(275, 43);
-            this.textBox1.TabIndex = 5;
+            this.btnPJISearch.BackColor = System.Drawing.Color.LightGray;
+            this.btnPJISearch.bNormalButton = false;
+            this.btnPJISearch.BorderColor = System.Drawing.Color.Black;
+            this.btnPJISearch.BorderSize = ((uint)(1u));
+            this.btnPJISearch.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.btnPJISearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPJISearch.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPJISearch.ForeColor = System.Drawing.Color.Black;
+            this.btnPJISearch.IsToggled = false;
+            this.btnPJISearch.Location = new System.Drawing.Point(734, 39);
+            this.btnPJISearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnPJISearch.Name = "btnPJISearch";
+            this.btnPJISearch.NormalBackColor = System.Drawing.Color.LightGray;
+            this.btnPJISearch.NormalForeColor = System.Drawing.Color.Black;
+            this.btnPJISearch.Size = new System.Drawing.Size(115, 99);
+            this.btnPJISearch.TabIndex = 9;
+            this.btnPJISearch.Text = "Search";
+            this.btnPJISearch.ToggleBackColor = System.Drawing.Color.CornflowerBlue;
+            this.btnPJISearch.ToggleForeColor = System.Drawing.Color.Black;
+            this.btnPJISearch.UseVisualStyleBackColor = false;
+            this.btnPJISearch.Click += new System.EventHandler(this.btnPJISearch_Click);
             // 
-            // dateTimePicker1
+            // btnDateSearch
             // 
-            this.dateTimePicker1.CustomFormat = "yyyy-mm-dd";
-            this.dateTimePicker1.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dateTimePicker1.Location = new System.Drawing.Point(17, 94);
-            this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(255, 42);
-            this.dateTimePicker1.TabIndex = 2;
-            this.dateTimePicker1.Value = new System.DateTime(2025, 8, 12, 12, 1, 22, 0);
-            // 
-            // seqList
-            // 
-            this.seqList.Activation = System.Windows.Forms.ItemActivation.TwoClick;
-            this.seqList.BackColor = System.Drawing.Color.SeaShell;
-            this.seqList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.seqList.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.seqList.FullRowSelect = true;
-            this.seqList.GridLines = true;
-            this.seqList.HideSelection = false;
-            this.seqList.Location = new System.Drawing.Point(33, 220);
-            this.seqList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.seqList.MultiSelect = false;
-            this.seqList.Name = "seqList";
-            this.seqList.Size = new System.Drawing.Size(654, 843);
-            this.seqList.TabIndex = 159;
-            this.seqList.UseCompatibleStateImageBehavior = false;
-            this.seqList.View = System.Windows.Forms.View.List;
-            // 
-            // cButton2
-            // 
-            this.cButton2.BackColor = System.Drawing.Color.LightGray;
-            this.cButton2.bNormalButton = false;
-            this.cButton2.BorderColor = System.Drawing.Color.Black;
-            this.cButton2.BorderSize = ((uint)(1u));
-            this.cButton2.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.cButton2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cButton2.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cButton2.ForeColor = System.Drawing.Color.Black;
-            this.cButton2.IsToggled = false;
-            this.cButton2.Location = new System.Drawing.Point(734, 39);
-            this.cButton2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.cButton2.Name = "cButton2";
-            this.cButton2.NormalBackColor = System.Drawing.Color.LightGray;
-            this.cButton2.NormalForeColor = System.Drawing.Color.Black;
-            this.cButton2.Size = new System.Drawing.Size(115, 99);
-            this.cButton2.TabIndex = 9;
-            this.cButton2.Text = "Search";
-            this.cButton2.ToggleBackColor = System.Drawing.Color.CornflowerBlue;
-            this.cButton2.ToggleForeColor = System.Drawing.Color.Black;
-            this.cButton2.UseVisualStyleBackColor = false;
-            // 
-            // cButton1
-            // 
-            this.cButton1.BackColor = System.Drawing.Color.LightGray;
-            this.cButton1.bNormalButton = false;
-            this.cButton1.BorderColor = System.Drawing.Color.Black;
-            this.cButton1.BorderSize = ((uint)(1u));
-            this.cButton1.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.cButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cButton1.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cButton1.ForeColor = System.Drawing.Color.Black;
-            this.cButton1.IsToggled = false;
-            this.cButton1.Location = new System.Drawing.Point(291, 40);
-            this.cButton1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.cButton1.Name = "cButton1";
-            this.cButton1.NormalBackColor = System.Drawing.Color.LightGray;
-            this.cButton1.NormalForeColor = System.Drawing.Color.Black;
-            this.cButton1.Size = new System.Drawing.Size(115, 99);
-            this.cButton1.TabIndex = 8;
-            this.cButton1.Text = "Search";
-            this.cButton1.ToggleBackColor = System.Drawing.Color.CornflowerBlue;
-            this.cButton1.ToggleForeColor = System.Drawing.Color.Black;
-            this.cButton1.UseVisualStyleBackColor = false;
+            this.btnDateSearch.BackColor = System.Drawing.Color.LightGray;
+            this.btnDateSearch.bNormalButton = false;
+            this.btnDateSearch.BorderColor = System.Drawing.Color.Black;
+            this.btnDateSearch.BorderSize = ((uint)(1u));
+            this.btnDateSearch.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.btnDateSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDateSearch.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDateSearch.ForeColor = System.Drawing.Color.Black;
+            this.btnDateSearch.IsToggled = false;
+            this.btnDateSearch.Location = new System.Drawing.Point(291, 40);
+            this.btnDateSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnDateSearch.Name = "btnDateSearch";
+            this.btnDateSearch.NormalBackColor = System.Drawing.Color.LightGray;
+            this.btnDateSearch.NormalForeColor = System.Drawing.Color.Black;
+            this.btnDateSearch.Size = new System.Drawing.Size(115, 99);
+            this.btnDateSearch.TabIndex = 8;
+            this.btnDateSearch.Text = "Search";
+            this.btnDateSearch.ToggleBackColor = System.Drawing.Color.CornflowerBlue;
+            this.btnDateSearch.ToggleForeColor = System.Drawing.Color.Black;
+            this.btnDateSearch.UseVisualStyleBackColor = false;
+            this.btnDateSearch.Click += new System.EventHandler(this.btnDateSearch_Click);
             // 
             // roundLabel2
             // 
@@ -343,11 +307,50 @@
             this.roundLabel1.TextColor = System.Drawing.Color.White;
             this.roundLabel1.UseVisualStyleBackColor = false;
             // 
+            // txtPji
+            // 
+            this.txtPji.Location = new System.Drawing.Point(447, 96);
+            this.txtPji.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtPji.Multiline = true;
+            this.txtPji.Name = "txtPji";
+            this.txtPji.Size = new System.Drawing.Size(275, 43);
+            this.txtPji.TabIndex = 5;
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.CustomFormat = "yyyy-mm-dd";
+            this.dateTimePicker1.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dateTimePicker1.Location = new System.Drawing.Point(17, 94);
+            this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(255, 42);
+            this.dateTimePicker1.TabIndex = 2;
+            this.dateTimePicker1.Value = new System.DateTime(2025, 8, 12, 12, 1, 22, 0);
+            // 
+            // seqList
+            // 
+            this.seqList.Activation = System.Windows.Forms.ItemActivation.TwoClick;
+            this.seqList.BackColor = System.Drawing.Color.SeaShell;
+            this.seqList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.seqList.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.seqList.FullRowSelect = true;
+            this.seqList.GridLines = true;
+            this.seqList.HideSelection = false;
+            this.seqList.Location = new System.Drawing.Point(33, 220);
+            this.seqList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.seqList.MultiSelect = false;
+            this.seqList.Name = "seqList";
+            this.seqList.Size = new System.Drawing.Size(654, 843);
+            this.seqList.TabIndex = 159;
+            this.seqList.UseCompatibleStateImageBehavior = false;
+            this.seqList.View = System.Windows.Forms.View.List;
+            this.seqList.SelectedIndexChanged += new System.EventHandler(this.seqList_SelectedIndexChanged);
+            // 
             // Frm_Result
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2057, 1125);
+            this.ClientSize = new System.Drawing.Size(1645, 900);
             this.Controls.Add(this.seqList);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -379,11 +382,11 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label lblRearLeftRadarAngle;
         private System.Windows.Forms.GroupBox groupBox4;
-        private KI_Controls.CButton cButton2;
-        private KI_Controls.CButton cButton1;
+        private KI_Controls.CButton btnPJISearch;
+        private KI_Controls.CButton btnDateSearch;
         private KI_Controls.RoundLabel roundLabel2;
         private KI_Controls.RoundLabel roundLabel1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtPji;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.ListView seqList;
         private System.Windows.Forms.Label lblElevation;

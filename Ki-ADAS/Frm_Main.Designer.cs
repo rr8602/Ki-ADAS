@@ -50,6 +50,7 @@
             this.BtnStart = new System.Windows.Forms.Button();
             this.BtnStop = new System.Windows.Forms.Button();
             this.BtnTestModbus = new System.Windows.Forms.Button();
+            this.BtnRegister = new System.Windows.Forms.Button();
             this.GB_GenInfo.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -320,11 +321,24 @@
             this.BtnTestModbus.UseVisualStyleBackColor = false;
             this.BtnTestModbus.Click += new System.EventHandler(this.BtnTestModbus_Click);
             // 
+            // BtnRegister
+            // 
+            this.BtnRegister.BackColor = System.Drawing.Color.Olive;
+            this.BtnRegister.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.BtnRegister.Location = new System.Drawing.Point(921, 831);
+            this.BtnRegister.Name = "BtnRegister";
+            this.BtnRegister.Size = new System.Drawing.Size(300, 138);
+            this.BtnRegister.TabIndex = 175;
+            this.BtnRegister.Text = "Register";
+            this.BtnRegister.UseVisualStyleBackColor = false;
+            this.BtnRegister.Click += new System.EventHandler(this.BtnRegister_Click);
+            // 
             // Frm_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2029, 1179);
+            this.Controls.Add(this.BtnRegister);
             this.Controls.Add(this.BtnTestModbus);
             this.Controls.Add(this.BtnStop);
             this.Controls.Add(this.BtnStart);
@@ -370,5 +384,6 @@
         private System.Windows.Forms.Button BtnStart;
         private System.Windows.Forms.Button BtnStop;
         private System.Windows.Forms.Button BtnTestModbus;
+        private System.Windows.Forms.Button BtnRegister;
     }
 }

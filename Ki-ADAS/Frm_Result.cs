@@ -26,7 +26,6 @@ namespace Ki_ADAS
 
         public Frm_Result(
             string pji,
-            DateTime meaDate,
             double frontCameraAngle1,
             double frontCameraAngle2,
             double frontCameraAngle3,
@@ -36,7 +35,6 @@ namespace Ki_ADAS
             InitializeComponent();
 
             _pji = pji;
-            _meaDate = meaDate;
             _frontCameraAngle1 = frontCameraAngle1;
             _frontCameraAngle2 = frontCameraAngle2;
             _frontCameraAngle3 = frontCameraAngle3;
@@ -49,32 +47,43 @@ namespace Ki_ADAS
             lblElevation.Text = _frontCameraAngle3.ToString("F2");
             lblRearRightRadarAngle.Text = _rearRightRadarAngle.ToString("F2");
             lblRearLeftRadarAngle.Text = _rearLeftRadarAngle.ToString("F2");
-
-            dateTimePicker1.Value = DateTime.Now;
         }
 
         private void LoadPjiListFromXml()
         {
             try
             {
-                string dateString = DateTime.Now.ToString("yyyyMMdd");
-                string xmlFileName = $"test_result_{dateString}.xml";
-                string xmlFilePath = Path.Combine(Application.StartupPath, xmlFileName);
+                string xmlFilePath = Application.StartupPath;
+                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
 
                 seqList.Items.Clear();
+                int totalCount = 0;
 
-                if (File.Exists(xmlFileName))
+                if (xmlFiles.Length > 0)
                 {
-                    XElement root = XElement.Load(xmlFilePath);
-                    var results = root.Elements("TestResults");
+                    Array.Sort(xmlFiles, (a, b) => string.Compare(b, a)); // 최신 파일이 먼저 오도록 정렬
 
-                    foreach (var result in results)
+                    foreach (string file in xmlFiles)
                     {
-                        string barcode = result.Element("Barcode")?.Value;
-                        
-                        if (!string.IsNullOrEmpty(barcode))
+                        try
                         {
-                            seqList.Items.Add(barcode);
+                            XElement root = XElement.Load(file);
+                            var results = root.Elements("TestResults");
+
+                            foreach (var result in results)
+                            {
+                                string barcode = result.Element("Barcode")?.Value;
+
+                                if (!string.IsNullOrEmpty(barcode))
+                                {
+                                    seqList.Items.Add(barcode);
+                                    totalCount++;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            continue;
                         }
                     }
 
@@ -82,17 +91,77 @@ namespace Ki_ADAS
                     {
                         seqList.Items[0].Selected = true;
                         seqList.Focus();
-                        MessageBox.Show($"총 {seqList.Items.Count}개의 테스트 결과를 불러왔습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 else
                 {
-                    MessageBox.Show($"{xmlFileName} 파일이 존재하지 않습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("XML 파일이 존재하지 않습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"XML 파일을 불러오는 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"XML 파일 로드 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void seqList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (seqList.SelectedItems.Count > 0)
+            {
+                string selectedBarcode = seqList.SelectedItems[0].Text;
+                DisplayTestResultDetails(selectedBarcode);
+            }
+        }
+
+        private void DisplayTestResultDetails(string barcode)
+        {
+            try
+            {
+                string xmlFilePath = Application.StartupPath;
+                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
+
+                foreach (string file in xmlFiles)
+                {
+                    try
+                    {
+                        XElement root = XElement.Load(file);
+                        var results = root.Elements("TestResults");
+
+                        foreach (var result in results)
+                        {
+                            string currentBarcode = result.Element("Barcode")?.Value;
+
+                            if (currentBarcode == barcode)
+                            {
+                                lblBarcode.Text = currentBarcode;
+
+                                double frontCameraAngle1 = double.Parse(result.Element("FrontCameraAngle1")?.Value ?? "0");
+                                double frontCameraAngle2 = double.Parse(result.Element("FrontCameraAngle2")?.Value ?? "0");
+                                double frontCameraAngle3 = double.Parse(result.Element("FrontCameraAngle3")?.Value ?? "0");
+                                double rearRightRadarAngle = double.Parse(result.Element("RearRightRadarAngle")?.Value ?? "0");
+                                double rearLeftRadarAngle = double.Parse(result.Element("RearLeftRadarAngle")?.Value ?? "0");
+
+                                lblRoll.Text = frontCameraAngle1.ToString("F2");
+                                lblAzimuth.Text = frontCameraAngle2.ToString("F2");
+                                lblElevation.Text = frontCameraAngle3.ToString("F2");
+                                lblRearRightRadarAngle.Text = rearRightRadarAngle.ToString("F2");
+                                lblRearLeftRadarAngle.Text = rearLeftRadarAngle.ToString("F2");
+
+                                return;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+
+                MessageBox.Show($"선택한 바코드({barcode})에 대한 상세 정보를 찾을 수 없습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"테스트 결과 상세정보 표시 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -109,6 +178,131 @@ namespace Ki_ADAS
         private void Frm_Result_Load(object sender, EventArgs e)
         {
             LoadPjiListFromXml();
+            dateTimePicker1.Value = DateTime.Now;
+        }
+
+        private void btnDateSearch_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string searchDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
+                string xmlFilePath = Application.StartupPath;
+                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
+
+                seqList.Items.Clear();
+                int count = 0;
+
+                if (xmlFiles.Length > 0)
+                {
+                    foreach (string file in xmlFiles)
+                    {
+                        try
+                        {
+                            XElement root = XElement.Load(file);
+                            var results = root.Elements("TestResults");
+
+                            foreach (var result in results)
+                            {
+                                string timestamp = result.Element("Timestamp")?.Value;
+                                string barcode = result.Element("Barcode")?.Value;
+
+                                if (!string.IsNullOrEmpty(timestamp) && timestamp.StartsWith(searchDate))
+                                {
+                                    seqList.Items.Add(barcode);
+                                    count++;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (count > 0)
+                    {
+                        seqList.Items[0].Selected = true;
+                        seqList.Focus();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"{searchDate} 날짜에 대한 결과가 없습니다.", "검색 결과", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("XML 파일이 존재하지 않습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"날짜 검색 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnPJISearch_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string searchPji = txtPji.Text.Trim();
+
+                if (string.IsNullOrEmpty(searchPji))
+                {
+                    MessageBox.Show("검색할 PJI를 입력하세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                string xmlFilePath = Application.StartupPath;
+                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
+
+                seqList.Items.Clear();
+                int count = 0;
+
+                if (xmlFiles.Length > 0)
+                {
+                    foreach (string file in xmlFiles)
+                    {
+                        try
+                        {
+                            XElement root = XElement.Load(file);
+                            var results = root.Elements("TestResults");
+
+                            foreach (var result in results)
+                            {
+                                string barcode = result.Element("Barcode")?.Value;
+
+                                if (!string.IsNullOrEmpty(barcode) && barcode.Contains(searchPji))
+                                {
+                                    seqList.Items.Add(barcode);
+                                    count++;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (count > 0)
+                    {
+                        seqList.Items[0].Selected = true;
+                        seqList.Focus();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"{searchPji}에 대한 결과가 없습니다.", "검색 결과", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("XML 파일이 존재하지 않습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"PJI 검색 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

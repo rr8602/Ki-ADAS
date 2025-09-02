@@ -1,17 +1,23 @@
-﻿using System;
+﻿using Ki_ADAS.VEPBench;
+
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Ki_ADAS.VEPBench;
+using System.Windows.Forms;
 
 namespace Ki_ADAS
 {
     public class ADASProcess
     {
-        private VEPBenchClient _vepBenchClient;
+        private Frm_Main mainForm;
+        private Frm_Config config;
+        private VEPBenchClient vepClient;
+        private VEPBenchStatusZone statusZone;
+        private VEPBenchSynchroZone synchroZone;
         private int _currentStep = 0;
         private List<ADASProcessStep> _processSteps;
         private List<ADASProcessStep> _frontCameraSteps;
@@ -21,6 +27,9 @@ namespace Ki_ADAS
         private int _currentSensorStepIndex;
         private bool _isRunning = false;
         private Thread _processThread;
+        private DataRow selectedModel;
+        private string modelName;
+        private string barcodeValue;
 
         // 각도 측정값과 허용 범위 저장 변수
         private double _frontCameraAngle1; // Roll
@@ -87,9 +96,11 @@ namespace Ki_ADAS
 
         public ADASProcess() { }
 
-        public ADASProcess(VEPBenchClient vepBenchClient)
+        public ADASProcess(VEPBenchClient vepBenchClient, Frm_Config configForm, Frm_Main mainForm)
         {
-            _vepBenchClient = vepBenchClient ?? throw new ArgumentNullException(nameof(vepBenchClient));
+            this.config = configForm;
+            this.mainForm = mainForm;
+            vepClient = vepBenchClient ?? throw new ArgumentNullException(nameof(vepBenchClient));
             InitializeProcessSteps();
         }
 
@@ -103,20 +114,18 @@ namespace Ki_ADAS
                 1, "홈 포지션 및 초기화", "초기화", () => {
                     try
                     {
-                        var statusZone = _vepBenchClient.ReadStatusZone();
+                        var statusZone = vepClient.ReadStatusZone();
                         statusZone.StartCycle = 0;
                         statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Undefined;
-                        _vepBenchClient.WriteStatusZone(statusZone);
+                        vepClient.WriteStatusZone(statusZone);
 
-                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
 
                         // SynchroZone 초기화
                         for (int i = 0; i < synchroZone.Size; i++)
                             synchroZone.SetValue(i, 0);
 
-                        _vepBenchClient.WriteSynchroZone(synchroZone);
-
-
+                        vepClient.WriteSynchroZone(synchroZone);
 
                         NotifyProcessState("홈 포지션 및 초기화 완료", ProcessStateType.Info);
                         return true;
@@ -138,6 +147,28 @@ namespace Ki_ADAS
             // 3. 차량 감지 및 바코드 스캔 (시뮬레이션)
             _processSteps.Add(new ADASProcessStep(
                 3, "차량 감지 및 바코드 스캔", "바코드", () => {
+
+                    if (mainForm != null)
+                    {
+                        Random random = new Random();
+                        DataTable modelData = config.GetModelData();
+
+                        int randomIndex = random.Next(modelData.Rows.Count);
+                        selectedModel = modelData.Rows[randomIndex];
+                        modelName = selectedModel["Name"].ToString();
+                        barcodeValue = mainForm.SelectedBarcode;
+
+                        if (string.IsNullOrEmpty(barcodeValue))
+                        {
+                            MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+
+                        if (selectedModel == null)
+                        {
+                            MessageBox.Show($"선택된 모델 '{modelName}'에 대한 설정 정보를 찾을 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+
                     NotifyProcessState("차량 감지 및 바코드 스캔 완료", ProcessStateType.Info);
                     return true;
                 }));
@@ -147,9 +178,9 @@ namespace Ki_ADAS
                 4, "사이클 시작", "StartCycle", () => {
                     try
                     {
-                        var statusZone = _vepBenchClient.ReadStatusZone();
+                        var statusZone = vepClient.ReadStatusZone();
                         statusZone.StartCycle = 1;
-                        _vepBenchClient.WriteStatusZone(statusZone);
+                        vepClient.WriteStatusZone(statusZone);
                         NotifyProcessState("사이클 시작", ProcessStateType.Info);
                         return true;
                     }
@@ -165,12 +196,12 @@ namespace Ki_ADAS
                 5, "PJI 요청", "PJI", () => {
                     try
                     {
-                        var statusZone = _vepBenchClient.ReadStatusZone();
+                        var statusZone = vepClient.ReadStatusZone();
                         statusZone.StartCycle = 0;
                         statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Working;
-                        _vepBenchClient.WriteStatusZone(statusZone);
+                        vepClient.WriteStatusZone(statusZone);
 
-                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
 
                         if (isTest[0] == true)
                         {
@@ -191,7 +222,7 @@ namespace Ki_ADAS
                             synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 1);
                         }
 
-                        _vepBenchClient.WriteSynchroZone(synchroZone);
+                        vepClient.WriteSynchroZone(synchroZone);
 
                         NotifyProcessState("PJI 요청 및 타겟 선택", ProcessStateType.Info);
                         return true;
@@ -206,7 +237,7 @@ namespace Ki_ADAS
             // 6. VEP 상태 확인
             _processSteps.Add(new ADASProcessStep(
                 6, "VEP 상태 확인", "VEPStatus", () => {
-                    var statusZone = _vepBenchClient.ReadStatusZone();
+                    var statusZone = vepClient.ReadStatusZone();
 
                     if (statusZone.VepStatus == VEPBenchStatusZone.VepStatus_Working)
                     {
@@ -221,7 +252,7 @@ namespace Ki_ADAS
             // 7. 타겟(FrontCamera/RearRadar) 선택 및 테스트 포지션 이동
             _processSteps.Add(new ADASProcessStep(
                 7, "타겟 선택 및 테스트 포지션 이동", "타겟", () => {
-                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
                     string target = "알 수 없음";
 
                     if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
@@ -240,34 +271,34 @@ namespace Ki_ADAS
                 8, "센서별 보정/측정 단계", "SensorType", () =>
                 {
                     int sensorType = DetermineSensorType();
-                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
 
                     switch (sensorType)
                     {
                         case VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX:
                             synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
-                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            vepClient.WriteSynchroZone(synchroZone);
                             NotifyProcessState("전방 카메라 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
                             InitializeFrontCameraSteps();
                             _currentSensorSteps = _frontCameraSteps;
                             break;
                         case VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX:
                             synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
-                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            vepClient.WriteSynchroZone(synchroZone);
                             NotifyProcessState("우측 후방 레이더 타겟(VEP Synchro 52 = 1) 설정", ProcessStateType.Info);
                             InitializeRightRearRadarSteps();
                             _currentSensorSteps = _rightRearRadarSteps;
                             break;
                         case VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX:
                             synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX, 1);
-                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            vepClient.WriteSynchroZone(synchroZone);
                             NotifyProcessState("좌측 후방 레이더 타겟(VEP Synchro 54 = 1) 설정", ProcessStateType.Info);
                             InitializeLeftRearRadarSteps();
                             _currentSensorSteps = _leftRearRadarSteps;
                             break;
                         default:
                             synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
-                            _vepBenchClient.WriteSynchroZone(synchroZone);
+                            vepClient.WriteSynchroZone(synchroZone);
                             NotifyProcessState("기본값(전방 카메라) 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
                             InitializeFrontCameraSteps();
                             _currentSensorSteps = _frontCameraSteps;
@@ -282,7 +313,7 @@ namespace Ki_ADAS
             // 9. 결과 판정 및 완료
             _processSteps.Add(new ADASProcessStep(
                 99, "테스트 결과 판정 및 완료", "결과", () => {
-                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
                     int result = synchroZone.GetValue(1);
 
                     if (result == 20)
@@ -307,7 +338,7 @@ namespace Ki_ADAS
         {
             try
             {
-                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
 
                 if (synchroZone.GetValue(3) == 1)
                     return 3;
@@ -533,14 +564,14 @@ namespace Ki_ADAS
         {
             try
             {
-                if (_vepBenchClient == null)
+                if (vepClient == null)
                 {
                     NotifyProcessState(LanguageResource.GetMessage("VEPBenchNotInitialized"), ProcessStateType.Error);
 
                     return -1;
                 }
 
-                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => _vepBenchClient.ReadSynchroZone(start, count));
+                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
 
                 if (syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX ||
                     syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX ||
@@ -636,12 +667,12 @@ namespace Ki_ADAS
                 if (_isRunning)
                     return false;
 
-                if (_vepBenchClient == null)
+                if (vepClient == null)
                 {
-                    _vepBenchClient = new VEPBenchClient(ipAddress, port);
+                    vepClient = new VEPBenchClient(ipAddress, port);
                 }
 
-                _vepBenchClient.Connect();
+                vepClient.Connect();
 
                 _currentStep = 0;
                 _isRunning = true;
@@ -679,7 +710,7 @@ namespace Ki_ADAS
                     catch { }
                 }
 
-                _vepBenchClient.DisConnect();
+                vepClient.DisConnect();
 
                 NotifyProcessState(LanguageResource.GetMessage("ProcessStop"), ProcessStateType.Info);
             }

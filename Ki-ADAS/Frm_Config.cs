@@ -185,6 +185,9 @@ namespace Ki_ADAS
             _iniFile.WriteValue(CONFIG_SECTION, VEP_IP_KEY, TxtVepIp.Text);
             _iniFile.WriteValue(CONFIG_SECTION, VEP_PORT_KEY, TxtVepPort.Text);
 
+            Frm_Main.ipAddress = TxtVepIp.Text;
+            Frm_Main.port = int.Parse(TxtVepPort.Text);
+
             MessageBox.Show(LanguageResource.GetMessage("ConfigSaveSuccess"),
                 LanguageResource.GetMessage("Information"),
                 MessageBoxButtons.OK,

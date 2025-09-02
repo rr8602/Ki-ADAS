@@ -17,14 +17,14 @@ namespace Ki_ADAS
 {
     public partial class Frm_Main : Form
     {
-        private Frm_Mainfrm m_frmParent = null;
+        public Frm_Mainfrm m_frmParent = null;
         private Frm_VEP _vep;
         private Frm_Config _frmConfig;
         private VEPBenchClient _vepBenchClient;
         private ADASProcess _adasProcess;
         private IniFile _iniFile;
-        private string ipAddress;
-        private int port;
+        public static string ipAddress;
+        public static int port;
         private const string CONFIG_SECTION = "Network";
         private const string VEP_IP_KEY = "VepIp";
         private const string VEP_PORT = "VepPort";
@@ -33,6 +33,8 @@ namespace Ki_ADAS
         {
             InitializeComponent();
             InitializeComponents();
+
+            _adasProcess = new ADASProcess(_vepBenchClient, _frmConfig, this);
         }
 
         private void InitializeComponents()
@@ -47,6 +49,19 @@ namespace Ki_ADAS
             _frmConfig = new Frm_Config();
 
             BtnStop.Enabled = false;
+        }
+
+        public string SelectedBarcode
+        {
+            get
+            {
+                if (seqList.SelectedItems.Count > 0)
+                {
+                    return seqList.SelectedItems[0].Text;
+                }
+
+                return null;
+            }
         }
 
         public void SetParent(Frm_Mainfrm f)
@@ -73,6 +88,7 @@ namespace Ki_ADAS
                         foreach (var result in results)
                         {
                             string barcode = result.Element("Barcode")?.Value;
+                            string model = result.Element("Model")?.Value;
 
                             if (!string.IsNullOrEmpty(barcode))
                             {
@@ -89,7 +105,9 @@ namespace Ki_ADAS
 
                                 if (!isDuplicate)
                                 {
-                                    seqList.Items.Add(new ListViewItem(barcode));
+                                    ListViewItem item = new ListViewItem(barcode);
+                                    item.Tag = model;
+                                    seqList.Items.Add(item);
                                 }
                             }
                         }
@@ -114,7 +132,7 @@ namespace Ki_ADAS
 
                 string selectedBarcode = seqList.SelectedItems[0].Text;
 
-                /*_adasProcess = new ADASProcess(_vepBenchClient);
+                /*
                 _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
                 _adasProcess.InitializeProcessSteps();
 
@@ -152,8 +170,8 @@ namespace Ki_ADAS
                     if (MessageBox.Show("홈 포지션 시뮬레이터를 지금 실행하시겠습니까?",
                         "시뮬레이터 실행", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        HomePositionSimulator simulator = new HomePositionSimulator(_vepBenchClient, _frmConfig);
-                        simulator.ShowDialog();
+                        HomePositionSimulator simulator = new HomePositionSimulator(_vepBenchClient, _frmConfig, this);
+                        simulator.Show();
                     }
                 }
                 else
@@ -197,6 +215,21 @@ namespace Ki_ADAS
             {
                 AddLogMessage($"오류 발생: {ex.Message}");
             }*/
+        }
+
+        private void BtnRegister_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Register registerForm = new Register();
+                registerForm.ShowDialog();
+
+                LoadAllBarcodeFromXmlFiles();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void BtnStop_Click(object sender, EventArgs e)
@@ -287,7 +320,7 @@ namespace Ki_ADAS
                 }
 
                 _vepBenchClient = new VEPBenchClient(ipAddress, port);
-                _adasProcess = new ADASProcess(_vepBenchClient);
+                _adasProcess = new ADASProcess(_vepBenchClient, _frmConfig, this);
                 _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
 
                 bool success = _adasProcess.Start(ipAddress, port);

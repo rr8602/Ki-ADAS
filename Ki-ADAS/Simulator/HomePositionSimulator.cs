@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,6 +16,7 @@ namespace Ki_ADAS
 {
     public partial class HomePositionSimulator : Form
     {
+        private Frm_Main mainForm;
         private Frm_Config config;
         private VEPBenchClient vepClient;
         private VEPBenchStatusZone statusZone;
@@ -54,11 +56,13 @@ namespace Ki_ADAS
         private bool isTestPositionReady = false;
         private bool isCalibrationMode = false;
 
-        public HomePositionSimulator(VEPBenchClient client, Frm_Config configForm)
+        public HomePositionSimulator(VEPBenchClient client, Frm_Config configForm, Frm_Main mainForm)
         {
             InitializeComponent();
             vepClient = client;
-            config = configForm;
+            this.config = configForm;
+            this.mainForm = mainForm;
+            this.TopMost = false;
             InitializeCustomComponents();
             SetInitialState();
         }
@@ -170,7 +174,7 @@ namespace Ki_ADAS
 
         private void UpdateStatusPanels(int currentStep)
         {
-            // 순서도의 단계에 따라 패널 색상 업데이트
+            // 단계에 따라 패널 색상 업데이트
             pnlHomePosition.BackColor = (currentStep >= 1) ? Color.LightGreen : Color.LightGray;
             pnlTrafficLight.BackColor = (currentStep >= 2) ? Color.LightGreen : Color.LightGray;
             pnlVehicleEntrance.BackColor = (currentStep >= 3) ? Color.LightGreen : Color.LightGray;
@@ -192,13 +196,46 @@ namespace Ki_ADAS
 
         private void btnScanBarcode_Click(object sender, EventArgs e)
         {
-            // 바코드 스캔 시뮬레이션
-            Random random = new Random();
-            DataTable modelData = config.GetModelData();
-            int randomIndex = random.Next(modelData.Rows.Count);
-            selectedModel = modelData.Rows[randomIndex];
-            modelName = selectedModel["Name"].ToString();
-            barcodeValue = $"VIN{random.Next(10000, 99999)}";
+            if (mainForm != null)
+            {
+                Random random = new Random();
+                DataTable modelData = config.GetModelData();
+
+                int randomIndex = random.Next(modelData.Rows.Count);
+                selectedModel = modelData.Rows[randomIndex];
+                modelName = selectedModel["Name"].ToString();
+                barcodeValue = mainForm.SelectedBarcode;
+
+                if (string.IsNullOrEmpty(barcodeValue))
+                {
+                    MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                if (selectedModel == null)
+                {
+                    MessageBox.Show($"선택된 모델 '{modelName}'에 대한 설정 정보를 찾을 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            else
+            {
+                // 기존 랜덤 방식 유지 (mainForm이 없는 경우의 예외 처리)
+                Random random = new Random();
+                DataTable modelData = config.GetModelData();
+
+                if (modelData.Rows.Count == 0)
+                {
+                    MessageBox.Show("모델 데이터가 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                int randomIndex = random.Next(modelData.Rows.Count);
+                selectedModel = modelData.Rows[randomIndex];
+                modelName = selectedModel["Name"].ToString();
+                barcodeValue = $"VIN{random.Next(10000, 99999)}";
+            }
+
             lblStatus.Text = $"상태: 바코드 스캔 완료 - {barcodeValue}";
             isVehicleDetected = true;
             lblVehicleDetect.Text = "차량 감지 센서: 켜짐";
@@ -628,7 +665,6 @@ namespace Ki_ADAS
         private void btnDisplayResult_Click(object sender, EventArgs e)
         {
             string pji = barcodeValue;
-            DateTime meaDate = meaDateValue;
             double frontCameraAngle1 = synchroZone?.FrontCameraAngle1 ?? 0;
             double frontCameraAngle2 = synchroZone?.FrontCameraAngle2 ?? 0;
             double frontCameraAngle3 = synchroZone?.FrontCameraAngle3 ?? 0;
@@ -637,7 +673,6 @@ namespace Ki_ADAS
 
             var resultForm = new Frm_Result(
                     pji,
-                    meaDate,
                     frontCameraAngle1,
                     frontCameraAngle2,
                     frontCameraAngle3,

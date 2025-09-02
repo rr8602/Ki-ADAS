@@ -109,12 +109,10 @@ namespace Ki_ADAS
                     try
                     {
                         _tcpClient = new TcpClient();
-                        
-                        // 연결 타임아웃 설정
-                        var connectTask = Task.Run(() => _tcpClient.Connect(_ip, _port));
-                        bool completed = connectTask.Wait(5000); // 5초 타임아웃
-                        
-                        if (!completed)
+
+                        var connectTask = _tcpClient.ConnectAsync(_ip, _port);
+
+                        if (!connectTask.Wait(5000))
                         {
                             throw new TimeoutException("연결 시간이 초과되었습니다.");
                         }
@@ -292,7 +290,6 @@ namespace Ki_ADAS
                 PollStatusZone();
                 PollSynchroZone();
                 PollTransmissionZone();
-                PollReceptionZone();
             }
             catch (Exception ex)
             {
@@ -395,36 +392,20 @@ namespace Ki_ADAS
                             LogMessage($"Transmission Zone 요청 감지: FctCode={txZone.GetFctCodeString()}, PCNum={txZone.PCNum}");
                         }
 
-                        txZone.ExchStatus = 1; // 요청 없음 상태로 설정
+                        txZone.ExchStatus = 1; // TransmissionZone에 요청 없음 상태로 설정
+
+                        if (_lastReceptionZone != null)
+                        {
+                            _lastReceptionZone.ExchStatus = 2; // ReceptionZone에 응답 완료 상태로 설정
+                            ushort[] data = _lastReceptionZone.ToRegisters();
+                            WriteReceptionZone(data);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
                 LogMessage($"전송 영역 폴링 오류: {ex.Message}");
-            }
-        }
-
-        private void PollReceptionZone()
-        {
-            try
-            {
-                if (_lastReceptionZone != null)
-                {
-                    ushort[] data = _lastReceptionZone.ToRegisters();
-                    WriteReceptionZone(data);
-                    _lastReceptionZone.ExchStatus = 2; // 응답 완료 상태로 설정
-
-                    LogMessage($"수신 영역 응답 작성(Write): {string.Join(", ", data)}");
-                }
-                else
-                {
-                    LogMessage("수신 영역 응답 데이터가 없습니다.");
-                }
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"수신 영역 응답 작성(Write) 오류: {ex.Message}");
             }
         }
 
