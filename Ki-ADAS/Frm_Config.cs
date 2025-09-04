@@ -1,4 +1,5 @@
 ﻿using Ki_ADAS.VEPBench;
+using Ki_ADAS.DB;
 
 using System;
 using System.Collections.Generic;
@@ -26,11 +27,14 @@ namespace Ki_ADAS
         private const string LANGUAGE_SECTION = "Language";
 
         private SettingConfigDb db;
+        private ModelRepository _modelRepository;
 
-        public Frm_Config()
+        public Frm_Config(SettingConfigDb dbInstance)
         {
             InitializeComponent();
             InitializeConfig();
+            this.db = dbInstance;
+            _modelRepository = new ModelRepository(dbInstance);
         }
 
         public void SetParent(Frm_Mainfrm f)
@@ -49,9 +53,6 @@ namespace Ki_ADAS
         private void Frm_Config_Load(object sender, EventArgs e)
         {
             LoadSettings();
-            db = new SettingConfigDb();
-            db.SetupDatabaseConnection();
-
             LoadModelList();
         }
 
@@ -60,25 +61,12 @@ namespace Ki_ADAS
             try
             {
                 modelList.Items.Clear();
+                var models = _modelRepository.GetAllModels();
 
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
+                foreach (var model in models)
                 {
-                    con.Open();
-
-                    string query = "SELECT Name FROM Model ORDER BY Name";
-
-                    using (OleDbCommand cmd = new OleDbCommand(query, con))
-                    {
-                        using (OleDbDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                ListViewItem item = new ListViewItem(reader["Name"].ToString());
-
-                                modelList.Items.Add(item);
-                            }
-                        }
-                    }
+                    ListViewItem item = new ListViewItem(model.Name);
+                    modelList.Items.Add(item);
                 }
             }
             catch (Exception ex)
@@ -138,47 +126,7 @@ namespace Ki_ADAS
             }
         }
 
-        private bool IsDuplicateModelName(OleDbConnection con, string newModelName, string oldModelName = null)
-        {
-            try
-            {
-                string checkQuery;
-
-                if (string.IsNullOrEmpty(oldModelName))
-                {
-                    checkQuery = "SELECT COUNT(*) FROM Model WHERE Name = ?";
-                }
-                else
-                {
-                    checkQuery = "SELECT COUNT(*) FROM Model WHERE Name = ? AND Name <> ?";
-                }
-
-                using (OleDbCommand checkCmd = new OleDbCommand(checkQuery, con))
-                {
-                    checkCmd.Parameters.AddWithValue("Name", newModelName);
-
-                    if (!string.IsNullOrEmpty(oldModelName))
-                    {
-                        checkCmd.Parameters.AddWithValue("OldName", oldModelName);
-                    }
-
-                    int count = Convert.ToInt32(checkCmd.ExecuteScalar());
-
-                    return count > 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"중복 모델명 검사 중 오류: {ex.Message}");
-
-                return true;
-            }
-        }
-
-        private void BtnModelSave_Click(object sender, EventArgs e)
-        {
-            SaveModelData();
-        }
+        
 
         private void BtnConfigSave_Click(object sender, EventArgs e)
         {
@@ -222,186 +170,114 @@ namespace Ki_ADAS
             }
         }
 
+        
+
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            try
+            if (string.IsNullOrWhiteSpace(txtModel.Text))
             {
-                if (string.IsNullOrWhiteSpace(txtModel.Text))
-                {
-                    MessageBox.Show(LanguageResource.GetMessage("ModelNameRequired"),
-                        LanguageResource.GetMessage("Warning"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-
-                    return;
-                }
-
-                string newModelName = txtModel.Text.Trim();
-
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
-                {
-                    con.Open();
-
-                    if (IsDuplicateModelName(con, newModelName))
-                    {
-                        MessageBox.Show(LanguageResource.GetMessage("ModelNameAlreadyExists"),
-                            LanguageResource.GetMessage("Warning"),
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
-
-                        return;
-                    }
-
-                    OleDbTransaction transaction = con.BeginTransaction();
-
-                    try
-                    {
-                        string query = "INSERT INTO Model (Name) VALUES (@Name)";
-
-                        using (OleDbCommand cmd = new OleDbCommand(query, con, transaction))
-                        {
-                            cmd.Parameters.AddWithValue("@Name", txtModel.Text.Trim());
-
-                            int result = cmd.ExecuteNonQuery();
-
-                            if (result > 0)
-                            {
-                                transaction.Commit();
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelAddSuccess"),
-                                    LanguageResource.GetMessage("Information"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
-
-                                txtModel.Text = string.Empty;
-
-                                LoadModelList();
-                            }
-                            else
-                            {
-                                transaction.Rollback();
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelAddFailed"),
-                                    LanguageResource.GetMessage("Error"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-
-                        throw;
-                    }
-                }
+                MessageBox.Show(LanguageResource.GetMessage("ModelNameRequired"),
+                                LanguageResource.GetMessage("Warning"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception ex)
+
+            var newModel = new Model
             {
-                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
-                    LanguageResource.GetMessage("Error"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Name = txtModel.Text.Trim(),
+                Barcode = txtBarcode.Text.Trim(),
+                Wheelbase = ParseNullableDouble(txtWheelbase.Text),
+                Fr_Distance = ParseNullableDouble(txtDistance.Text),
+                Fr_Height = ParseNullableDouble(txtHeight.Text),
+                Fr_InterDistance = ParseNullableDouble(txtInterDistance.Text),
+                Fr_Htu = ParseNullableDouble(txtHtu.Text),
+                Fr_Htl = ParseNullableDouble(txtHtl.Text),
+                Fr_Ts = ParseNullableDouble(txtTs.Text),
+                Fr_AlignmentAxeOffset = ParseNullableDouble(txtOffset.Text),
+                Fr_Vv = ParseNullableDouble(txtVv.Text),
+                Fr_StCt = ParseNullableDouble(txtStCt.Text),
+                Fr_IsTest = chkIsFrontCameraTest.Checked,
+                R_X = ParseNullableDouble(txtRX.Text),
+                R_Y = ParseNullableDouble(txtRY.Text),
+                R_Z = ParseNullableDouble(txtRZ.Text),
+                R_Angle = ParseNullableDouble(txtRAngle.Text),
+                R_IsTest = chkIsRearRightRadar.Checked,
+                L_X = ParseNullableDouble(txtLX.Text),
+                L_Y = ParseNullableDouble(txtLY.Text),
+                L_Z = ParseNullableDouble(txtLZ.Text),
+                L_Angle = ParseNullableDouble(txtLAngle.Text),
+                L_IsTest = chkIsRearLeftRadar.Checked
+            };
+
+            if (_modelRepository.AddModel(newModel))
+            {
+                MessageBox.Show(LanguageResource.GetMessage("ModelAddSuccess"),
+                                LanguageResource.GetMessage("Information"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                txtModel.Text = string.Empty;
+                LoadModelList();
+                ClearAllFields();
             }
         }
 
         private void BtnModify_Click(object sender, EventArgs e)
         {
-            try
+            if (modelList.SelectedItems.Count == 0)
             {
-                if (string.IsNullOrWhiteSpace(txtModel.Text))
-                {
-                    MessageBox.Show(LanguageResource.GetMessage("ModelNameRequired"),
-                        LanguageResource.GetMessage("Warning"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-
-                    return;
-                }
-
-                if (modelList.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show(LanguageResource.GetMessage("PleaseSelectModel"),
-                        LanguageResource.GetMessage("Warning"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-
-                    return;
-                }
-
-                string oldModelName = modelList.SelectedItems[0].Text;
-                string newModelName = txtModel.Text.Trim();
-
-                if (oldModelName == newModelName)
-                {
-                    return;
-                }
-
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
-                {
-                    con.Open();
-
-                    if (IsDuplicateModelName(con, newModelName, oldModelName))
-                    {
-                        MessageBox.Show(LanguageResource.GetMessage("ModelNameAlreadyExists"),
-                            LanguageResource.GetMessage("Warning"),
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
-
-                        return;
-                    }
-
-                    OleDbTransaction transaction = con.BeginTransaction();
-
-                    try
-                    {
-                        string query = "UPDATE Model SET Name = ? WHERE Name = ?";
-
-                        using (OleDbCommand cmd = new OleDbCommand(query, con, transaction))
-                        {
-                            cmd.Parameters.AddWithValue("NewName", newModelName);
-                            cmd.Parameters.AddWithValue("OldName", oldModelName);
-
-                            int result = cmd.ExecuteNonQuery();
-                            
-                            if (result > 0)
-                            {
-                                transaction.Commit();
-
-                                modelList.SelectedItems[0].Text = newModelName;
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelUpdateSuccess"),
-                                    LanguageResource.GetMessage("Information"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
-
-                                LoadModelList();
-                            }
-                            else
-                            {
-                                transaction.Rollback();
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelUpdateFailed"),
-                                    LanguageResource.GetMessage("Error"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-
-                        throw;
-                    }
-                }
+                MessageBox.Show(LanguageResource.GetMessage("PleaseSelectModel"),
+                                LanguageResource.GetMessage("Warning"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                return;
             }
-            catch (Exception ex)
+
+            if (string.IsNullOrWhiteSpace(txtModel.Text))
             {
-                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
-                    LanguageResource.GetMessage("Error"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show(LanguageResource.GetMessage("ModelNameRequired"),
+                                LanguageResource.GetMessage("Warning"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                return;
+            }
+
+            string oldModelName = modelList.SelectedItems[0].Text;
+
+            var updatedModel = new Model
+            {
+                Name = txtModel.Text.Trim(),
+                Barcode = txtBarcode.Text.Trim(),
+                Wheelbase = ParseNullableDouble(txtWheelbase.Text),
+                Fr_Distance = ParseNullableDouble(txtDistance.Text),
+                Fr_Height = ParseNullableDouble(txtHeight.Text),
+                Fr_InterDistance = ParseNullableDouble(txtInterDistance.Text),
+                Fr_Htu = ParseNullableDouble(txtHtu.Text),
+                Fr_Htl = ParseNullableDouble(txtHtl.Text),
+                Fr_Ts = ParseNullableDouble(txtTs.Text),
+                Fr_AlignmentAxeOffset = ParseNullableDouble(txtOffset.Text),
+                Fr_Vv = ParseNullableDouble(txtVv.Text),
+                Fr_StCt = ParseNullableDouble(txtStCt.Text),
+                Fr_IsTest = chkIsFrontCameraTest.Checked,
+                R_X = ParseNullableDouble(txtRX.Text),
+                R_Y = ParseNullableDouble(txtRY.Text),
+                R_Z = ParseNullableDouble(txtRZ.Text),
+                R_Angle = ParseNullableDouble(txtRAngle.Text),
+                R_IsTest = chkIsRearRightRadar.Checked,
+                L_X = ParseNullableDouble(txtLX.Text),
+                L_Y = ParseNullableDouble(txtLY.Text),
+                L_Z = ParseNullableDouble(txtLZ.Text),
+                L_Angle = ParseNullableDouble(txtLAngle.Text),
+                L_IsTest = chkIsRearLeftRadar.Checked
+            };
+
+            if (_modelRepository.UpdateModel(updatedModel, oldModelName))
+            {
+                MessageBox.Show(LanguageResource.GetMessage("ModelUpdateSuccess"),
+                                LanguageResource.GetMessage("Information"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                LoadModelList();
             }
         }
 
@@ -430,53 +306,25 @@ namespace Ki_ADAS
                 if (result != DialogResult.Yes)
                     return;
 
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
+                if (_modelRepository.DeleteModel(modelName))
                 {
-                    con.Open();
-                    OleDbTransaction transaction = con.BeginTransaction();
+                    modelList.SelectedItems[0].Remove();
+                    txtModel.Text = string.Empty;
+                    ClearAllFields();
 
-                    try
-                    {
-                        string query = "DELETE FROM Model WHERE Name = ?";
+                    MessageBox.Show(LanguageResource.GetMessage("ModelDeleteSuccess"),
+                        LanguageResource.GetMessage("Information"),
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
 
-                        using (OleDbCommand cmd = new OleDbCommand(query, con, transaction))
-                        {
-                            cmd.Parameters.AddWithValue("Name", modelName);
-
-                            int rowsAffected = cmd.ExecuteNonQuery();
-
-                            if (rowsAffected > 0)
-                            {
-                                transaction.Commit();
-
-                                modelList.SelectedItems[0].Remove();
-                                txtModel.Text = string.Empty;
-                                ClearAllFields();
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelDeleteSuccess"),
-                                    LanguageResource.GetMessage("Information"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
-
-                                LoadModelList();
-                            }
-                            else
-                            {
-                                transaction.Rollback();
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelDeleteFailed"),
-                                    LanguageResource.GetMessage("Error"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-
-                        return;
-                    }
+                    LoadModelList();
+                }
+                else
+                {
+                    MessageBox.Show(LanguageResource.GetMessage("ModelDeleteFailed"),
+                        LanguageResource.GetMessage("Error"),
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
@@ -488,270 +336,13 @@ namespace Ki_ADAS
             }   
         }
 
-        private void modelList_MouseDoubleClick(object sender, MouseEventArgs e)
+        private double? ParseNullableDouble(string text)
         {
-            if (modelList.SelectedItems.Count > 0)
+            if (double.TryParse(text, out double result))
             {
-                string modelName = modelList.SelectedItems[0].Text;
-                txtModel.Text = modelName;
-
-                LoadModelDetails(modelName);
+                return result;
             }
-        }
-
-        private void SaveModelData()
-        {
-            try
-            {
-                string modelName = modelList.SelectedItems[0].Text;
-
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
-                {
-                    con.Open();
-
-                    OleDbTransaction transaction = con.BeginTransaction();
-
-                    try
-                    {
-                        string query = @"UPDATE Model SET
-                                        Barcode = ?,
-                                        Wheelbase = ?,
-                                        Fr_Distance = ?,
-                                        Fr_Height = ?,
-                                        Fr_InterDistance = ?,
-                                        Fr_Htu = ?,
-                                        Fr_Htl = ?,
-                                        Fr_Ts = ?,
-                                        Fr_AlignmentAxeOffset = ?,
-                                        Fr_Vv = ?,
-                                        Fr_StCt = ?,
-                                        Fr_IsTest = ?,
-                                        R_X = ?,
-                                        R_Y = ?,
-                                        R_Z = ?,
-                                        R_Angle = ?,
-                                        R_IsTest = ?,
-                                        L_X = ?,
-                                        L_Y = ?,
-                                        L_Z = ?,
-                                        L_Angle = ?,
-                                        L_IsTest = ?
-                                        WHERE Name = ?";
-
-                        using (OleDbCommand cmd = new OleDbCommand(query, con, transaction))
-                        {
-                            cmd.Parameters.AddWithValue("Barcode", txtBarcode.Text.Trim());
-                            cmd.Parameters.AddWithValue("Wheelbase", txtWheelbase.Text.Trim());
-
-                            cmd.Parameters.AddWithValue("Fr_Distance", txtDistance.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_Height", txtHeight.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_InterDistance", txtInterDistance.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_Htu", txtHtu.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_Htl", txtHtl.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_Ts", txtTs.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_AlignmentAxeOffset", txtOffset.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_Vv", txtVv.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_StCt", txtStCt.Text.Trim());
-                            cmd.Parameters.AddWithValue("Fr_IsTest", chkIsFrontCameraTest.Checked);
-
-                            cmd.Parameters.AddWithValue("R_X", txtRX.Text.Trim());
-                            cmd.Parameters.AddWithValue("R_Y", txtRY.Text.Trim());
-                            cmd.Parameters.AddWithValue("R_Z", txtRZ.Text.Trim());
-                            cmd.Parameters.AddWithValue("R_Angle", txtRAngle.Text.Trim());
-                            cmd.Parameters.AddWithValue("R_IsTest", chkIsRearRightRadar.Checked);
-
-                            cmd.Parameters.AddWithValue("L_X", txtLX.Text.Trim());
-                            cmd.Parameters.AddWithValue("L_Y", txtLY.Text.Trim());
-                            cmd.Parameters.AddWithValue("L_Z", txtLZ.Text.Trim());
-                            cmd.Parameters.AddWithValue("L_Angle", txtLAngle.Text.Trim());
-                            cmd.Parameters.AddWithValue("L_IsTest", chkIsRearLeftRadar.Checked);
-
-                            cmd.Parameters.AddWithValue("Name", modelName);
-
-                            int result = cmd.ExecuteNonQuery();
-
-                            if (result > 0)
-                            {
-                                transaction.Commit();
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelSaveSuccess"),
-                                    LanguageResource.GetMessage("Information"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                transaction.Rollback();
-
-                                MessageBox.Show(LanguageResource.GetMessage("ModelSaveFailed"),
-                                    LanguageResource.GetMessage("Error"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-
-                        throw;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
-                    LanguageResource.GetMessage("Error"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-        }
-
-        private void LoadModelDetails(string modelName)
-        {
-            try
-            {
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
-                {
-                    con.Open();
-
-                    string query = "SELECT * FROM Model WHERE Name = @Name";
-
-                    using (OleDbCommand cmd = new OleDbCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("@Name", modelName);
-
-                        using (OleDbDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                // 상단 필드
-                                txtBarcode.Text = GetSafeString(reader, "Barcode");
-                                txtWheelbase.Text = GetSafeString(reader, "Wheelbase");
-
-                                // Front Camera 섹션
-                                txtDistance.Text = GetSafeString(reader, "Fr_Distance");
-                                txtHeight.Text = GetSafeString(reader, "Fr_Height");
-                                txtInterDistance.Text = GetSafeString(reader, "Fr_InterDistance");
-                                txtHtu.Text = GetSafeString(reader, "Fr_Htu");
-                                txtHtl.Text = GetSafeString(reader, "Fr_Htl");
-                                txtTs.Text = GetSafeString(reader, "Fr_Ts");
-                                txtOffset.Text = GetSafeString(reader, "Fr_AlignmentAxeOffset");
-                                txtVv.Text = GetSafeString(reader, "Fr_Vv");
-                                txtStCt.Text = GetSafeString(reader, "Fr_StCt");
-                                chkIsFrontCameraTest.Checked = GetSafeBool(reader, "Fr_IsTest");
-
-                                // Rear Right Radar 섹션
-                                txtRX.Text = GetSafeString(reader, "R_X");
-                                txtRY.Text = GetSafeString(reader, "R_Y");
-                                txtRZ.Text = GetSafeString(reader, "R_Z");
-                                txtRAngle.Text = GetSafeString(reader, "R_Angle");
-                                chkIsRearRightRadar.Checked = GetSafeBool(reader, "R_IsTest");
-
-                                // Rear Left Radar 섹션
-                                txtLX.Text = GetSafeString(reader, "L_X");
-                                txtLY.Text = GetSafeString(reader, "L_Y");
-                                txtLZ.Text = GetSafeString(reader, "L_Z");
-                                txtLAngle.Text = GetSafeString(reader, "L_Angle");
-                                chkIsRearLeftRadar.Checked = GetSafeBool(reader, "L_IsTest");
-                            }
-                            else
-                            {
-                                ClearAllFields();
-
-                                MessageBox.Show(LanguageResource.GetMessage("NoModelDetailsFound"),
-                                    LanguageResource.GetMessage("Information"),
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
-                    LanguageResource.GetMessage("Error"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-        }
-
-        private string GetSafeString(OleDbDataReader reader, string columnName)
-        {
-            int ordinal;
-
-            try
-            {
-                ordinal = reader.GetOrdinal(columnName);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-
-            if (!reader.IsDBNull(ordinal))
-            {
-                return reader.GetValue(ordinal).ToString();
-            }
-
-            return string.Empty;
-        }
-
-        private bool GetSafeBool(OleDbDataReader reader, string columnName)
-        {
-            int ordinal;
-
-            try
-            {
-                ordinal = reader.GetOrdinal(columnName);
-            }
-            catch
-            {
-                return false;
-            }
-
-            if (!reader.IsDBNull(ordinal))
-            {
-                return Convert.ToBoolean(reader.GetValue(ordinal));
-            }
-
-            return false;
-        }
-
-        public DataTable GetModelData()
-        {
-            DataTable modelData = new DataTable();
-
-            try
-            {
-                if (db == null)
-                {
-                    db = new SettingConfigDb();
-                    db.SetupDatabaseConnection();
-                }
-
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
-                {
-                    con.Open();
-
-                    string query = "SELECT * FROM Model ORDER BY Name";
-
-                    using (OleDbDataAdapter adapter = new OleDbDataAdapter(query, con))
-                    {
-                        adapter.Fill(modelData);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
-                    LanguageResource.GetMessage("Error"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-
-            return modelData;
+            return null;
         }
 
         private void ClearAllFields()
@@ -785,6 +376,51 @@ namespace Ki_ADAS
             txtLZ.Text = string.Empty;
             txtLAngle.Text = string.Empty;
             chkIsRearLeftRadar.Checked = false;
+        }
+
+        private void modelList_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (modelList.SelectedItems.Count > 0)
+            {
+                string modelName = modelList.SelectedItems[0].Text;
+                txtModel.Text = modelName;
+
+                var selectedModel = _modelRepository.GetModelDetails(modelName);
+
+                if (selectedModel != null)
+                {
+                    txtBarcode.Text = selectedModel.Barcode;
+                    txtWheelbase.Text = selectedModel.Wheelbase?.ToString();
+                    txtDistance.Text = selectedModel.Fr_Distance?.ToString();
+                    txtHeight.Text = selectedModel.Fr_Height?.ToString();
+                    txtInterDistance.Text = selectedModel.Fr_InterDistance?.ToString();
+                    txtHtu.Text = selectedModel.Fr_Htu?.ToString();
+                    txtHtl.Text = selectedModel.Fr_Htl?.ToString();
+                    txtTs.Text = selectedModel.Fr_Ts?.ToString();
+                    txtOffset.Text = selectedModel.Fr_AlignmentAxeOffset?.ToString();
+                    txtVv.Text = selectedModel.Fr_Vv?.ToString();
+                    txtStCt.Text = selectedModel.Fr_StCt?.ToString();
+                    chkIsFrontCameraTest.Checked = selectedModel.Fr_IsTest;
+                    txtRX.Text = selectedModel.R_X?.ToString();
+                    txtRY.Text = selectedModel.R_Y?.ToString();
+                    txtRZ.Text = selectedModel.R_Z?.ToString();
+                    txtRAngle.Text = selectedModel.R_Angle?.ToString();
+                    chkIsRearRightRadar.Checked = selectedModel.R_IsTest;
+                    txtLX.Text = selectedModel.L_X?.ToString();
+                    txtLY.Text = selectedModel.L_Y?.ToString();
+                    txtLZ.Text = selectedModel.L_Z?.ToString();
+                    txtLAngle.Text = selectedModel.L_Angle?.ToString();
+                    chkIsRearLeftRadar.Checked = selectedModel.L_IsTest;
+                }
+                else
+                {
+                    ClearAllFields();
+                    MessageBox.Show(LanguageResource.GetMessage("NoModelDetailsFound"),
+                                        LanguageResource.GetMessage("Information"),
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Information);
+                }
+            }
         }
     }
 }

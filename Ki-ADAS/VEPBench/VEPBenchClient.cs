@@ -4,6 +4,7 @@ using Microsoft.Win32;
 
 using NModbus;
 using NModbus.Extensions;
+using NModbus.Extensions.Enron;
 
 using System;
 using System.Collections.Generic;
@@ -34,8 +35,6 @@ namespace Ki_ADAS
 
         public bool IsConnected => _isConnected && _tcpClient != null && _tcpClient.Connected;
 
-        private VEPBenchProcessor _processor = new VEPBenchProcessor();
-
         // 연결 실패 시 재시도 설정
         private const int MaxRetryCount = 3;
         private const int RetryDelayMs = 1000;
@@ -44,11 +43,7 @@ namespace Ki_ADAS
         private CancellationTokenSource _cancellationTokenSouce = null;
         private int _pollingIntervalMs = 1000;
 
-        // 마지막으로 읽은 Zone 값
-        private VEPBenchStatusZone _lastStatusZone = null;
-        private VEPBenchSynchroZone _lastSynchroZone = null;
-        private VEPBenchTransmissionZone _lastTransmissionZone = null;
-        private VEPBenchReceptionZone _lastReceptionZone = null;
+        private VEPBenchDataManager _dataManager;
 
         // 폴링 주기 설정
         public int PollingIntervalMs
@@ -71,6 +66,7 @@ namespace Ki_ADAS
         {
             _ip = ip;
             _port = port;
+            _dataManager = VEPBenchDataManager.Instance;
         }
 
         public void InitializeAndReadDescriptionZone()
@@ -81,7 +77,7 @@ namespace Ki_ADAS
                     Connect();
 
                 var descriptionZone = ReadDescriptionZone();
-                OnDescriptionZoneRead(descriptionZone);
+                OnDescriptionZoneRead();
 
                 LogMessage("Description Zone 초기 읽기 완료");
             }
@@ -209,6 +205,7 @@ namespace Ki_ADAS
 
                 try
                 {
+                    InitializeAndReadDescriptionZone();
                     PollAllZones();
 
                     while (!token.IsCancellationRequested)
@@ -220,7 +217,6 @@ namespace Ki_ADAS
 
                         if (IsConnected)
                         {
-                            InitializeAndReadDescriptionZone();
                             PollAllZones();
                         }
                         else
@@ -287,9 +283,38 @@ namespace Ki_ADAS
             try
             {
                 PollValidityIndicator();
-                PollStatusZone();
-                PollSynchroZone();
-                PollTransmissionZone();
+                _dataManager.UpdateAllZonesFromRegisters(ReadAllRegisters);
+
+                if (_dataManager.DescriptionZone.IsChanged)
+                {
+                    OnDescriptionZoneRead();
+                    _dataManager.DescriptionZone.ResetChangedState();
+                }
+
+                if (_dataManager.StatusZone.IsChanged)
+                {
+                    OnStatusZoneChanged();
+                    _dataManager.StatusZone.ResetChangedState();
+                }
+
+                if (_dataManager.SynchroZone.IsChanged)
+                {
+                    OnSynchroZoneChanged();
+                    _dataManager.SynchroZone.ResetChangedState();
+                }
+
+                if (_dataManager.TransmissionZone.IsChanged)
+                {
+                    OnTransmissionZoneChanged();
+                    _dataManager.TransmissionZone.ResetChangedState();
+                    ProcessTransmissionRequest();
+                }
+
+                if (_dataManager.ReceptionZone.IsChanged)
+                {
+                    OnReceptionZoneChanged();
+                    _dataManager.ReceptionZone.ResetChangedState();
+                }
             }
             catch (Exception ex)
             {
@@ -314,99 +339,11 @@ namespace Ki_ADAS
             }
         }
 
-        private void PollStatusZone()
+        private ushort[] ReadAllRegisters(int address, int count)
         {
-            try
-            {
-                var statusZone = ReadStatusZone();
+            CheckConnection();
 
-                bool isChanged = _lastStatusZone == null ||
-                    _lastStatusZone.VepStatus != statusZone.VepStatus ||
-                    _lastStatusZone.VepCycleInterruption != statusZone.VepCycleInterruption ||
-                    _lastStatusZone.VepCycleEnd != statusZone.VepCycleEnd;
-
-                if (isChanged)
-                {
-                    _lastStatusZone = statusZone;
-                    OnStatusZoneChanged(statusZone);
-                    LogMessage($"Status Zone 변경 감지: VepStatus={statusZone.GetVepStatusString()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"상태 영역 폴링 오류: {ex.Message}");
-            }
-        }
-
-        private void PollSynchroZone()
-        {
-            try
-            {
-                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => ReadSynchroZone(start, count));
-
-                bool isChanged = _lastSynchroZone == null ||
-                    _lastSynchroZone.FrontCameraAngle1 != synchroZone.FrontCameraAngle1 ||
-                    _lastSynchroZone.FrontCameraAngle2 != synchroZone.FrontCameraAngle2 ||
-                    _lastSynchroZone.FrontCameraAngle3 != synchroZone.FrontCameraAngle3 ||
-                    _lastSynchroZone.RearRightRadarAngle != synchroZone.RearRightRadarAngle ||
-                    _lastSynchroZone.RearLeftRadarAngle != synchroZone.RearLeftRadarAngle;
-
-                if (isChanged)
-                {
-                    _lastSynchroZone = synchroZone;
-                    OnSynchroZoneChanged(synchroZone);
-                    LogMessage($"동기화 영역 변경 감지: FrontCameraAngle (Roll) = {synchroZone.FrontCameraAngle1}, " +
-                        $"FrontCameraAngle (Azimuth) ={ synchroZone.FrontCameraAngle2}, " +
-                        $"FrontCameraAngle (Elevation) ={synchroZone.FrontCameraAngle3}, " +
-                        $"RearRightRadarAngle={synchroZone.RearRightRadarAngle}, " +
-                        $"RearLeftRadarAngle={synchroZone.RearLeftRadarAngle}");
-                }
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"동기화 영역 폴링 오류: {ex.Message}");
-            }
-        }
-
-        private void PollTransmissionZone()
-        {
-            try
-            {
-                var txZone = ReadTransmissionZone();
-
-                // 요청 상태가 2(요청 가능)인 경우에만 처리
-                if (txZone.ExchStatus == 2)
-                {
-                    bool isChanged = _lastTransmissionZone == null ||
-                    _lastTransmissionZone.AddTzSize != txZone.AddTzSize ||
-                    _lastTransmissionZone.ExchStatus != txZone.ExchStatus ||
-                    !_lastTransmissionZone.Data.SequenceEqual(txZone.Data);
-
-                    if (isChanged)
-                    {
-                        _lastTransmissionZone = txZone;
-                        OnTransmissionZoneChanged(txZone);
-
-                        if (txZone.IsRequest)
-                        {
-                            LogMessage($"Transmission Zone 요청 감지: FctCode={txZone.GetFctCodeString()}, PCNum={txZone.PCNum}");
-                        }
-
-                        txZone.ExchStatus = 1; // TransmissionZone에 요청 없음 상태로 설정
-
-                        if (_lastReceptionZone != null)
-                        {
-                            _lastReceptionZone.ExchStatus = 2; // ReceptionZone에 응답 완료 상태로 설정
-                            ushort[] data = _lastReceptionZone.ToRegisters();
-                            WriteReceptionZone(data);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"전송 영역 폴링 오류: {ex.Message}");
-            }
+            return _modbusMaster.ReadHoldingRegisters(1, (ushort)address, (ushort)count);
         }
 
         public ushort ReadValidityIndicator()
@@ -435,17 +372,14 @@ namespace Ki_ADAS
 
             try
             {
-                const ushort descriptionZoneStartAddress = 0;
-                const ushort descriptionZoneLength = 18;
+                ushort[] registers = _modbusMaster.ReadHoldingRegisters(1, _dataManager.DescriptionZone.ValidityIndicator, _dataManager.DescriptionZone.Length);
 
-                ushort[] registers = _modbusMaster.ReadHoldingRegisters(1, descriptionZoneStartAddress, descriptionZoneLength);
+                _dataManager.DescriptionZone.FromRegisters(registers);
 
-                var descriptionZone = VEPBenchDescriptionZone.FromRegisters(registers);
+                LogMessage($"Description Zone 읽기 성공: ValidityIndicator={_dataManager.DescriptionZone.ValidityIndicator}, " +
+                  $"StatusZoneAddr={_dataManager.DescriptionZone.StatusZoneAddr}, StatusZoneSize={_dataManager.DescriptionZone.StatusZoneSize}");
 
-                LogMessage($"Description Zone 읽기 성공: ValidityIndicator={descriptionZone.ValidityIndicator}, " +
-                  $"StatusZoneAddr={descriptionZone.StatusZoneAddr}, StatusZoneSize={descriptionZone.StatusZoneSize}");
-
-                return descriptionZone;
+                return _dataManager.DescriptionZone;
             }
             catch (Exception ex)
             {
@@ -472,206 +406,25 @@ namespace Ki_ADAS
             }
         }
 
-        public VEPBenchStatusZone ReadStatusZone()
+        public void WriteStatusZone()
         {
             CheckConnection();
 
             try
             {
-                ushort[] registers = _modbusMaster.ReadHoldingRegisters(1, Addr_StatusZone, 6);
-                var statusZone = VEPBenchStatusZone.FromRegisters(registers);
-
-                LogMessage($"Status Zone 읽기 성공: VepStatus={statusZone.GetVepStatusString()}, " +
-                  $"StartCycle={statusZone.StartCycle}, " +
-                  $"VepCycleEnd={statusZone.VepCycleEnd}, " +
-                  $"BenchCycleEnd={statusZone.BenchCycleEnd}");
-
-                return statusZone;
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"상태 영역 읽기 오류: {ex.Message}");
-                throw;
-            }
-        }
-
-        public void WriteStatusZone(VEPBenchStatusZone statusZone)
-        {
-            CheckConnection();
-
-            try
-            {
-                ushort[] registers = statusZone.ToRegisters();
+                ushort[] registers = _dataManager.StatusZone.ToRegisters();
                 _modbusMaster.WriteMultipleRegisters(1, Addr_StatusZone, registers);
 
-                LogMessage($"Status Zone 쓰기 성공: VepStatus={statusZone.GetVepStatusString()}, " +
-                 $"StartCycle={statusZone.StartCycle}, " +
-                 $"VepCycleEnd={statusZone.VepCycleEnd}, " +
-                 $"BenchCycleEnd={statusZone.BenchCycleEnd}");
+                LogMessage($"Status Zone 쓰기 성공: VepStatus={_dataManager.StatusZone.GetVepStatusString()}, " +
+                 $"StartCycle={_dataManager.StatusZone.StartCycle}, " +
+                 $"VepCycleEnd={_dataManager.StatusZone.VepCycleEnd}, " +
+                 $"BenchCycleEnd={_dataManager.StatusZone.BenchCycleEnd}");
             }
             catch (Exception ex)
             {
                 LogMessage($"상태 영역 쓰기 오류: {ex.Message}");
                 throw;
             }
-        }
-
-        // Bench -> VEP에 응답 Write
-        public void WriteReceptionZone(ushort[] data)
-        {
-            CheckConnection();
-
-            try
-            {
-                _modbusMaster.WriteMultipleRegisters(1, Addr_ReceptionZone, data);
-                LogMessage($"수신 영역 쓰기: {string.Join(", ", data)}");
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"수신 영역 쓰기 오류: {ex.Message}");
-                throw;
-            }
-        }
-
-        // VEP -> Bench에 요청 Read
-        public VEPBenchTransmissionZone ReadTransmissionZone(int length = 20)
-        {
-            CheckConnection();
-
-            try
-            {
-                var registers = _modbusMaster.ReadHoldingRegisters(1, Addr_TransmissionZone, (ushort)length);
-                var transmissionZone = VEPBenchTransmissionZone.FromRegisters(registers);
-
-                LogMessage($"전송 영역 읽기 성공: " +
-                  $"AddTSize={transmissionZone.AddTzSize}, " +
-                  $"ExchStatus={transmissionZone.ExchStatus}, " +
-                  $"FctCode={transmissionZone.FctCode}, " +
-                  $"PCNum={transmissionZone.PCNum}, " +
-                  $"DataSize={transmissionZone.Data.Length}");
-
-                return transmissionZone;
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"전송 영역 읽기 오류: {ex.Message}");
-                throw;
-            }
-        }
-
-        // VEP가 Bench의 ReceptionZone을 읽어야 하는건데, 이 함수는 차후에 삭제 가능성 있음
-        public VEPBenchReceptionZone ReadReceptionZone(int length = 20)
-        {
-            CheckConnection();
-
-            try
-            {
-                ushort[] registers = _modbusMaster.ReadHoldingRegisters(1, Addr_ReceptionZone, (ushort)length);
-                var receptionZone = VEPBenchReceptionZone.FromRegisters(registers);
-
-                LogMessage($"수신 영역 읽기 성공: " +
-                  $"AddReSize={receptionZone.AddReSize}, " +
-                  $"ExchStatus={receptionZone.ExchStatus}, " +
-                  $"DataSize={receptionZone.Data.Length}");
-
-                return receptionZone;
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"수신 영역 읽기 오류: {ex.Message}");
-                throw;
-            }
-        }
-
-        protected virtual void OnDescriptionZoneRead(VEPBenchDescriptionZone descriptionZone)
-        {
-            DescriptionZoneRead?.Invoke(this, descriptionZone);
-        }
-
-        protected virtual void OnStatusZoneChanged(VEPBenchStatusZone statusZone)
-        {
-            StatusZoneChanged?.Invoke(this, statusZone);
-        }
-
-        protected virtual void OnSynchroZoneChanged(VEPBenchSynchroZone synchroZone)
-        {
-            SynchroZoneChanged?.Invoke(this, synchroZone);
-        }
-
-        protected virtual void OnTransmissionZoneChanged(VEPBenchTransmissionZone transmissionZone)
-        {
-            TransmissionZoneChanged?.Invoke(this, transmissionZone);
-        }
-
-        protected virtual void OnReceptionZoneChanged(VEPBenchReceptionZone receptionZone)
-        {
-            ReceptionZoneChanged?.Invoke(this, receptionZone);
-        }
-
-        // Test
-        public void RunBenchRoop()
-        {
-            CheckConnection();
-            try
-            {
-                // 1. VEP 정상동작 확인
-                LogMessage("VEP 정상동작 확인 중...");
-                if (ReadValidityIndicator() != 1)
-                {
-                    LogMessage("VEP 소프트웨어가 준비되지 않았습니다.");
-                    return;
-                }
-
-                // 2. Bench에서 사이클 Start (1초 후 0으로 복귀)
-                LogMessage("사이클 시작 신호 전송...");
-                WriteStartCycle(true);
-                Thread.Sleep(1000);
-                WriteStartCycle(false);
-
-                LogMessage("StartCycle 신호 전송 완료");
-
-                // 3. TransmissionZone 폴링하면서 요청 대기
-                LogMessage("전송 영역 폴링 시작...");
-                int pollCount = 0;
-                const int maxPollCount = 30; // 최대 30초 대기
-                
-                while (pollCount < maxPollCount)
-                {
-                    var tx = ReadTransmissionZone();
-
-                    /*if (IsVEPRequestAvailable(tx))
-                    {
-                        LogMessage("유효한 VEP 요청 감지");
-                        var request = new VEPBenchRequest(tx);
-                        LogMessage($"요청 타입: {request.RequestType}, 함수 코드: {request.FctCode}");
-                        
-                        var response = _processor.Process(request);
-                        LogMessage($"응답 생성 완료: {string.Join(", ", response.Data)}");
-
-                        WriteReceptionZone(response.Data);
-                        LogMessage("응답 전송 완료");
-                        return;
-                    }*/
-
-                    LogMessage($"폴링 {++pollCount}/{maxPollCount}: 유효한 요청 없음");
-                    Thread.Sleep(1000);
-                }
-                
-                LogMessage("최대 폴링 횟수 초과: 유효한 요청을 받지 못했습니다.");
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"벤치 루프 실행 오류: {ex.Message}");
-                throw;
-            }
-        }
-
-        // 요청 감지: ExchStatus가 2일 때
-        private bool IsVEPRequestAvailable(ushort[] tx)
-        {
-            bool result = tx != null && tx.Length > 3 && tx[3] == 2;
-            LogMessage($"요청 상태 확인: {(result ? "유효한 요청 있음" : "유효한 요청 없음")}");
-            return result;
         }
 
         public ushort[] ReadSynchroZone(int startIndex, int count)
@@ -697,13 +450,13 @@ namespace Ki_ADAS
             }
         }
 
-        public void WriteSynchroZone(VEPBenchSynchroZone s)
+        public void WriteSynchroZone()
         {
             CheckConnection();
 
             try
             {
-                ushort[] arr = s.ToUshortArray();
+                ushort[] arr = _dataManager.SynchroZone.ToRegisters();
 
                 if (arr.Length >= VEPBenchSynchroZone.SYNCHRO_SIZE_PART1)
                 {
@@ -719,16 +472,73 @@ namespace Ki_ADAS
                     _modbusMaster.WriteMultipleRegisters(1, (ushort)(Addr_SynchroZone + VEPBenchSynchroZone.SYNCHRO_SIZE_PART1), part2);
                 }
 
-                LogMessage($"동기화 영역 쓰기: FrontCameraAngle (Roll) = {s.FrontCameraAngle1}, " +
-                        $"FrontCameraAngle (Azimuth) ={s.FrontCameraAngle2}, " +
-                        $"FrontCameraAngle (Elevation) ={s.FrontCameraAngle3}, " +
-                        $"RearRightRadarAngle={s.RearRightRadarAngle}, " +
-                        $"RearLeftRadarAngle={s.RearLeftRadarAngle}");
+                LogMessage($"동기화 영역 쓰기: FrontCameraAngle (Roll) = {_dataManager.SynchroZone.FrontCameraAngle1}, " +
+                        $"FrontCameraAngle (Azimuth) ={_dataManager.SynchroZone.FrontCameraAngle2}, " +
+                        $"FrontCameraAngle (Elevation) ={_dataManager.SynchroZone.FrontCameraAngle3}, " +
+                        $"RearRightRadarAngle={_dataManager.SynchroZone.RearRightRadarAngle}, " +
+                        $"RearLeftRadarAngle={_dataManager.SynchroZone.RearLeftRadarAngle}");
             }
             catch (Exception ex)
             {
                 LogMessage($"동기화 영역 쓰기 오류: {ex.Message}");
                 throw;
+            }
+        }
+
+        // Bench -> VEP에 응답 Write
+        public void WriteReceptionZone()
+        {
+            CheckConnection();
+
+            try
+            {
+                ushort[] data = _dataManager.ReceptionZone.ToRegisters();
+                _modbusMaster.WriteMultipleRegisters(1, Addr_ReceptionZone, data);
+                LogMessage($"수신 영역 쓰기: {string.Join(", ", data)}");
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"수신 영역 쓰기 오류: {ex.Message}");
+                throw;
+            }
+        }
+
+        public void WriteTransmissionZone()
+        {
+            CheckConnection();
+
+            try
+            {
+                ushort[] registers = _dataManager.TransmissionZone.ToRegisters();
+                _modbusMaster.WriteMultipleRegisters(1, Addr_TransmissionZone, registers);
+
+                LogMessage($"전송 영역 쓰기 성공: " +
+                  $"AddTSize={_dataManager.TransmissionZone.AddTzSize}, " +
+                  $"ExchStatus={_dataManager.TransmissionZone.ExchStatus}, " +
+                  $"FctCode={_dataManager.TransmissionZone.FctCode}, " +
+                  $"PCNum={_dataManager.TransmissionZone.PCNum}, " +
+                  $"DataSize={_dataManager.TransmissionZone.Data.Length}");
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"전송 영역 쓰기 오류: {ex.Message}");
+                throw;
+            }
+        }
+
+        private void ProcessTransmissionRequest()
+        {
+            var txZone = _dataManager.TransmissionZone;
+
+            if (txZone.ExchStatus == VEPBenchTransmissionZone.ExchStatus_Request)
+            {
+                LogMessage($"Transmission Zone 요청 감지: FctCode={txZone.GetFctCodeString()}, PCNum={txZone.PCNum}");
+
+                txZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
+                WriteTransmissionZone();
+
+                _dataManager.ReceptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Ready;
+                WriteReceptionZone();
             }
         }
 
@@ -740,6 +550,31 @@ namespace Ki_ADAS
                 LogMessage("Modbus 서버에 연결되어 있지 않습니다. 연결 시도 중...");
                 Connect();
             }
+        }
+
+        protected virtual void OnDescriptionZoneRead()
+        {
+            DescriptionZoneRead?.Invoke(this, _dataManager.DescriptionZone);
+        }
+
+        protected virtual void OnStatusZoneChanged()
+        {
+            StatusZoneChanged?.Invoke(this, _dataManager.StatusZone);
+        }
+
+        protected virtual void OnSynchroZoneChanged()
+        {
+            SynchroZoneChanged?.Invoke(this, _dataManager.SynchroZone);
+        }
+
+        protected virtual void OnTransmissionZoneChanged()
+        {
+            TransmissionZoneChanged?.Invoke(this, _dataManager.TransmissionZone);
+        }
+
+        protected virtual void OnReceptionZoneChanged()
+        {
+            ReceptionZoneChanged?.Invoke(this, _dataManager.ReceptionZone);
         }
 
         // 로깅

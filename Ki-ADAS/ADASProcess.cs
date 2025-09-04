@@ -1,4 +1,5 @@
-﻿using Ki_ADAS.VEPBench;
+﻿using Ki_ADAS.DB;
+using Ki_ADAS.VEPBench;
 
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,12 @@ using System.Windows.Forms;
 
 namespace Ki_ADAS
 {
-    public class ADASProcess
+    public class ADASProcess : VEPBenchDataManager
     {
         private Frm_Main mainForm;
-        private Frm_Config config;
         private VEPBenchClient vepClient;
-        private VEPBenchStatusZone statusZone;
-        private VEPBenchSynchroZone synchroZone;
+        private VEPBenchDataManager _dataManager;
+        private ModelRepository _modelRepository;
         private int _currentStep = 0;
         private List<ADASProcessStep> _processSteps;
         private List<ADASProcessStep> _frontCameraSteps;
@@ -27,7 +27,7 @@ namespace Ki_ADAS
         private int _currentSensorStepIndex;
         private bool _isRunning = false;
         private Thread _processThread;
-        private DataRow selectedModel;
+        private Model selectedModel;
         private string modelName;
         private string barcodeValue;
 
@@ -96,11 +96,14 @@ namespace Ki_ADAS
 
         public ADASProcess() { }
 
-        public ADASProcess(VEPBenchClient vepBenchClient, Frm_Config configForm, Frm_Main mainForm)
+        public ADASProcess(VEPBenchClient vepBenchClient, ModelRepository modelRepository, Frm_Main mainForm)
         {
-            this.config = configForm;
+            this._modelRepository = modelRepository;
             this.mainForm = mainForm;
+            _dataManager = VEPBenchDataManager.Instance;
+            _dataManager.SynchroZone = _dataManager.RefreshSynchroZoneFromVEP(vepClient);
             vepClient = vepBenchClient ?? throw new ArgumentNullException(nameof(vepBenchClient));
+
             InitializeProcessSteps();
         }
 
@@ -114,18 +117,15 @@ namespace Ki_ADAS
                 1, "홈 포지션 및 초기화", "초기화", () => {
                     try
                     {
-                        var statusZone = vepClient.ReadStatusZone();
-                        statusZone.StartCycle = 0;
-                        statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Undefined;
-                        vepClient.WriteStatusZone(statusZone);
-
-                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
+                        _dataManager.StatusZone.StartCycle = 0;
+                        _dataManager.StatusZone.VepStatus = VEPBenchStatusZone.VepStatus_Undefined;
+                        vepClient.WriteStatusZone();
 
                         // SynchroZone 초기화
-                        for (int i = 0; i < synchroZone.Size; i++)
-                            synchroZone.SetValue(i, 0);
+                        for (int i = 0; i < _dataManager.SynchroZone.Size; i++)
+                            _dataManager.SynchroZone.SetValue(i, 0);
 
-                        vepClient.WriteSynchroZone(synchroZone);
+                        vepClient.WriteSynchroZone();
 
                         NotifyProcessState("홈 포지션 및 초기화 완료", ProcessStateType.Info);
                         return true;
@@ -150,22 +150,18 @@ namespace Ki_ADAS
 
                     if (mainForm != null)
                     {
-                        Random random = new Random();
-                        DataTable modelData = config.GetModelData();
-
-                        int randomIndex = random.Next(modelData.Rows.Count);
-                        selectedModel = modelData.Rows[randomIndex];
-                        modelName = selectedModel["Name"].ToString();
-                        barcodeValue = mainForm.SelectedBarcode;
-
-                        if (string.IsNullOrEmpty(barcodeValue))
-                        {
-                            MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
+                        selectedModel = mainForm.SelectedModelInfo;
 
                         if (selectedModel == null)
                         {
                             MessageBox.Show($"선택된 모델 '{modelName}'에 대한 설정 정보를 찾을 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
+                        barcodeValue = selectedModel.Barcode;
+
+                        if (string.IsNullOrEmpty(barcodeValue))
+                        {
+                            MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
 
@@ -178,9 +174,9 @@ namespace Ki_ADAS
                 4, "사이클 시작", "StartCycle", () => {
                     try
                     {
-                        var statusZone = vepClient.ReadStatusZone();
-                        statusZone.StartCycle = 1;
-                        vepClient.WriteStatusZone(statusZone);
+                        _dataManager.StatusZone.StartCycle = 1;
+                        _dataManager.StatusZone.VepStatus = VEPBenchStatusZone.VepStatus_Working;
+                        vepClient.WriteStatusZone();
                         NotifyProcessState("사이클 시작", ProcessStateType.Info);
                         return true;
                     }
@@ -196,33 +192,26 @@ namespace Ki_ADAS
                 5, "PJI 요청", "PJI", () => {
                     try
                     {
-                        var statusZone = vepClient.ReadStatusZone();
-                        statusZone.StartCycle = 0;
-                        statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Working;
-                        vepClient.WriteStatusZone(statusZone);
-
-                        var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-
                         if (isTest[0] == true)
                         {
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 1);
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 1);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
                         }
                         else if (isTest[1] == true)
                         {
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 1);
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 1);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
                         }
                         else if (isTest[2] == true)
                         {
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
-                            synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 1);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 1);
                         }
 
-                        vepClient.WriteSynchroZone(synchroZone);
+                        vepClient.WriteSynchroZone();
 
                         NotifyProcessState("PJI 요청 및 타겟 선택", ProcessStateType.Info);
                         return true;
@@ -237,9 +226,7 @@ namespace Ki_ADAS
             // 6. VEP 상태 확인
             _processSteps.Add(new ADASProcessStep(
                 6, "VEP 상태 확인", "VEPStatus", () => {
-                    var statusZone = vepClient.ReadStatusZone();
-
-                    if (statusZone.VepStatus == VEPBenchStatusZone.VepStatus_Working)
+                    if (_dataManager.StatusZone.VepStatus == VEPBenchStatusZone.VepStatus_Working)
                     {
                         NotifyProcessState("VEP 작업 중", ProcessStateType.Info);
                         return true;
@@ -252,14 +239,13 @@ namespace Ki_ADAS
             // 7. 타겟(FrontCamera/RearRadar) 선택 및 테스트 포지션 이동
             _processSteps.Add(new ADASProcessStep(
                 7, "타겟 선택 및 테스트 포지션 이동", "타겟", () => {
-                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
                     string target = "알 수 없음";
 
-                    if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
+                    if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
                         target = "전방 카메라";
-                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
+                    else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
                         target = "우측 후방 레이더";
-                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
+                    else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
                         target = "좌측 후방 레이더";
 
                     NotifyProcessState($"{target} 타겟 선택 및 테스트 포지션 이동", ProcessStateType.Info);
@@ -267,54 +253,53 @@ namespace Ki_ADAS
                 }));
 
             // 8. 센서별 보정/측정 단계
-            _processSteps.Add(new ADASProcessStep(
-                8, "센서별 보정/측정 단계", "SensorType", () =>
-                {
-                    int sensorType = DetermineSensorType();
-                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
+            //_processSteps.Add(new ADASProcessStep(
+            //    8, "센서별 보정/측정 단계", "SensorType", () =>
+            //    {
+            //        int sensorType = DetermineSensorType();
 
-                    switch (sensorType)
-                    {
-                        case VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX:
-                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
-                            vepClient.WriteSynchroZone(synchroZone);
-                            NotifyProcessState("전방 카메라 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
-                            InitializeFrontCameraSteps();
-                            _currentSensorSteps = _frontCameraSteps;
-                            break;
-                        case VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX:
-                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
-                            vepClient.WriteSynchroZone(synchroZone);
-                            NotifyProcessState("우측 후방 레이더 타겟(VEP Synchro 52 = 1) 설정", ProcessStateType.Info);
-                            InitializeRightRearRadarSteps();
-                            _currentSensorSteps = _rightRearRadarSteps;
-                            break;
-                        case VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX:
-                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX, 1);
-                            vepClient.WriteSynchroZone(synchroZone);
-                            NotifyProcessState("좌측 후방 레이더 타겟(VEP Synchro 54 = 1) 설정", ProcessStateType.Info);
-                            InitializeLeftRearRadarSteps();
-                            _currentSensorSteps = _leftRearRadarSteps;
-                            break;
-                        default:
-                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
-                            vepClient.WriteSynchroZone(synchroZone);
-                            NotifyProcessState("기본값(전방 카메라) 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
-                            InitializeFrontCameraSteps();
-                            _currentSensorSteps = _frontCameraSteps;
-                            break;
-                    }
+            //        if (sensorType == _dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX)
+            //        {
+            //            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
+            //            vepClient.WriteSynchroZone();
+            //            NotifyProcessState("전방 카메라 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
+            //            InitializeFrontCameraSteps();
+            //            _currentSensorSteps = _frontCameraSteps;
+            //        }
+            //        else if (sensorType == _dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX)
+            //        {
+            //            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
+            //            vepClient.WriteSynchroZone();
+            //            NotifyProcessState("우측 후방 레이더 타겟(VEP Synchro 52 = 1) 설정", ProcessStateType.Info);
+            //            InitializeRightRearRadarSteps();
+            //            _currentSensorSteps = _rightRearRadarSteps;
+            //        }
+            //        else if (sensorType == _dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX)
+            //        {
+            //            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX, 1);
+            //            vepClient.WriteSynchroZone();
+            //            NotifyProcessState("좌측 후방 레이더 타겟(VEP Synchro 54 = 1) 설정", ProcessStateType.Info);
+            //            InitializeLeftRearRadarSteps();
+            //            _currentSensorSteps = _leftRearRadarSteps;
+            //        }
+            //        else
+            //        {
+            //            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
+            //            vepClient.WriteSynchroZone();
+            //            NotifyProcessState("기본값(전방 카메라) 타겟(VEP Synchro 4 = 1) 설정", ProcessStateType.Info);
+            //            InitializeFrontCameraSteps();
+            //            _currentSensorSteps = _frontCameraSteps;
+            //        }
 
-                    _currentSensorStepIndex = 0;
+            //        _currentSensorStepIndex = 0;
 
-                    return true;
-                }));
+            //        return true;
+            //    }));
 
             // 9. 결과 판정 및 완료
             _processSteps.Add(new ADASProcessStep(
                 99, "테스트 결과 판정 및 완료", "결과", () => {
-                    var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-                    int result = synchroZone.GetValue(1);
+                    int result = _dataManager.SynchroZone.GetValue(1);
 
                     if (result == 20)
                     {
@@ -338,15 +323,13 @@ namespace Ki_ADAS
         {
             try
             {
-                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-
-                if (synchroZone.GetValue(3) == 1)
+                if (_dataManager.SynchroZone.GetValue(3) == 1)
                     return 3;
 
-                if (synchroZone.GetValue(51) == 1)
+                if (_dataManager.SynchroZone.GetValue(51) == 1)
                     return 51;
 
-                if (synchroZone.GetValue(53) == 1)
+                if (_dataManager.SynchroZone.GetValue(53) == 1)
                     return 53;
 
                 return 3;
@@ -361,58 +344,58 @@ namespace Ki_ADAS
             }
         }
 
-        public void InitializeFrontCameraSteps()
+        public void InitializeFrontCameraSteps(VEPBenchDataManager _dataManager)
         {
             _frontCameraSteps = new List<ADASProcessStep>();
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 213,
                 "전방 카메라 - 초기화",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 1",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 1",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 214,
                 "전방 카메라 - 준비 완료",
-                $"Synchro {VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX} = 1",
-                () => ReadSynchroValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX) == 1));
+                $"Synchro {_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX} = 1",
+                () => ReadSynchroValue(_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX) == 1));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 213,
                 "전방 카메라 - 보정 완료",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 20",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 20));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 20",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 20));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 213,
                 "전방 카메라 - 보정 실패",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 21",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 21));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 21",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 21));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 320,
                 "Roll 각도 측정",
-                $"Synchro {VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX} = FrontCameraAngle",
+                $"Synchro {_dataManager.SynchroZone.FRONT_CAMERA_ANGLE1_INDEX} = FrontCameraAngle",
                 () => {
-                    _frontCameraAngle1 = ReadSynchroValue(VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX) / 100.0;
+                    _frontCameraAngle1 = ReadSynchroValue(_dataManager.SynchroZone.FRONT_CAMERA_ANGLE1_INDEX) / 100.0;
                     return true;
                 }));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 321,
                 "Azimuth 각도 측정",
-                $"Synchro {VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX} = FrontCameraAngle",
+                $"Synchro {_dataManager.SynchroZone.FRONT_CAMERA_ANGLE2_INDEX} = FrontCameraAngle",
                 () => {
-                    _frontCameraAngle2 = ReadSynchroValue(VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX) / 100.0;
+                    _frontCameraAngle2 = ReadSynchroValue(_dataManager.SynchroZone.FRONT_CAMERA_ANGLE2_INDEX) / 100.0;
                     return true;
                 }));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 322,
                 "Elevation 각도 측정",
-                $"Synchro {VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX} = FrontCameraAngle",
+                $"Synchro {_dataManager.SynchroZone.FRONT_CAMERA_ANGLE3_INDEX} = FrontCameraAngle",
                 () => {
-                    _frontCameraAngle3 = ReadSynchroValue(VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX) / 100.0;
+                    _frontCameraAngle3 = ReadSynchroValue(_dataManager.SynchroZone.FRONT_CAMERA_ANGLE3_INDEX) / 100.0;
                     return true;
                 }));
 
@@ -424,7 +407,7 @@ namespace Ki_ADAS
                 {
                     NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
 
-                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_FRONT_CAMERA_INDEX) == 1;
+                    return ReadSynchroValue(_dataManager.SynchroZone.TRY_FRONT_CAMERA_INDEX) == 1;
                 }));
 
             _frontCameraSteps.Add(new ADASProcessStep(
@@ -435,37 +418,37 @@ namespace Ki_ADAS
                     _currentSensorStepIndex = 0;
                     NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
 
-                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_FRONT_CAMERA_INDEX) == 2;
+                    return ReadSynchroValue(_dataManager.SynchroZone.TRY_FRONT_CAMERA_INDEX) == 2;
                 }));
         }
 
-        public void InitializeRightRearRadarSteps()
+        public void InitializeRightRearRadarSteps(VEPBenchDataManager _dataManager)
         {
             _rightRearRadarSteps = new List<ADASProcessStep>();
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 261,
                 "우측 후방 레이더 - 초기화",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 1",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 262,
                 "우측 후방 레이더 - 보정 위치 확인",
-                $"Synchro {VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX} = 1",
-                () => ReadSynchroValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX) == 1));
+                $"Synchro {_dataManager.SynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX) == 1));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 261,
                 "우측 후방 레이더 - 보정 완료",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 20",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 20));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 20",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 20));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 261,
                 "우측 후방 레이더 - 보정 실패",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 21",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 21));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 21",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 21));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 293,
@@ -475,7 +458,7 @@ namespace Ki_ADAS
                 {
                     NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
 
-                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 1;
+                    return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 1;
                 }));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
@@ -486,46 +469,46 @@ namespace Ki_ADAS
                     _currentSensorStepIndex = 0;
                     NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
 
-                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 2;
+                    return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 2;
                 }));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 325,
                 "우측 후방 레이더 각도 측정",
-                $"Synchro {VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX} = RearRightRadarAngle",
+                $"Synchro {_dataManager.SynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX} = RearRightRadarAngle",
                 () => {
-                    _rightRearRadarAngle = ReadSynchroValue(VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX) / 100.0;
+                    _rightRearRadarAngle = ReadSynchroValue(_dataManager.SynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX) / 100.0;
                     return true;
                 }));
         }
 
-        public void InitializeLeftRearRadarSteps()
+        public void InitializeLeftRearRadarSteps(VEPBenchDataManager _dataManager)
         {
             _leftRearRadarSteps = new List<ADASProcessStep>();
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 263,
                 "좌측 후방 레이더 - 초기화",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 1",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 264,
                 "좌측 후방 레이더 - 보정 위치 확인",
-                $"Synchro {VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX} = 1",
-                () => ReadSynchroValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX) == 1));
+                $"Synchro {_dataManager.SynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX} = 1",
+                () => ReadSynchroValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX) == 1));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 263,
                 "좌측 후방 레이더 - 보정 완료",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 20",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 20));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 20",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 20));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 263,
                 "좌측 후방 레이더 - 보정 실패",
-                $"Synchro {VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 21",
-                () => ReadSynchroValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 21));
+                $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 21",
+                () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 21));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 292,
@@ -535,7 +518,7 @@ namespace Ki_ADAS
                 {
                     NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
 
-                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 1;
+                    return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 1;
                 }));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
@@ -546,15 +529,15 @@ namespace Ki_ADAS
                     _currentSensorStepIndex = 0;
                     NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
 
-                    return ReadSynchroValue(VEPBenchSynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 2;
+                    return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 2;
                 }));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 326,
                 "좌측 후방 레이더 각도 측정",
-                $"Synchro {VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX} = RearLeftRadarAngle",
+                $"Synchro {_dataManager.SynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX} = RearLeftRadarAngle",
                 () => {
-                    _leftRearRadarAngle = ReadSynchroValue(VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX) / 100.0;
+                    _leftRearRadarAngle = ReadSynchroValue(_dataManager.SynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX) / 100.0;
                     return true;
                 }));
         }
@@ -571,34 +554,30 @@ namespace Ki_ADAS
                     return -1;
                 }
 
-                var synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-
-                if (syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX ||
-                    syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX ||
-                    syncNumber == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX)
+                if (syncNumber == _dataManager.SynchroZone.FRONT_CAMERA_ANGLE1_INDEX ||
+                    syncNumber == _dataManager.SynchroZone.FRONT_CAMERA_ANGLE2_INDEX ||
+                    syncNumber == _dataManager.SynchroZone.FRONT_CAMERA_ANGLE3_INDEX)
                 {
                     double angle = 0;
                     string angleName = "";
 
-                    switch (syncNumber)
+                    if (syncNumber == _dataManager.SynchroZone.FRONT_CAMERA_ANGLE1_INDEX) // Roll
                     {
-                        case VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX: // Roll
-                            angle = synchroZone.FrontCameraAngle1;
-                            _frontCameraAngle1 = angle;
-                            angleName = "Roll";
-                            break;
-
-                        case VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX: // Azimuth
-                            angle = synchroZone.FrontCameraAngle2;
-                            _frontCameraAngle2 = angle;
-                            angleName = "Azimuth";
-                            break;
-
-                        case VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX: // Elevation
-                            angle = synchroZone.FrontCameraAngle3;
-                            _frontCameraAngle3 = angle;
-                            angleName = "Elevation";
-                            break;
+                        angle = _dataManager.SynchroZone.FrontCameraAngle1;
+                        _frontCameraAngle1 = angle;
+                        angleName = "Roll";
+                    }
+                    else if (syncNumber == _dataManager.SynchroZone.FRONT_CAMERA_ANGLE2_INDEX) // Azimuth
+                    {
+                        angle = _dataManager.SynchroZone.FrontCameraAngle2;
+                        _frontCameraAngle2 = angle;
+                        angleName = "Azimuth";
+                    }
+                    else if (syncNumber == _dataManager.SynchroZone.FRONT_CAMERA_ANGLE3_INDEX) // Elevation
+                    {
+                        angle = _dataManager.SynchroZone.FrontCameraAngle3;
+                        _frontCameraAngle3 = angle;
+                        angleName = "Elevation";
                     }
 
                     NotifyProcessState(
@@ -608,9 +587,9 @@ namespace Ki_ADAS
                     return (int)(angle * 100);
                 }
                 // 우측 후방 레이더 각도 처리
-                else if (syncNumber == VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX)
+                else if (syncNumber == _dataManager.SynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX)
                 {
-                    double angle = synchroZone.RearRightRadarAngle;
+                    double angle = _dataManager.SynchroZone.RearRightRadarAngle;
                     _rightRearRadarAngle = angle;
 
                     NotifyProcessState(
@@ -620,9 +599,9 @@ namespace Ki_ADAS
                     return (int)(angle * 100);
                 }
                 // 좌측 후방 레이더 각도 처리
-                else if (syncNumber == VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX)
+                else if (syncNumber == _dataManager.SynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX)
                 {
-                    double angle = synchroZone.RearLeftRadarAngle;
+                    double angle = _dataManager.SynchroZone.RearLeftRadarAngle;
                     _leftRearRadarAngle = angle;
 
                     NotifyProcessState(
@@ -633,9 +612,9 @@ namespace Ki_ADAS
                 }
 
                 // 일반 Synchro 값 처리
-                if (syncNumber < synchroZone.Size)
+                if (syncNumber < _dataManager.SynchroZone.Size)
                 {
-                    ushort value = synchroZone.GetValue(syncNumber);
+                    ushort value = _dataManager.SynchroZone.GetValue(syncNumber);
 
                     NotifyProcessState(
                         LanguageResource.GetFormattedMessage("SynchroReadComplete", syncNumber, value),

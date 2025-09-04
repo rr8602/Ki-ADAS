@@ -1,4 +1,5 @@
-﻿using Ki_ADAS;
+﻿using Ki_ADAS.DB;
+using Ki_ADAS;
 using Ki_ADAS.VEPBench;
 
 using System;
@@ -11,33 +12,26 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace Ki_ADAS
 {
     public partial class HomePositionSimulator : Form
     {
         private Frm_Main mainForm;
-        private Frm_Config config;
         private VEPBenchClient vepClient;
-        private VEPBenchStatusZone statusZone;
-        private VEPBenchSynchroZone synchroZone;
+        private ModelRepository _modelRepository;
+        private VEPBenchDataManager _dataManager;
 
         // 시스템 상태 변수
-        private bool isHomePosition = true;
-        private bool isTrafficLightGreen = false;
-        private bool isVehicleDetected = false;
-        private bool isPIIRequested = false;
         private bool isVEPWorking = false;
-        private bool isCameraOptionSelected = false;
-        private bool isRadarOptionSelected = false;
-        private bool isExitPositionReady = false;
         private bool isTestCompleted = false;
         private int cycleValue = 0;
-        private DataRow selectedModel;
+        private Model selectedModel;
         private string modelName;
         private string barcodeValue = "";
         private DateTime meaDateValue;
-        private Timer processTimer;
+        private System.Windows.Forms.Timer processTimer;
         private int timeElapsed = 0;
         private int timeoutLimit = 30; // 30초 타임아웃
         private bool[] isTest = new bool[3]; // 각 센서별 테스트 계획 여부
@@ -53,16 +47,16 @@ namespace Ki_ADAS
         }
 
         private CalibrationTarget currentTarget = CalibrationTarget.None;
-        private bool isTestPositionReady = false;
-        private bool isCalibrationMode = false;
 
-        public HomePositionSimulator(VEPBenchClient client, Frm_Config configForm, Frm_Main mainForm)
+        public HomePositionSimulator(VEPBenchClient client, ModelRepository modelRepository, Frm_Main mainForm)
         {
             InitializeComponent();
             vepClient = client;
-            this.config = configForm;
+            this._modelRepository = modelRepository;
             this.mainForm = mainForm;
             this.TopMost = false;
+            _dataManager = VEPBenchDataManager.Instance;
+            _dataManager.SynchroZone = _dataManager.RefreshSynchroZoneFromVEP(vepClient);
             InitializeCustomComponents();
             SetInitialState();
         }
@@ -70,18 +64,13 @@ namespace Ki_ADAS
         private void InitializeCustomComponents()
         {
             // 타이머 초기화
-            processTimer = new Timer();
+            processTimer = new System.Windows.Forms.Timer();
             processTimer.Interval = 1000;
             processTimer.Tick += ProcessTimer_Tick;
 
             try
             {
-                if (vepClient != null && vepClient.IsConnected)
-                {
-                    statusZone = vepClient.ReadStatusZone();
-                    synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-                }
-                else
+                if (vepClient == null && !vepClient.IsConnected)
                 {
                     MessageBox.Show("VEP 클라이언트가 연결되어 있지 않습니다. 시뮬레이터를 실행하기 전에 Start 버튼을 눌러주세요.",
                         "연결 오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -111,20 +100,12 @@ namespace Ki_ADAS
         private void SetInitialState()
         {
             // 초기 상태 설정 - Home Position
-            isHomePosition = true;
-            isTrafficLightGreen = false;
-            isVehicleDetected = false;
-            isPIIRequested = false;
             isVEPWorking = false;
-            isCameraOptionSelected = false;
-            isRadarOptionSelected = false;
             cycleValue = 0;
             barcodeValue = "";
             timeElapsed = 0;
 
             currentTarget = CalibrationTarget.None;
-            isTestPositionReady = false;
-            isCalibrationMode = false;
 
             // UI 업데이트
             lblStatus.Text = "상태: 홈 포지션";
@@ -136,7 +117,7 @@ namespace Ki_ADAS
             // 버튼 상태 업데이트
             btnSetTrafficLight.Enabled = true;
             btnScanBarcode.Enabled = false;
-            btnRequestPII.Enabled = false;
+            btnRequestPJI.Enabled = false;
             btnCheckVEPStatus.Enabled = false;
             btnSelectOption.Enabled = false;
             btnReset.Enabled = true;
@@ -145,19 +126,16 @@ namespace Ki_ADAS
             {
                 if (vepClient != null && vepClient.IsConnected)
                 {
-                    statusZone = vepClient.ReadStatusZone();
-                    statusZone.StartCycle = 0;
-                    statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Undefined;
-                    vepClient.WriteStatusZone(statusZone);
+                    _dataManager.StatusZone.StartCycle = 0;
+                    _dataManager.StatusZone.VepStatus = VEPBenchStatusZone.VepStatus_Undefined;
+                    vepClient.WriteStatusZone();
 
-                    synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-
-                    for (int i = 0; i < synchroZone.Size; i++)
+                    for (int i = 0; i < _dataManager.SynchroZone.Size; i++)
                     {
-                        synchroZone.SetValue(i, 0);
+                        _dataManager.SynchroZone.SetValue(i, 0);
                     }
 
-                    vepClient.WriteSynchroZone(synchroZone);
+                    vepClient.WriteSynchroZone();
                 }
             }
             catch (Exception ex)
@@ -187,7 +165,6 @@ namespace Ki_ADAS
 
         private void btnSetTrafficLight_Click(object sender, EventArgs e)
         {
-            isTrafficLightGreen = true;
             lblStatus.Text = "상태: 입구 신호등 초록색";
             UpdateStatusPanels(2);
             btnSetTrafficLight.Enabled = false;
@@ -198,46 +175,24 @@ namespace Ki_ADAS
         {
             if (mainForm != null)
             {
-                Random random = new Random();
-                DataTable modelData = config.GetModelData();
-
-                int randomIndex = random.Next(modelData.Rows.Count);
-                selectedModel = modelData.Rows[randomIndex];
-                modelName = selectedModel["Name"].ToString();
-                barcodeValue = mainForm.SelectedBarcode;
-
-                if (string.IsNullOrEmpty(barcodeValue))
-                {
-                    MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
+                selectedModel = mainForm.SelectedModelInfo;
 
                 if (selectedModel == null)
                 {
                     MessageBox.Show($"선택된 모델 '{modelName}'에 대한 설정 정보를 찾을 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-            }
-            else
-            {
-                // 기존 랜덤 방식 유지 (mainForm이 없는 경우의 예외 처리)
-                Random random = new Random();
-                DataTable modelData = config.GetModelData();
 
-                if (modelData.Rows.Count == 0)
+                barcodeValue = selectedModel.Barcode;
+
+                if (string.IsNullOrEmpty(barcodeValue))
                 {
-                    MessageBox.Show("모델 데이터가 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-
-                int randomIndex = random.Next(modelData.Rows.Count);
-                selectedModel = modelData.Rows[randomIndex];
-                modelName = selectedModel["Name"].ToString();
-                barcodeValue = $"VIN{random.Next(10000, 99999)}";
             }
 
             lblStatus.Text = $"상태: 바코드 스캔 완료 - {barcodeValue}";
-            isVehicleDetected = true;
             lblVehicleDetect.Text = "차량 감지 센서: 켜짐";
             UpdateStatusPanels(4);
             btnScanBarcode.Enabled = false;
@@ -247,37 +202,33 @@ namespace Ki_ADAS
 
             if (vepClient != null && vepClient.IsConnected)
             {
-                statusZone = vepClient.ReadStatusZone();
-                statusZone.StartCycle = (ushort)cycleValue;
-                vepClient.WriteStatusZone(statusZone);
+                _dataManager.StatusZone.StartCycle = (ushort)cycleValue;
+                vepClient.WriteStatusZone();
             }
 
             lblStatus.Text = $"상태: 사이클 시작 값 = {cycleValue}";
             UpdateStatusPanels(5);
-            btnRequestPII.Enabled = true;
+            btnRequestPJI.Enabled = true;
         }
 
-        private async void btnRequestPJI_Click(object sender, EventArgs e)
+        private void btnRequestPJI_Click(object sender, EventArgs e)
         {
-            isPIIRequested = true;
             lblStatus.Text = "상태: PJI 요청됨";
             UpdateStatusPanels(6);
-            btnRequestPII.Enabled = false;
+            btnRequestPJI.Enabled = false;
             lblStatus.Text = "상태: PJI가 VEP로 전송됨";
             btnCheckVEPStatus.Enabled = true;
 
             if (vepClient != null && vepClient.IsConnected)
             {
-                statusZone.StartCycle = 0;
-                statusZone = vepClient.ReadStatusZone();
-                statusZone.VepStatus = VEPBenchStatusZone.VepStatus_Working;
-                vepClient.WriteStatusZone(statusZone);
+                _dataManager.StatusZone.StartCycle = 1;
+                _dataManager.StatusZone.VepStatus = VEPBenchStatusZone.VepStatus_Working;
+                vepClient.WriteStatusZone();
 
-                synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-
-                bool frontCameraTest = Convert.ToBoolean(selectedModel["Fr_IsTest"]);
-                bool rearRightRadarTest = Convert.ToBoolean(selectedModel["R_IsTest"]);
-                bool rearLeftRadarTest = Convert.ToBoolean(selectedModel["L_IsTest"]);
+                #region 센서별 테스트 계획 여부 설정 - VEP 서버에서 전달해주는 값이기 때문에 테스트 목적으로만 설정 (실제는 필요 없음)
+                bool frontCameraTest = selectedModel.Fr_IsTest;
+                bool rearRightRadarTest = selectedModel.R_IsTest;
+                bool rearLeftRadarTest = selectedModel.L_IsTest;
 
                 isTest[0] = frontCameraTest;
                 isTest[1] = rearRightRadarTest;
@@ -285,30 +236,32 @@ namespace Ki_ADAS
 
                 if (isTest[0] == true)
                 {
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 1);
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 1);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
                 }
                 else if (isTest[1] == true)
                 {
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 1);
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 1);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 0);
                 }
                 else if (isTest[2] == true)
                 {
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
-                    synchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 1);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 0);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 0);
+                    _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 1);
                 }
 
-                vepClient.WriteSynchroZone(synchroZone);
+                vepClient.WriteSynchroZone();
+                #endregion
             }
 
+            // VEP 서버에서 Transmission Zone의 ExchStatus 가 2로 변경되면, 자동으로 VEPBenchClient의 PollAllZones 에서 캐치하여 VEP로 전송됨
             lblStatus.Text = "상태: PJI가 VEP로 전송됨";
             btnCheckVEPStatus.Enabled = true;
 
-            await Task.Delay(1000);
+            Thread.Sleep(1000);
 
             // 타이머 시작
             timeElapsed = 0;
@@ -320,14 +273,9 @@ namespace Ki_ADAS
             try
             {
                 if (vepClient != null && vepClient.IsConnected)
-                {
-                    statusZone = vepClient.ReadStatusZone();
-                    isVEPWorking = (statusZone.VepStatus == VEPBenchStatusZone.VepStatus_Working);
-                }
+                    isVEPWorking = (_dataManager.StatusZone.VepStatus == VEPBenchStatusZone.VepStatus_Working);
                 else
-                {
                     isVEPWorking = chkVEPWorking.Checked;
-                }
 
                 if (isVEPWorking)
                 {
@@ -362,39 +310,25 @@ namespace Ki_ADAS
 
                 if (vepClient != null && vepClient.IsConnected)
                 {
-                    synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-
-                    if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
+                    if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
                     {
                         deviceType = "카메라";
                     }
-                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
+                    else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
                     {
                         deviceType = "우측 후방 레이더";
                     }
-                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
+                    else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
                     {
                         deviceType = "좌측 후방 레이더";
                     }
 
                     if (isTest[0] == true)
-                    {
-                        isCameraOptionSelected = true;
-                        isRadarOptionSelected = false;
                         lblStatus.Text = $"상태: 전방 카메라 옵션 선택됨 - {deviceType}";
-                    }
                     else if (isTest[1] == true)
-                    {
-                        isCameraOptionSelected = false;
-                        isRadarOptionSelected = true;
                         lblStatus.Text = $"상태: 우측 후방 레이더 옵션 선택됨 - {deviceType}";
-                    }
                     else if (isTest[2] == true)
-                    {
-                        isCameraOptionSelected = false;
-                        isRadarOptionSelected = true;
                         lblStatus.Text = $"상태: 좌측 후방 레이더 옵션 선택됨 - {deviceType}";
-                    }
                     else
                     {
                         MessageBox.Show("옵션을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -434,7 +368,6 @@ namespace Ki_ADAS
             lblTestStatusValue.Text = "테스트 포지션 설정 중";
             MessageBox.Show("센터링 장치 이동, 카메라 타겟 하향, 후방 측면 레이더가 이동합니다.", "테스트 포지션", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            isTestPositionReady = true;
             lblTestStatusValue.Text = "테스트 포지션 설정 완료";
             btnSendToVEP.Enabled = true;
         }
@@ -447,22 +380,21 @@ namespace Ki_ADAS
 
                 if (vepClient != null && vepClient.IsConnected)
                 {
-                    synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
                     CalibrationTarget detectedTarget = CalibrationTarget.None;
 
-                    if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
+                    if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
                     {
                         detectedTarget = CalibrationTarget.FrontCamera;
                         lblTargetValue.Text = "전방 카메라";
                         lblTestStatusValue.Text = "전방 카메라 타겟 설정됨";
                     }
-                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
+                    else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
                     {
                         detectedTarget = CalibrationTarget.RightRearRadar;
                         lblTargetValue.Text = "우측 후방 레이더";
                         lblTestStatusValue.Text = "우측 후방 레이더 타겟 설정됨";
                     }
-                    else if (synchroZone.GetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
+                    else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
                     {
                         detectedTarget = CalibrationTarget.LeftRearRadar;
                         lblTargetValue.Text = "좌측 후방 레이더";
@@ -479,25 +411,25 @@ namespace Ki_ADAS
                     switch (currentTarget)
                     {
                         case CalibrationTarget.FrontCamera:
-                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
                             lblTargetValue.Text = "전방 카메라";
                             lblTestStatusValue.Text = "전방 카메라 타겟(VEP Synchro 4 = 1) 설정";
-                            vepClient.WriteSynchroZone(synchroZone);
-                            process.InitializeFrontCameraSteps();
+                            vepClient.WriteSynchroZone();
+                            process.InitializeFrontCameraSteps(_dataManager);
                             break;
                         case CalibrationTarget.RightRearRadar:
-                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
                             lblTargetValue.Text = "우측 후방 레이더";
                             lblTestStatusValue.Text = "우측 후방 레이더 타겟(VEP Synchro 52 = 1) 설정";
-                            vepClient.WriteSynchroZone(synchroZone);
-                            process.InitializeRightRearRadarSteps();
+                            vepClient.WriteSynchroZone();
+                            process.InitializeRightRearRadarSteps(_dataManager);
                             break;
                         case CalibrationTarget.LeftRearRadar:
-                            synchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX, 1);
+                            _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX, 1);
                             lblTargetValue.Text = "좌측 후방 레이더";
                             lblTestStatusValue.Text = "좌측 후방 레이더 타겟(VEP Synchro 54 = 1) 설정";
-                            vepClient.WriteSynchroZone(synchroZone);
-                            process.InitializeLeftRearRadarSteps();
+                            vepClient.WriteSynchroZone();
+                            process.InitializeLeftRearRadarSteps(_dataManager);
                             break;
                     }
 
@@ -532,8 +464,6 @@ namespace Ki_ADAS
             {
                 if (vepClient != null && vepClient.IsConnected)
                 {
-                    synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-
                     string resultText = "";
                     double frontCameraAngle1 = 0;
                     double frontCameraAngle2 = 0;
@@ -544,23 +474,23 @@ namespace Ki_ADAS
                     switch (currentTarget)
                     {
                         case CalibrationTarget.FrontCamera:
-                            frontCameraAngle1 = synchroZone.FrontCameraAngle1;
-                            frontCameraAngle2 = synchroZone.FrontCameraAngle2;
-                            frontCameraAngle3 = synchroZone.FrontCameraAngle3;
+                            frontCameraAngle1 = _dataManager.SynchroZone.FrontCameraAngle1;
+                            frontCameraAngle2 = _dataManager.SynchroZone.FrontCameraAngle2;
+                            frontCameraAngle3 = _dataManager.SynchroZone.FrontCameraAngle3;
 
-                            resultText = $"Roll 각도: {frontCameraAngle1:F2}°\nSynchro 110: {synchroZone.GetValue(110)}\n" +
-                                         $"Azimuth 각도: {frontCameraAngle2:F2}°\nSynchro 111: {synchroZone.GetValue(111)}\n" +
-                                         $"Elevation 각도: {frontCameraAngle3:F2}°\nSynchro 112: {synchroZone.GetValue(112)}";
+                            resultText = $"Roll 각도: {frontCameraAngle1:F2}°\nSynchro 110: {_dataManager.SynchroZone.GetValue(110)}\n" +
+                                         $"Azimuth 각도: {frontCameraAngle2:F2}°\nSynchro 111: {_dataManager.SynchroZone.GetValue(111)}\n" +
+                                         $"Elevation 각도: {frontCameraAngle3:F2}°\nSynchro 112: {_dataManager.SynchroZone.GetValue(112)}";
                             break;
 
                         case CalibrationTarget.RightRearRadar:
-                            rearRightRadarAngle = synchroZone.RearRightRadarAngle;
-                            resultText = $"각도: {rearRightRadarAngle:F2}°\nSynchro 115: {synchroZone.GetValue(115)}";
+                            rearRightRadarAngle = _dataManager.SynchroZone.RearRightRadarAngle;
+                            resultText = $"각도: {rearRightRadarAngle:F2}°\nSynchro 115: {_dataManager.SynchroZone.GetValue(115)}";
                             break;
 
                         case CalibrationTarget.LeftRearRadar:
-                            rearLeftRadarAngle = synchroZone.RearLeftRadarAngle;
-                            resultText = $"각도: {rearLeftRadarAngle:F2}°\nSynchro 116: {synchroZone.GetValue(116)}";
+                            rearLeftRadarAngle = _dataManager.SynchroZone.RearLeftRadarAngle;
+                            resultText = $"각도: {rearLeftRadarAngle:F2}°\nSynchro 116: {_dataManager.SynchroZone.GetValue(116)}";
                             break;
                     }
 
@@ -579,11 +509,11 @@ namespace Ki_ADAS
                 btnReset.Enabled = true;
 
                 if (isTestCompleted) 
-                    synchroZone.SetValue(1, 20); // 테스트 결과 OK
+                    _dataManager.SynchroZone.SetValue(1, 20); // 테스트 결과 OK
                 else
-                    synchroZone.SetValue(1, 21); // 테스트 결과 NOK
+                    _dataManager.SynchroZone.SetValue(1, 21); // 테스트 결과 NOK
 
-                vepClient.WriteSynchroZone(synchroZone);
+                vepClient.WriteSynchroZone();
 
             }
             catch (Exception ex)
@@ -596,8 +526,7 @@ namespace Ki_ADAS
         {
             if (vepClient != null && vepClient.IsConnected)
             {
-                synchroZone = VEPBenchSynchroZone.ReadFromVEP((start, count) => vepClient.ReadSynchroZone(start, count));
-                int synTestOK = synchroZone.GetValue(1);
+                int synTestOK = _dataManager.SynchroZone.GetValue(1);
                 
                 if (synTestOK == 20)
                 {
@@ -633,11 +562,11 @@ namespace Ki_ADAS
                     new XElement("Timestamp", meaDateValue.ToString("yyyy-MM-dd HH:mm:ss")),
                     new XElement("Model", modelName),
                     new XElement("Barcode", barcodeValue),
-                    new XElement("FrontCameraAngle1", synchroZone.FrontCameraAngle1),
-                    new XElement("FrontCameraAngle2", synchroZone.FrontCameraAngle2),
-                    new XElement("FrontCameraAngle3", synchroZone.FrontCameraAngle3),
-                    new XElement("RearRightRadarAngle", synchroZone.RearRightRadarAngle),
-                    new XElement("RearLeftRadarAngle", synchroZone.RearLeftRadarAngle)
+                    new XElement("FrontCameraAngle1", _dataManager.SynchroZone.FrontCameraAngle1),
+                    new XElement("FrontCameraAngle2", _dataManager.SynchroZone.FrontCameraAngle2),
+                    new XElement("FrontCameraAngle3", _dataManager.SynchroZone.FrontCameraAngle3),
+                    new XElement("RearRightRadarAngle", _dataManager.SynchroZone.RearRightRadarAngle),
+                    new XElement("RearLeftRadarAngle", _dataManager.SynchroZone.RearLeftRadarAngle)
                 );
 
                 XElement root;
@@ -665,11 +594,11 @@ namespace Ki_ADAS
         private void btnDisplayResult_Click(object sender, EventArgs e)
         {
             string pji = barcodeValue;
-            double frontCameraAngle1 = synchroZone?.FrontCameraAngle1 ?? 0;
-            double frontCameraAngle2 = synchroZone?.FrontCameraAngle2 ?? 0;
-            double frontCameraAngle3 = synchroZone?.FrontCameraAngle3 ?? 0;
-            double rearRightRadarAngle = synchroZone?.RearRightRadarAngle ?? 0;
-            double rearLeftRadarAngle = synchroZone?.RearLeftRadarAngle ?? 0;
+            double frontCameraAngle1 = _dataManager.SynchroZone?.FrontCameraAngle1 ?? 0;
+            double frontCameraAngle2 = _dataManager.SynchroZone?.FrontCameraAngle2 ?? 0;
+            double frontCameraAngle3 = _dataManager.SynchroZone?.FrontCameraAngle3 ?? 0;
+            double rearRightRadarAngle = _dataManager.SynchroZone?.RearRightRadarAngle ?? 0;
+            double rearLeftRadarAngle = _dataManager.SynchroZone?.RearLeftRadarAngle ?? 0;
 
             var resultForm = new Frm_Result(
                     pji,

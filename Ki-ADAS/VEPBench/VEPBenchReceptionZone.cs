@@ -6,31 +6,31 @@ using System.Threading.Tasks;
 
 namespace Ki_ADAS.VEPBench
 {
-    public class VEPBenchReceptionZone
+    public class VEPBenchReceptionZone : IVEPBenchZone
     {
         private static VEPBenchReceptionZone _instance;
         private static readonly object _lock = new object();
+        private static int RZ_Addr = VEPBenchDataManager.Instance.DescriptionZone.ReceptionZoneAddr;
 
         // 상대 주소값
-        public const int Offset_Reserved1 = 0;
-        public const int Offset_Reserved2 = 1;
-        public const int Offset_AddReSize = 2;
-        public const int Offset_ExchStatus = 3;
-        public const int Offset_Reserved3 = 4;
-        public const int Offset_Reserved4 = 5;
-        public const int Offset_FctAndPCNum = 6;
-        public const int Offset_Reserver5 = 7;
-        public const int Offset_ProcessAndSubFct = 8;
-        public const int Offset_Reserved6 = 9;
-        public const int Offset_Reserved7 = 10;
-        public const int Offset_Reserved8 = 11;
-        public const int Offset_DataStart = 12;
+        public int Offset_Reserved1 = RZ_Addr;
+        public int Offset_Reserved2 = RZ_Addr + 1;
+        public int Offset_AddReSize = RZ_Addr + 2;
+        public int Offset_ExchStatus = RZ_Addr + 3;
+        public int Offset_Reserved3 = RZ_Addr + 4;
+        public int Offset_Reserved4 = RZ_Addr + 5;
+        public int Offset_FctAndPCNum = RZ_Addr + 6;
+        public int Offset_Reserver5 = RZ_Addr + 7;
+        public int Offset_ProcessAndSubFct = RZ_Addr + 8;
+        public int Offset_Reserved6 = RZ_Addr + 9;
+        public int Offset_Reserved7 = RZ_Addr + 10;
+        public int Offset_Reserved8 = RZ_Addr + 11;
+        public int Offset_DataStart = RZ_Addr + 12;
 
         // 기능 코드
-        public const byte FctCode_PJI = 6;
-        public const byte FctCode_ReportSend = 15;
-        public const byte FctCode_DiagnosticInfo = 20;
-        public const byte FctCode_VirtualDiag = 21;
+        public const int FctCode_PJI = 6;
+        public const int FctCode_ReportPrint = 15;
+        public const int FctCode_WorkInfo = 20;
 
         // 교환 상태
         public const ushort ExchStatus_Response = 1; // 요청 없음
@@ -44,6 +44,14 @@ namespace Ki_ADAS.VEPBench
         public byte SubFctCode { get; set; }
         public ushort[] Data { get; set; }
         public int TotalSize => Offset_DataStart + (Data?.Length ?? 0);
+
+        private bool _isChanged;
+        public bool IsChanged => _isChanged;
+
+        public void ResetChangedState()
+        {
+            _isChanged = false;
+        }
 
         public static VEPBenchReceptionZone Instance
         {
@@ -67,39 +75,59 @@ namespace Ki_ADAS.VEPBench
             ExchStatus = ExchStatus_Response;
             AddReSize = 0;
             FctCode = 0;
-            PCNum = 0;
+            PCNum = 1; // 고정값
             ProcessCode = 0;
             SubFctCode = 0;
             Data = new ushort[dataSize];
+            _isChanged = false;
         }
 
-        public static VEPBenchReceptionZone FromRegisters(ushort[] registers)
+        public void FromRegisters(ushort[] registers)
         {
             if (registers == null || registers.Length < Offset_DataStart)
                 throw new ArgumentException("Invalid register array.");
 
+            bool changed = false;
+
+            if (AddReSize != registers[Offset_AddReSize]) { AddReSize = registers[Offset_AddReSize]; changed = true; }
+            if (ExchStatus != registers[Offset_ExchStatus]) { ExchStatus = registers[Offset_ExchStatus]; changed = true; }
+
+            byte newFctCode = (byte)(registers[Offset_FctAndPCNum] & 0xFF);
+            byte newPCNum = (byte)((registers[Offset_FctAndPCNum] >> 8) & 0xFF);
+            if (FctCode != newFctCode) { FctCode = newFctCode; changed = true; }
+            if (PCNum != newPCNum) { PCNum = newPCNum; changed = true; }
+
+            byte newProcessCode = (byte)(registers[Offset_ProcessAndSubFct] & 0xFF);
+            byte newSubFctCode = (byte)((registers[Offset_ProcessAndSubFct] >> 8) & 0xFF);
+            if (ProcessCode != newProcessCode) { ProcessCode = newProcessCode; changed = true; }
+            if (SubFctCode != newSubFctCode) { SubFctCode = newSubFctCode; changed = true; }
+
             int dataSize = registers.Length - Offset_DataStart;
-            var zone = Instance;
-
-            zone.AddReSize = registers[Offset_AddReSize];
-            zone.ExchStatus = registers[Offset_ExchStatus];
-
-            zone.FctCode = (byte)(registers[Offset_FctAndPCNum] & 0xFF);
-            zone.PCNum = (byte)((registers[Offset_FctAndPCNum] >> 8) & 0xFF);
-
-            zone.ProcessCode = (byte)(registers[Offset_ProcessAndSubFct] & 0xFF);
-            zone.SubFctCode = (byte)((registers[Offset_ProcessAndSubFct] >> 8) & 0xFF);
+            if (Data.Length != dataSize)
+            {
+                Data = new ushort[dataSize];
+                changed = true;
+            }
 
             if (dataSize > 0)
             {
                 for (int i = 0; i < dataSize; i++)
                 {
                     if (Offset_DataStart + i < registers.Length)
-                        zone.Data[i] = registers[Offset_DataStart + i];
+                    {
+                        if (Data[i] != registers[Offset_DataStart + i])
+                        {
+                            Data[i] = registers[Offset_DataStart + i];
+                            changed = true;
+                        }
+                    }
                 }
             }
 
-            return zone;
+            if (changed)
+            {
+                _isChanged = true;
+            }
         }
 
         public ushort[] ToRegisters()
@@ -158,12 +186,10 @@ namespace Ki_ADAS.VEPBench
             {
                 case FctCode_PJI:
                     return "PJI";
-                case FctCode_ReportSend:
-                    return "Report Send";
-                case FctCode_DiagnosticInfo:
-                    return "Diagnostic Info";
-                case FctCode_VirtualDiag:
-                    return "Virtual Diagnostic";
+                case FctCode_ReportPrint:
+                    return "Report Print";
+                case FctCode_WorkInfo:
+                    return "Work Info";
                 default:
                     return "Unknown Function Code";
             }

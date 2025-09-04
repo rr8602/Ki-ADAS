@@ -52,7 +52,7 @@ namespace Ki_ADAS
             this.lblCameraRadarOption = new System.Windows.Forms.Label();
             this.btnSetTrafficLight = new System.Windows.Forms.Button();
             this.btnScanBarcode = new System.Windows.Forms.Button();
-            this.btnRequestPII = new System.Windows.Forms.Button();
+            this.btnRequestPJI = new System.Windows.Forms.Button();
             this.btnCheckVEPStatus = new System.Windows.Forms.Button();
             this.btnSelectOption = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
@@ -319,16 +319,16 @@ namespace Ki_ADAS
             this.btnScanBarcode.UseVisualStyleBackColor = true;
             this.btnScanBarcode.Click += new System.EventHandler(this.btnScanBarcode_Click);
             // 
-            // btnRequestPII
+            // btnRequestPJI
             // 
-            this.btnRequestPII.Location = new System.Drawing.Point(240, 496);
-            this.btnRequestPII.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnRequestPII.Name = "btnRequestPII";
-            this.btnRequestPII.Size = new System.Drawing.Size(200, 35);
-            this.btnRequestPII.TabIndex = 12;
-            this.btnRequestPII.Text = "PJI 요청";
-            this.btnRequestPII.UseVisualStyleBackColor = true;
-            this.btnRequestPII.Click += new System.EventHandler(this.btnRequestPJI_Click);
+            this.btnRequestPJI.Location = new System.Drawing.Point(240, 496);
+            this.btnRequestPJI.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnRequestPJI.Name = "btnRequestPJI";
+            this.btnRequestPJI.Size = new System.Drawing.Size(200, 35);
+            this.btnRequestPJI.TabIndex = 12;
+            this.btnRequestPJI.Text = "PJI 요청";
+            this.btnRequestPJI.UseVisualStyleBackColor = true;
+            this.btnRequestPJI.Click += new System.EventHandler(this.btnRequestPJI_Click);
             // 
             // btnCheckVEPStatus
             // 
@@ -773,7 +773,7 @@ namespace Ki_ADAS
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnSelectOption);
             this.Controls.Add(this.btnCheckVEPStatus);
-            this.Controls.Add(this.btnRequestPII);
+            this.Controls.Add(this.btnRequestPJI);
             this.Controls.Add(this.btnScanBarcode);
             this.Controls.Add(this.btnSetTrafficLight);
             this.Controls.Add(this.pnlCameraRadarOption);
@@ -839,7 +839,7 @@ namespace Ki_ADAS
         private System.Windows.Forms.Label lblCameraRadarOption;
         private System.Windows.Forms.Button btnSetTrafficLight;
         private System.Windows.Forms.Button btnScanBarcode;
-        private System.Windows.Forms.Button btnRequestPII;
+        private System.Windows.Forms.Button btnRequestPJI;
         private System.Windows.Forms.Button btnCheckVEPStatus;
         private System.Windows.Forms.Button btnSelectOption;
         private System.Windows.Forms.Button btnReset;

@@ -33,6 +33,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkIsRearRightRadar = new System.Windows.Forms.CheckBox();
             this.txtRAngle = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -43,6 +44,8 @@
             this.label17 = new System.Windows.Forms.Label();
             this.txtRY = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkIsRearLeftRadar = new System.Windows.Forms.CheckBox();
+            this.label25 = new System.Windows.Forms.Label();
             this.txtLAngle = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.txtLY = new System.Windows.Forms.TextBox();
@@ -52,6 +55,7 @@
             this.label22 = new System.Windows.Forms.Label();
             this.txtLZ = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkIsFrontCameraTest = new System.Windows.Forms.CheckBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.textBox14 = new System.Windows.Forms.TextBox();
             this.txtStCt = new System.Windows.Forms.TextBox();
@@ -77,7 +81,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtWheelbase = new System.Windows.Forms.TextBox();
             this.txtBarcode = new System.Windows.Forms.TextBox();
-            this.BtnModelSave = new System.Windows.Forms.Button();
             this.lbl_wheelbase = new System.Windows.Forms.Label();
             this.lbl_barcode = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -110,10 +113,6 @@
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.BtnLanSave = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.chkIsFrontCameraTest = new System.Windows.Forms.CheckBox();
-            this.chkIsRearRightRadar = new System.Windows.Forms.CheckBox();
-            this.chkIsRearLeftRadar = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -175,7 +174,6 @@
             this.panel2.Controls.Add(this.groupBox1);
             this.panel2.Controls.Add(this.txtWheelbase);
             this.panel2.Controls.Add(this.txtBarcode);
-            this.panel2.Controls.Add(this.BtnModelSave);
             this.panel2.Controls.Add(this.lbl_wheelbase);
             this.panel2.Controls.Add(this.lbl_barcode);
             this.panel2.Location = new System.Drawing.Point(403, 45);
@@ -204,6 +202,14 @@
             this.groupBox2.TabIndex = 219;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Rear Right Radar";
+            // 
+            // chkIsRearRightRadar
+            // 
+            this.chkIsRearRightRadar.Location = new System.Drawing.Point(945, 60);
+            this.chkIsRearRightRadar.Name = "chkIsRearRightRadar";
+            this.chkIsRearRightRadar.Size = new System.Drawing.Size(20, 33);
+            this.chkIsRearRightRadar.TabIndex = 255;
+            this.chkIsRearRightRadar.UseVisualStyleBackColor = true;
             // 
             // txtRAngle
             // 
@@ -323,6 +329,27 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Rear Left Radar";
             // 
+            // chkIsRearLeftRadar
+            // 
+            this.chkIsRearLeftRadar.Location = new System.Drawing.Point(945, 60);
+            this.chkIsRearLeftRadar.Name = "chkIsRearLeftRadar";
+            this.chkIsRearLeftRadar.Size = new System.Drawing.Size(20, 33);
+            this.chkIsRearLeftRadar.TabIndex = 264;
+            this.chkIsRearLeftRadar.UseVisualStyleBackColor = true;
+            // 
+            // label25
+            // 
+            this.label25.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label25.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.ForeColor = System.Drawing.Color.Aqua;
+            this.label25.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label25.Location = new System.Drawing.Point(546, 49);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(287, 51);
+            this.label25.TabIndex = 263;
+            this.label25.Text = "IsTest";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // txtLAngle
             // 
             this.txtLAngle.Location = new System.Drawing.Point(306, 232);
@@ -441,6 +468,14 @@
             this.groupBox1.TabIndex = 218;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Front Camera";
+            // 
+            // chkIsFrontCameraTest
+            // 
+            this.chkIsFrontCameraTest.Location = new System.Drawing.Point(1482, 243);
+            this.chkIsFrontCameraTest.Name = "chkIsFrontCameraTest";
+            this.chkIsFrontCameraTest.Size = new System.Drawing.Size(20, 33);
+            this.chkIsFrontCameraTest.TabIndex = 247;
+            this.chkIsFrontCameraTest.UseVisualStyleBackColor = true;
             // 
             // textBox13
             // 
@@ -704,18 +739,6 @@
             this.txtBarcode.Size = new System.Drawing.Size(417, 51);
             this.txtBarcode.TabIndex = 216;
             // 
-            // BtnModelSave
-            // 
-            this.BtnModelSave.Font = new System.Drawing.Font("Arial", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnModelSave.Location = new System.Drawing.Point(1287, 27);
-            this.BtnModelSave.Name = "BtnModelSave";
-            this.BtnModelSave.Size = new System.Drawing.Size(352, 123);
-            this.BtnModelSave.TabIndex = 214;
-            this.BtnModelSave.Tag = "SaveButton";
-            this.BtnModelSave.Text = "S A V E";
-            this.BtnModelSave.UseVisualStyleBackColor = true;
-            this.BtnModelSave.Click += new System.EventHandler(this.BtnModelSave_Click);
-            // 
             // lbl_wheelbase
             // 
             this.lbl_wheelbase.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -832,7 +855,7 @@
             this.modelList.TabIndex = 159;
             this.modelList.UseCompatibleStateImageBehavior = false;
             this.modelList.View = System.Windows.Forms.View.List;
-            this.modelList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.modelList_MouseDoubleClick);
+            this.modelList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.modelList_MouseClick);
             // 
             // tabPage2
             // 
@@ -1098,43 +1121,6 @@
             this.label14.Text = "PLC IP";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label25
-            // 
-            this.label25.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label25.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.ForeColor = System.Drawing.Color.Aqua;
-            this.label25.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label25.Location = new System.Drawing.Point(546, 49);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(287, 51);
-            this.label25.TabIndex = 263;
-            this.label25.Text = "IsTest";
-            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // chkIsFrontCameraTest
-            // 
-            this.chkIsFrontCameraTest.Location = new System.Drawing.Point(1482, 243);
-            this.chkIsFrontCameraTest.Name = "chkIsFrontCameraTest";
-            this.chkIsFrontCameraTest.Size = new System.Drawing.Size(20, 33);
-            this.chkIsFrontCameraTest.TabIndex = 247;
-            this.chkIsFrontCameraTest.UseVisualStyleBackColor = true;
-            // 
-            // chkIsRearRightRadar
-            // 
-            this.chkIsRearRightRadar.Location = new System.Drawing.Point(945, 60);
-            this.chkIsRearRightRadar.Name = "chkIsRearRightRadar";
-            this.chkIsRearRightRadar.Size = new System.Drawing.Size(20, 33);
-            this.chkIsRearRightRadar.TabIndex = 255;
-            this.chkIsRearRightRadar.UseVisualStyleBackColor = true;
-            // 
-            // chkIsRearLeftRadar
-            // 
-            this.chkIsRearLeftRadar.Location = new System.Drawing.Point(945, 60);
-            this.chkIsRearLeftRadar.Name = "chkIsRearLeftRadar";
-            this.chkIsRearLeftRadar.Size = new System.Drawing.Size(20, 33);
-            this.chkIsRearLeftRadar.TabIndex = 264;
-            this.chkIsRearLeftRadar.UseVisualStyleBackColor = true;
-            // 
             // Frm_Config
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -1166,6 +1152,7 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -1174,7 +1161,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button BtnModelSave;
         private System.Windows.Forms.Label lbl_wheelbase;
         private System.Windows.Forms.Label lbl_barcode;
         private System.Windows.Forms.Button button2;

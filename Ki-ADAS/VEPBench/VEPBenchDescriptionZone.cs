@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ki_ADAS.VEPBench
 {
-    public class VEPBenchDescriptionZone
+    public class VEPBenchDescriptionZone : IVEPBenchZone
     {
         // 주소값
         public const int Addr_ValidityIndicator = 0;
@@ -38,6 +38,17 @@ namespace Ki_ADAS.VEPBench
         public ushort AdditionalRZAddr { get; set; }
         public ushort AdditionalRZSize { get; set; }
 
+        private bool _isChanged;
+        public bool IsChanged => _isChanged;
+
+        public ushort Length => 18;
+
+        public void ResetChangedState()
+        {
+            _isChanged = false;
+        }
+
+        // 각 구역별 Length
         public VEPBenchDescriptionZone()
         {
             ValidityIndicator = 0;
@@ -53,26 +64,31 @@ namespace Ki_ADAS.VEPBench
             AdditionalTZSize = 2000;
             AdditionalRZAddr = 3000;
             AdditionalRZSize = 2000;
+            _isChanged = false;
         }
 
-        public static VEPBenchDescriptionZone FromRegisters(ushort[] registers)
+        public void FromRegisters(ushort[] registers)
         {
-            return new VEPBenchDescriptionZone
+            bool changed = false;
+
+            if (ValidityIndicator != registers[Addr_ValidityIndicator]) { ValidityIndicator = registers[Addr_ValidityIndicator]; changed = true; }
+            if (StatusZoneAddr != registers[Addr_StatusZoneAddr]) { StatusZoneAddr = registers[Addr_StatusZoneAddr]; changed = true; }
+            if (StatusZoneSize != registers[Addr_StatusZoneSize]) { StatusZoneSize = registers[Addr_StatusZoneSize]; changed = true; }
+            if (SynchroZoneAddr != registers[Addr_SynchroZoneAddr]) { SynchroZoneAddr = registers[Addr_SynchroZoneAddr]; changed = true; }
+            if (SynchroZoneSize != registers[Addr_SynchroZoneSize]) { SynchroZoneSize = registers[Addr_SynchroZoneSize]; changed = true; }
+            if (TransmissionZoneAddr != registers[Addr_TransmissionZoneAddr]) { TransmissionZoneAddr = registers[Addr_TransmissionZoneAddr]; changed = true; }
+            if (TransmissionZoneSize != registers[Addr_TransmissionZoneSize]) { TransmissionZoneSize = registers[Addr_TransmissionZoneSize]; changed = true; }
+            if (ReceptionZoneAddr != registers[Addr_ReceptionZoneAddr]) { ReceptionZoneAddr = registers[Addr_ReceptionZoneAddr]; changed = true; }
+            if (ReceptionZoneSize != registers[Addr_ReceptionZoneSize]) { ReceptionZoneSize = registers[Addr_ReceptionZoneSize]; changed = true; }
+            if (AdditionalTZAddr != registers[Addr_AdditionalTZAddr]) { AdditionalTZAddr = registers[Addr_AdditionalTZAddr]; changed = true; }
+            if (AdditionalTZSize != registers[Addr_AdditionalTZSize]) { AdditionalTZSize = registers[Addr_AdditionalTZSize]; changed = true; }
+            if (AdditionalRZAddr != registers[Addr_AdditionalRZAddr]) { AdditionalRZAddr = registers[Addr_AdditionalRZAddr]; changed = true; }
+            if (AdditionalRZSize != registers[Addr_AdditionalRZSize]) { AdditionalRZSize = registers[Addr_AdditionalRZSize]; changed = true; }
+
+            if (changed)
             {
-                ValidityIndicator = registers[Addr_ValidityIndicator],
-                StatusZoneAddr = registers[Addr_StatusZoneAddr],
-                StatusZoneSize = registers[Addr_StatusZoneSize],
-                SynchroZoneAddr = registers[Addr_SynchroZoneAddr],
-                SynchroZoneSize = registers[Addr_SynchroZoneSize],
-                TransmissionZoneAddr = registers[Addr_TransmissionZoneAddr],
-                TransmissionZoneSize = registers[Addr_TransmissionZoneSize],
-                ReceptionZoneAddr = registers[Addr_ReceptionZoneAddr],
-                ReceptionZoneSize = registers[Addr_ReceptionZoneSize],
-                AdditionalTZAddr = registers[Addr_AdditionalTZAddr],
-                AdditionalTZSize = registers[Addr_AdditionalTZSize],
-                AdditionalRZAddr = registers[Addr_AdditionalRZAddr],
-                AdditionalRZSize = registers[Addr_AdditionalRZSize]
-            };
+                _isChanged = true;
+            }
         }
 
         public ushort[] ToRegisters()

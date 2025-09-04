@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Ki_ADAS.VEPBench
 {
-    public class VEPBenchStatusZone
+    public class VEPBenchStatusZone : IVEPBenchZone
     {
         private static VEPBenchStatusZone _instance;
         private static readonly object _lock = new object();
 
-        public const int Offset_VepStatus = 0;
-        public const int Offset_VepCycleInterruption = 1;
-        public const int Offset_VepCycleEnd = 2;
-        public const int Offset_BenchCycleInterruption = 3;
-        public const int Offset_BenchCycleEnd = 4;
-        public const int Offset_StartCycle = 5;
+        private static int SZ_Addr = VEPBenchDataManager.Instance.DescriptionZone.StatusZoneAddr;
+
+        public int Offset_VepStatus = SZ_Addr;
+        public int Offset_VepCycleInterruption = SZ_Addr + 1;
+        public int Offset_VepCycleEnd = SZ_Addr + 2;
+        public int Offset_BenchCycleInterruption = SZ_Addr + 3;
+        public int Offset_BenchCycleEnd = SZ_Addr + 4;
+        public int Offset_StartCycle = SZ_Addr + 5;
 
         public const ushort VepStatus_Undefined = 0;
         public const ushort VepStatus_Waiting = 1;
@@ -28,6 +30,14 @@ namespace Ki_ADAS.VEPBench
         public ushort BenchCycleInterruption { get; set; }
         public ushort BenchCycleEnd { get; set; }
         public ushort StartCycle { get; set; }
+
+        private bool _isChanged;
+        public bool IsChanged => _isChanged;
+
+        public void ResetChangedState()
+        {
+            _isChanged = false;
+        }
 
         public static VEPBenchStatusZone Instance
         {
@@ -54,22 +64,27 @@ namespace Ki_ADAS.VEPBench
             BenchCycleInterruption = 0;
             BenchCycleEnd = 0;
             StartCycle = 0;
+            _isChanged = false;
         }
 
-        public static VEPBenchStatusZone FromRegisters(ushort[] registers)
+        public void FromRegisters(ushort[] registers)
         {
             if (registers == null || registers.Length < 6)
                 throw new ArgumentException("Invalid register array.");
 
-            var status = Instance;
-            status.VepStatus = registers[Offset_VepStatus];
-            status.VepCycleInterruption = registers[Offset_VepCycleInterruption];
-            status.VepCycleEnd = registers[Offset_VepCycleEnd];
-            status.BenchCycleInterruption = registers[Offset_BenchCycleInterruption];
-            status.BenchCycleEnd = registers[Offset_BenchCycleEnd];
-            status.StartCycle = registers[Offset_StartCycle];
+            bool changed = false;
 
-            return status;
+            if (VepStatus != registers[Offset_VepStatus]) { VepStatus = registers[Offset_VepStatus]; changed = true; }
+            if (VepCycleInterruption != registers[Offset_VepCycleInterruption]) { VepCycleInterruption = registers[Offset_VepCycleInterruption]; changed = true; }
+            if (VepCycleEnd != registers[Offset_VepCycleEnd]) { VepCycleEnd = registers[Offset_VepCycleEnd]; changed = true; }
+            if (BenchCycleInterruption != registers[Offset_BenchCycleInterruption]) { BenchCycleInterruption = registers[Offset_BenchCycleInterruption]; changed = true; }
+            if (BenchCycleEnd != registers[Offset_BenchCycleEnd]) { BenchCycleEnd = registers[Offset_BenchCycleEnd]; changed = true; }
+            if (StartCycle != registers[Offset_StartCycle]) { StartCycle = registers[Offset_StartCycle]; changed = true; }
+
+            if (changed)
+            {
+                _isChanged = true;
+            }
         }
 
         public ushort[] ToRegisters()

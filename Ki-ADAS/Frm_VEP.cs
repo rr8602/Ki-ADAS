@@ -15,15 +15,13 @@ namespace Ki_ADAS
     public partial class Frm_VEP : Form
     {
         private Frm_Mainfrm m_frmParent = null;
-        private VEPBenchClient benchClient = new VEPBenchClient("192.168.99.159", 502);
+        private VEPBenchClient benchClient;
         private IniFile _iniFile;
 
-        public Frm_VEP()
+        public Frm_VEP(VEPBenchClient client)
         {
             InitializeComponent();
-
-            benchClient.Connect();
-            benchClient.DebugMode = true;
+            benchClient = client;
 
             benchClient.DescriptionZoneRead += BenchClient_OnDescriptionZoneRead;
             benchClient.StatusZoneChanged += BenchClient_StatusZoneChanged;

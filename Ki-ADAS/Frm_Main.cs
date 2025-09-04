@@ -1,4 +1,5 @@
-﻿using Ki_ADAS.VEPBench;
+using Ki_ADAS.VEPBench;
+using Ki_ADAS.DB;
 using Ki_ADAS;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +21,9 @@ namespace Ki_ADAS
     {
         public Frm_Mainfrm m_frmParent = null;
         private Frm_VEP _vep;
+        private SettingConfigDb _db;
+        private ModelRepository _modelRepository;
+        private InfoRepository _infoRepository;
         private Frm_Config _frmConfig;
         private VEPBenchClient _vepBenchClient;
         private ADASProcess _adasProcess;
@@ -29,12 +34,12 @@ namespace Ki_ADAS
         private const string VEP_IP_KEY = "VepIp";
         private const string VEP_PORT = "VepPort";
 
-        public Frm_Main()
+        public Frm_Main(SettingConfigDb dbInstance, VEPBenchClient client)
         {
+            _db = dbInstance;
+            _vepBenchClient = client;
             InitializeComponent();
             InitializeComponents();
-
-            _adasProcess = new ADASProcess(_vepBenchClient, _frmConfig, this);
         }
 
         private void InitializeComponents()
@@ -45,22 +50,55 @@ namespace Ki_ADAS
             ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
             port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
 
-            _vepBenchClient = new VEPBenchClient(ipAddress, port);
-            _frmConfig = new Frm_Config();
+            _modelRepository = new ModelRepository(_db);
+            _infoRepository = new InfoRepository(_db);
+            _frmConfig = new Frm_Config(_db);
+            _adasProcess = new ADASProcess(_vepBenchClient, _modelRepository, this);
 
             BtnStop.Enabled = false;
         }
 
-        public string SelectedBarcode
+        public Info SelectedVehicleInfo
         {
             get
             {
+                ListViewItem itemToUse = null;
+
                 if (seqList.SelectedItems.Count > 0)
                 {
-                    return seqList.SelectedItems[0].Text;
+                    itemToUse = seqList.SelectedItems[0];
+                }
+                else if (seqList.Items.Count > 0)
+                {
+                    itemToUse = seqList.Items[0];
+                }
+
+                if (itemToUse != null)
+                {
+                    return new Info
+                    {
+                        AcceptNo = itemToUse.SubItems[0].Text,
+                        PJI = itemToUse.SubItems[1].Text,
+                        Model = itemToUse.SubItems[2].Text
+                    };
                 }
 
                 return null;
+            }
+        }
+
+        public Model SelectedModelInfo
+        {
+            get
+            {
+                var vehicleInfo = SelectedVehicleInfo;
+
+                if (vehicleInfo == null)
+                {
+                    return new Model();
+                }
+
+                return _modelRepository.GetModelDetails(vehicleInfo.Model);
             }
         }
 
@@ -69,54 +107,24 @@ namespace Ki_ADAS
             m_frmParent = f;
         }
 
-        private void LoadAllBarcodeFromXmlFiles()
+        private void LoadRegisteredVehicles()
         {
             try
             {
-                string appPath = Application.StartupPath;
-                string[] xmlFiles = Directory.GetFiles(appPath, "test_result_*.xml");
-
                 seqList.Items.Clear();
+                var vehicles = _infoRepository.GetRegisteredVehicles();
 
-                if (xmlFiles.Length > 0)
+                foreach (var vehicle in vehicles)
                 {
-                    foreach (string xmlFile in xmlFiles)
-                    {
-                        XElement root = XElement.Load(xmlFile);
-                        var results = root.Descendants("TestResults");
-
-                        foreach (var result in results)
-                        {
-                            string barcode = result.Element("Barcode")?.Value;
-                            string model = result.Element("Model")?.Value;
-
-                            if (!string.IsNullOrEmpty(barcode))
-                            {
-                                bool isDuplicate = false;
-
-                                foreach (ListViewItem item in seqList.Items)
-                                {
-                                    if (item.Text == barcode)
-                                    {
-                                        isDuplicate = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!isDuplicate)
-                                {
-                                    ListViewItem item = new ListViewItem(barcode);
-                                    item.Tag = model;
-                                    seqList.Items.Add(item);
-                                }
-                            }
-                        }
-                    }
+                    var item = new ListViewItem(vehicle.AcceptNo);
+                    item.SubItems.Add(vehicle.PJI);
+                    item.SubItems.Add(vehicle.Model);
+                    seqList.Items.Add(item);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"XML 파일 로드 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading registered vehicle list: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -170,7 +178,7 @@ namespace Ki_ADAS
                     if (MessageBox.Show("홈 포지션 시뮬레이터를 지금 실행하시겠습니까?",
                         "시뮬레이터 실행", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        HomePositionSimulator simulator = new HomePositionSimulator(_vepBenchClient, _frmConfig, this);
+                        HomePositionSimulator simulator = new HomePositionSimulator(_vepBenchClient, _modelRepository, this);
                         simulator.Show();
                     }
                 }
@@ -221,14 +229,56 @@ namespace Ki_ADAS
         {
             try
             {
-                Register registerForm = new Register();
-                registerForm.ShowDialog();
+                string barcode = txt_barcode.Text.Trim();
 
-                LoadAllBarcodeFromXmlFiles();
+                if (string.IsNullOrEmpty(barcode))
+                {
+                    MessageBox.Show("바코드를 입력해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                string pji = barcode.Substring(2, 7);
+                string modelCode = barcode.Substring(barcode.Length - 3);
+                string modelName = _modelRepository.GetModelNameByBarcode(modelCode);
+
+                if (string.IsNullOrEmpty(modelName))
+                {
+                    MessageBox.Show($"모델 코드를 찾을 수 없습니다: {modelCode}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var newVehicle = new Info
+                {
+                    AcceptNo = _infoRepository.GetNextAcceptNo(),
+                    PJI = pji,
+                    Model = modelName
+                };
+
+                if (string.IsNullOrEmpty(newVehicle.AcceptNo))
+                {
+                    MessageBox.Show("AcceptNo 생성에 실패했습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                bool isSaved = _infoRepository.SaveVehicleInfo(newVehicle);
+                if (!isSaved)
+                {
+                    MessageBox.Show("차량 정보 저장에 실패했습니다.", "DB 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var item = new ListViewItem(newVehicle.AcceptNo);
+                item.SubItems.Add(newVehicle.PJI);
+                item.SubItems.Add(newVehicle.Model);
+                seqList.Items.Add(item);
+
+                txt_barcode.Clear();
+                AddLogMessage($"차량 등록 완료: {newVehicle.PJI} / {newVehicle.Model}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"차량 등록 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddLogMessage($"차량 등록 오류: {ex.Message}");
             }
         }
 
@@ -320,7 +370,7 @@ namespace Ki_ADAS
                 }
 
                 _vepBenchClient = new VEPBenchClient(ipAddress, port);
-                _adasProcess = new ADASProcess(_vepBenchClient, _frmConfig, this);
+                _adasProcess = new ADASProcess(_vepBenchClient, _modelRepository, this);
                 _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
 
                 bool success = _adasProcess.Start(ipAddress, port);
@@ -342,7 +392,38 @@ namespace Ki_ADAS
 
         private void Frm_Main_Load(object sender, EventArgs e)
         {
-            LoadAllBarcodeFromXmlFiles();
+            this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
+            this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
+
+            LoadRegisteredVehicles();
+        }
+
+        private void seqList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            using (StringFormat sf = new StringFormat())
+            {
+                sf.Alignment = StringAlignment.Center;
+                sf.LineAlignment = StringAlignment.Center;
+
+                e.DrawBackground();
+                e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.seqList.ForeColor), e.Bounds, sf);
+            }
+        }
+
+        private void seqList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+
+            if (e.Item.Selected)
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
+            }
+            else
+            {
+                e.DrawBackground();
+                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+            }
         }
     }
 }

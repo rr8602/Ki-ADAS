@@ -19,19 +19,40 @@ namespace Ki_ADAS
 
         private int m_nCurrentFrmIdx = Def.FOM_IDX_MAIN;
 
+        private SettingConfigDb _db;
         private Form m_ActiveSubForm;
-        public Frm_Main m_frmMain = new Frm_Main();
-        public Frm_Config m_frmConfig = new Frm_Config();
+        public Frm_Main m_frmMain;
+        public Frm_Config m_frmConfig;
         public Frm_Calibration m_frmCalibration = new Frm_Calibration();
         public Frm_Manual m_frmManual = new Frm_Manual();
         public Frm_Result m_frmResult = new Frm_Result();
-        public Frm_VEP m_frmVEP = new Frm_VEP();
+        public Frm_VEP m_frmVEP;
         public Frm_Operator User_Monitor = null;
         private List<Button> m_NavButtons = new List<Button>();
 
-        public Frm_Mainfrm()
+        private VEPBenchClient _vepBenchClient;
+        private IniFile _iniFile;
+        public static string ipAddress;
+        public static int port;
+        private const string CONFIG_SECTION = "Network";
+        private const string VEP_IP_KEY = "VepIp";
+        private const string VEP_PORT = "VepPort";
+
+
+        public Frm_Mainfrm(SettingConfigDb dbInstance)
         {
             InitializeComponent();
+            _db = dbInstance;
+
+            string iniPath = System.IO.Path.Combine(Application.StartupPath, "config.ini");
+            _iniFile = new IniFile(iniPath);
+            ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
+            port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
+            _vepBenchClient = new VEPBenchClient(ipAddress, port);
+
+            m_frmMain = new Frm_Main(_db, _vepBenchClient);
+            m_frmConfig = new Frm_Config(_db);
+            m_frmVEP = new Frm_VEP(_vepBenchClient);
         }
         private void Frm_Mainfrm_Load(object sender, EventArgs e)
         {

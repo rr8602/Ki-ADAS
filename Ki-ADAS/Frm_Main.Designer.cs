@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label19 = new System.Windows.Forms.Label();
             this.lbl_title = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
+            this.lbl_pji = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -47,12 +49,34 @@
             this.label30 = new System.Windows.Forms.Label();
             this.lb_Message = new System.Windows.Forms.ListBox();
             this.GB_GenInfo = new System.Windows.Forms.GroupBox();
+            this.btn_register = new System.Windows.Forms.Button();
+            this.txt_barcode = new System.Windows.Forms.TextBox();
             this.BtnStart = new System.Windows.Forms.Button();
             this.BtnStop = new System.Windows.Forms.Button();
             this.BtnTestModbus = new System.Windows.Forms.Button();
-            this.BtnRegister = new System.Windows.Forms.Button();
             this.GB_GenInfo.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Tag = "AcceptNo";
+            this.columnHeader1.Text = "AcceptNo";
+            this.columnHeader1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader1.Width = 300;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Tag = "PJI";
+            this.columnHeader2.Text = "PJI";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader2.Width = 200;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Tag = "Model";
+            this.columnHeader3.Text = "Model";
+            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader3.Width = 295;
             // 
             // label19
             // 
@@ -78,29 +102,17 @@
             this.lbl_title.Text = "PROCESS INFO";
             this.lbl_title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label12
+            // lbl_pji
             // 
-            this.label12.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label12.Font = new System.Drawing.Font("Arial", 30F);
-            this.label12.Location = new System.Drawing.Point(441, 460);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(640, 95);
-            this.label12.TabIndex = 22;
-            this.label12.Text = "PP 039096538510510";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label11
-            // 
-            this.label11.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label11.Font = new System.Drawing.Font("Arial", 30F);
-            this.label11.Location = new System.Drawing.Point(441, 350);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(640, 95);
-            this.label11.TabIndex = 21;
-            this.label11.Text = "0930365";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lbl_pji.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_pji.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.lbl_pji.Font = new System.Drawing.Font("Arial", 30F);
+            this.lbl_pji.Location = new System.Drawing.Point(441, 350);
+            this.lbl_pji.Name = "lbl_pji";
+            this.lbl_pji.Size = new System.Drawing.Size(640, 95);
+            this.lbl_pji.TabIndex = 21;
+            this.lbl_pji.Text = "0930365";
+            this.lbl_pji.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label9
             // 
@@ -204,7 +216,11 @@
             this.seqList.Activation = System.Windows.Forms.ItemActivation.TwoClick;
             this.seqList.BackColor = System.Drawing.Color.SeaShell;
             this.seqList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.seqList.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.seqList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.seqList.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.seqList.FullRowSelect = true;
             this.seqList.GridLines = true;
             this.seqList.HideSelection = false;
@@ -212,10 +228,11 @@
             this.seqList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.seqList.MultiSelect = false;
             this.seqList.Name = "seqList";
+            this.seqList.OwnerDraw = true;
             this.seqList.Size = new System.Drawing.Size(913, 781);
             this.seqList.TabIndex = 170;
             this.seqList.UseCompatibleStateImageBehavior = false;
-            this.seqList.View = System.Windows.Forms.View.List;
+            this.seqList.View = System.Windows.Forms.View.Details;
             // 
             // label29
             // 
@@ -265,8 +282,9 @@
             // 
             // GB_GenInfo
             // 
-            this.GB_GenInfo.Controls.Add(this.label12);
-            this.GB_GenInfo.Controls.Add(this.label11);
+            this.GB_GenInfo.Controls.Add(this.btn_register);
+            this.GB_GenInfo.Controls.Add(this.txt_barcode);
+            this.GB_GenInfo.Controls.Add(this.lbl_pji);
             this.GB_GenInfo.Controls.Add(this.label9);
             this.GB_GenInfo.Controls.Add(this.label8);
             this.GB_GenInfo.Controls.Add(this.label7);
@@ -284,6 +302,32 @@
             this.GB_GenInfo.TabIndex = 165;
             this.GB_GenInfo.TabStop = false;
             this.GB_GenInfo.Text = "General Info";
+            // 
+            // btn_register
+            // 
+            this.btn_register.BackColor = System.Drawing.Color.Silver;
+            this.btn_register.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_register.ForeColor = System.Drawing.Color.Teal;
+            this.btn_register.Location = new System.Drawing.Point(942, 460);
+            this.btn_register.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btn_register.Name = "btn_register";
+            this.btn_register.Size = new System.Drawing.Size(143, 95);
+            this.btn_register.TabIndex = 168;
+            this.btn_register.Text = "Register";
+            this.btn_register.UseVisualStyleBackColor = false;
+            this.btn_register.Click += new System.EventHandler(this.BtnRegister_Click);
+            // 
+            // txt_barcode
+            // 
+            this.txt_barcode.BackColor = System.Drawing.SystemColors.Window;
+            this.txt_barcode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txt_barcode.Font = new System.Drawing.Font("Arial", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_barcode.Location = new System.Drawing.Point(441, 460);
+            this.txt_barcode.Margin = new System.Windows.Forms.Padding(0);
+            this.txt_barcode.Multiline = true;
+            this.txt_barcode.Name = "txt_barcode";
+            this.txt_barcode.Size = new System.Drawing.Size(498, 95);
+            this.txt_barcode.TabIndex = 22;
             // 
             // BtnStart
             // 
@@ -321,24 +365,11 @@
             this.BtnTestModbus.UseVisualStyleBackColor = false;
             this.BtnTestModbus.Click += new System.EventHandler(this.BtnTestModbus_Click);
             // 
-            // BtnRegister
-            // 
-            this.BtnRegister.BackColor = System.Drawing.Color.Olive;
-            this.BtnRegister.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.BtnRegister.Location = new System.Drawing.Point(921, 831);
-            this.BtnRegister.Name = "BtnRegister";
-            this.BtnRegister.Size = new System.Drawing.Size(300, 138);
-            this.BtnRegister.TabIndex = 175;
-            this.BtnRegister.Text = "Register";
-            this.BtnRegister.UseVisualStyleBackColor = false;
-            this.BtnRegister.Click += new System.EventHandler(this.BtnRegister_Click);
-            // 
             // Frm_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2029, 1179);
-            this.Controls.Add(this.BtnRegister);
             this.Controls.Add(this.BtnTestModbus);
             this.Controls.Add(this.BtnStop);
             this.Controls.Add(this.BtnStart);
@@ -357,6 +388,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Main_FormClosing);
             this.Load += new System.EventHandler(this.Frm_Main_Load);
             this.GB_GenInfo.ResumeLayout(false);
+            this.GB_GenInfo.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -364,8 +396,7 @@
         #endregion
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label lbl_title;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label lbl_pji;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label6;
@@ -384,6 +415,10 @@
         private System.Windows.Forms.Button BtnStart;
         private System.Windows.Forms.Button BtnStop;
         private System.Windows.Forms.Button BtnTestModbus;
-        private System.Windows.Forms.Button BtnRegister;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.TextBox txt_barcode;
+        private System.Windows.Forms.Button btn_register;
     }
 }

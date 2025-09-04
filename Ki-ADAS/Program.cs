@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ki_ADAS.DB;
 
 namespace Ki_ADAS
 {
@@ -17,7 +18,10 @@ namespace Ki_ADAS
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Frm_Mainfrm mainForm = new Frm_Mainfrm();
+            SettingConfigDb db = new SettingConfigDb();
+            db.SetupDatabaseConnection();
+
+            Frm_Mainfrm mainForm = new Frm_Mainfrm(db);
 
             Application.Run(mainForm);
         }

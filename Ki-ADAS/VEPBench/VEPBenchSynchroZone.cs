@@ -6,36 +6,37 @@ using System.Threading.Tasks;
 
 namespace Ki_ADAS.VEPBench
 {
-    public class VEPBenchSynchroZone
+    public class VEPBenchSynchroZone : IVEPBenchZone
     {
         private static VEPBenchSynchroZone _instance;
         private static readonly object _lock = new object();
+        private static int SY_Addr = VEPBenchDataManager.Instance.DescriptionZone.SynchroZoneAddr;
 
-        public const int SYNCHRO_SIZE_PART1 = 123; // 125 / 65 크기로 잘라서 사용
+        public const int SYNCHRO_SIZE_PART1 = 123; // 123 / 67 크기로 잘라서 사용
         public const int SYNCHRO_SIZE_PART2 = 67;
         public const int DEFAULT_SYNCHRO_SIZE = SYNCHRO_SIZE_PART1 + SYNCHRO_SIZE_PART2;
 
         // 디바이스 타입 인덱스
-        public const int DEVICE_TYPE_FRONT_CAMERA_INDEX = 3;
-        public const int DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX = 51;
-        public const int DEVICE_TYPE_REAR_LEFT_RADAR_INDEX = 53;
+        public int DEVICE_TYPE_FRONT_CAMERA_INDEX = SY_Addr + 3;
+        public int DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX = SY_Addr + 51;
+        public int DEVICE_TYPE_REAR_LEFT_RADAR_INDEX = SY_Addr + 53;
 
         // 동기화 명령 인덱스
-        public const int SYNC_COMMAND_FRONT_CAMERA_INDEX = 4;
-        public const int SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX = 52;
-        public const int SYNC_COMMAND_REAR_LEFT_RADAR_INDEX = 54;
+        public int SYNC_COMMAND_FRONT_CAMERA_INDEX = SY_Addr + 4;
+        public int SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX = SY_Addr + 52;
+        public int SYNC_COMMAND_REAR_LEFT_RADAR_INDEX = SY_Addr + 54;
 
         // 각도값 인덱스 상수
-        public const int FRONT_CAMERA_ANGLE1_INDEX = 110; // Roll
-        public const int FRONT_CAMERA_ANGLE2_INDEX = 111; // Azimuth
-        public const int FRONT_CAMERA_ANGLE3_INDEX = 112; // Elevation
-        public const int REAR_RIGHT_RADAR_ANGLE_INDEX = 115;
-        public const int REAR_LEFT_RADAR_ANGLE_INDEX = 116;
+        public int FRONT_CAMERA_ANGLE1_INDEX = SY_Addr + 110; // Roll
+        public int FRONT_CAMERA_ANGLE2_INDEX = SY_Addr + 111; // Azimuth
+        public int FRONT_CAMERA_ANGLE3_INDEX = SY_Addr + 112; // Elevation
+        public int REAR_RIGHT_RADAR_ANGLE_INDEX = SY_Addr + 115;
+        public int REAR_LEFT_RADAR_ANGLE_INDEX = SY_Addr + 116;
 
         // Try / Retry 여부 인덱스 상수
-        public const int TRY_FRONT_CAMERA_INDEX = 89;
-        public const int TRY_REAR_RIGHT_RADAR_INDEX = 83;
-        public const int TRY_REAR_LEFT_RADAR_INDEX = 82;
+        public int TRY_FRONT_CAMERA_INDEX = SY_Addr + 89;
+        public int TRY_REAR_RIGHT_RADAR_INDEX = SY_Addr + 83;
+        public int TRY_REAR_LEFT_RADAR_INDEX = SY_Addr + 82;
 
         public static VEPBenchSynchroZone Instance
         {
@@ -106,10 +107,19 @@ namespace Ki_ADAS.VEPBench
             set => _values[REAR_LEFT_RADAR_ANGLE_INDEX] = (ushort)(value * 100);
         }
 
+        private bool _isChanged;
+        public bool IsChanged => _isChanged;
+
+        public void ResetChangedState()
+        {
+            _isChanged = false;
+        }
+
         public VEPBenchSynchroZone(int size = DEFAULT_SYNCHRO_SIZE)
         {
             _values = new ushort[size];
             ResetAllValues();
+            _isChanged = false;
         }
 
         public static VEPBenchSynchroZone ReadFromVEP(Func<int, int, ushort[]> readFunc)
@@ -124,25 +134,39 @@ namespace Ki_ADAS.VEPBench
             Array.Copy(part1, 0, all, 0, SYNCHRO_SIZE_PART1);
             Array.Copy(part2, 0, all, SYNCHRO_SIZE_PART1, SYNCHRO_SIZE_PART2);
 
-            return FormUshortArray(all);
+            Instance.FromRegisters(all);
+            return Instance;
         }
 
-        public static VEPBenchSynchroZone FormUshortArray(ushort[] arr)
+        public void FromRegisters(ushort[] registers)
         {
-            if (arr == null)
-                throw new ArgumentNullException(nameof(arr));
+            if (registers == null)
+                throw new ArgumentNullException(nameof(registers));
 
-            var synchro = Instance;
+            bool changed = false;
 
-            if (synchro._values.Length != arr.Length)
-                synchro._values = new ushort[arr.Length];
+            if (_values.Length != registers.Length)
+            {
+                _values = new ushort[registers.Length];
+                changed = true;
+            }
 
-            Array.Copy(arr, synchro._values, arr.Length);
+            for (int i = 0; i < registers.Length; i++)
+            {
+                if (_values[i] != registers[i])
+                {
+                    _values[i] = registers[i];
+                    changed = true;
+                }
+            }
 
-            return synchro;
+            if (changed)
+            {
+                _isChanged = true;
+            }
         }
 
-        public ushort[] ToUshortArray()
+        public ushort[] ToRegisters()
         {
             ushort[] result = new ushort[_values.Length];
             Array.Copy(_values, result, _values.Length);
