@@ -15,11 +15,11 @@ namespace Ki_ADAS
         public const int FOM_IDX_RESULT = 4;
         public const int FOM_IDX_VEP = 5;
     }
-    public static class ThreadStep
+    public static class TS
     {
 
         public const int STEP_MAIN_WAIT = 0;
-        public const int STEP_MAIN_BARCODE_ENTER = 1;
+        public const int STEP_MAIN_BARCODE_WAIT = 1;
         public const int STEP_MAIN_CHECK_DETECTION_SENSOR = 2;
         public const int STEP_MAIN_PRESS_START_BUTTON = 3; //
         public const int STEP_MAIN_CENTERING_ON = 4; //
