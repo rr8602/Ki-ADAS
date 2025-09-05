@@ -425,5 +425,14 @@ namespace Ki_ADAS
                 TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
             }
         }
+
+        private void seqList_MouseClick(object sender, MouseEventArgs e)
+        {
+            var selectedVehicle = SelectedVehicleInfo;
+
+            lbl_model.Text = selectedVehicle?.Model ?? "-";
+            lbl_pji.Text = selectedVehicle?.PJI ?? "-";
+            lbl_wheelbase.Text = SelectedModelInfo?.Wheelbase.ToString() ?? "-";
+        }
     }
 }

@@ -83,16 +83,19 @@ namespace Ki_ADAS.DB
         public List<Info> GetRegisteredVehicles()
         {
             var vehicles = new List<Info>();
+            string todayStr = DateTime.Now.ToString("yyyyMMdd");
 
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
                     con.Open();
-                    const string query = "SELECT AcceptNo, PJI, Model FROM Info ORDER BY AcceptNo DESC";
+                    const string query = "SELECT AcceptNo, PJI, Model FROM Info WHERE Mid(AcceptNo, 1, 8) = ? ORDER BY AcceptNo DESC";
 
                     using (var cmd = new OleDbCommand(query, con))
                     {
+                        cmd.Parameters.AddWithValue("Today", todayStr);
+
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())

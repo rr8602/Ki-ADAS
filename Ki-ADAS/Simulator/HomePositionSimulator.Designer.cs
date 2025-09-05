@@ -32,6 +32,7 @@ namespace Ki_ADAS
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HomePositionSimulator));
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.pnlHomePosition = new System.Windows.Forms.Panel();
@@ -786,6 +787,7 @@ namespace Ki_ADAS
             this.Controls.Add(this.pnlHomePosition);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lblTitle);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HomePositionSimulator";
             this.Text = "Home Position Simulator";

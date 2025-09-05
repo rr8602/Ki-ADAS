@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>K-Logo.ico</ApplicationIcon>
+    <ApplicationIcon>ADAS.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -226,6 +226,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ADAS.ico" />
     <Content Include="K-Logo.ico" />
   </ItemGroup>
   <ItemGroup />

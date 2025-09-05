@@ -10,22 +10,21 @@ namespace Ki_ADAS.VEPBench
     {
         private static VEPBenchTransmissionZone _instance;
         private static readonly object _lock = new object();
-        private static int TZ_Addr = VEPBenchDataManager.Instance.DescriptionZone.TransmissionZoneAddr;
 
-        // 상대 주소값
-        public int Offset_Reserved1 = TZ_Addr;
-        public int Offset_Reserved2 = TZ_Addr + 1;
-        public int Offset_AddTSize = TZ_Addr + 2;
-        public int Offset_ExchStatus = TZ_Addr + 3;
-        public int Offset_Reserved3 = TZ_Addr + 4;
-        public int Offset_Reserved4 = TZ_Addr + 5;
-        public int Offset_FctAndPCNum = TZ_Addr + 6;
-        public int Offset_Reserver5 = TZ_Addr + 7;
-        public int Offset_ProcessAndSubFct = TZ_Addr + 8;
-        public int Offset_Reserved6 = TZ_Addr + 9;
-        public int Offset_Reserved7 = TZ_Addr + 10;
-        public int Offset_Reserved8 = TZ_Addr + 11;
-        public int Offset_DataStart = TZ_Addr + 12;
+        // 주소값
+        public const int Offset_Reserved1 = 0;
+        public const int Offset_Reserved2 = 1;
+        public const int Offset_AddTSize = 2;
+        public const int Offset_ExchStatus = 3;
+        public const int Offset_Reserved4 = 5;
+        public const int Offset_FctAndPCNum = 6;
+        public const int Offset_Reserver5 = 7;
+        public const int Offset_ProcessAndSubFct = 8;
+        public const int Offset_Reserved6 = 9;
+        public const int Offset_Reserved3 = 4;
+        public const int Offset_Reserved7 = 10;
+        public const int Offset_Reserved8 = 11;
+        public const int Offset_DataStart = 12;
 
         // 기능 코드
         public const int FctCode_PJI = 6;

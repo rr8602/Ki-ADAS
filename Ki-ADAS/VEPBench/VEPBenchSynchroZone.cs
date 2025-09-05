@@ -10,6 +10,7 @@ namespace Ki_ADAS.VEPBench
     {
         private static VEPBenchSynchroZone _instance;
         private static readonly object _lock = new object();
+
         private static int SY_Addr = VEPBenchDataManager.Instance.DescriptionZone.SynchroZoneAddr;
 
         public const int SYNCHRO_SIZE_PART1 = 123; // 123 / 67 크기로 잘라서 사용
