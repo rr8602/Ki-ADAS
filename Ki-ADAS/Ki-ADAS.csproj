@@ -163,6 +163,10 @@
       <DependentUpon>HomePositionSimulator.cs</DependentUpon>
     </Compile>
     <Compile Include="snap7.net.cs" />
+    <Compile Include="ThreadADAS\Thread_FRCam.cs" />
+    <Compile Include="ThreadADAS\Thread_FrontRadar.cs" />
+    <Compile Include="ThreadADAS\Thread_Main.cs" />
+    <Compile Include="ThreadADAS\Thread_RearCam.cs" />
     <Compile Include="VEPBench\VEPBenchClient.cs" />
     <Compile Include="VEPBench\VEPBenchDescriptionZone.cs" />
     <Compile Include="VEPBench\VEPBenchReceptionZone.cs" />

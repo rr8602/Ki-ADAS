@@ -182,7 +182,7 @@ namespace Ki_ADAS
                 return;
             }
 
-            roundLabel4.Text = description;
+            //roundLabel4.Text = description;
         }
     }
 }
