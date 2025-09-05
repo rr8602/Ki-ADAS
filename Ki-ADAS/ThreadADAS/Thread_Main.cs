@@ -11,7 +11,7 @@ namespace Ki_ADAS
     public class Thread_Main
     {
         private Thread _testThread = null;
-
+        GlobalVal _GV;
         private Thread_FRCam _Thread_FRCam = null;
         private Thread_FRCam _Thread_FrontRadar = null;
         private Thread_FRCam _Thread_RearRadar = null;
@@ -44,7 +44,7 @@ namespace Ki_ADAS
 
         public Thread_Main()
         {
-            
+            _GV = GlobalVal.Instance;
         }
 
         public void SetBarcode(Info pInfo, Model pModel)

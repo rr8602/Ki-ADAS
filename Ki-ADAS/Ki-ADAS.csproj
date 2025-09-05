@@ -134,6 +134,7 @@
     <Compile Include="Frm_Result.Designer.cs">
       <DependentUpon>Frm_Result.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalVal.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="Language\LanguageManager.cs" />
     <Compile Include="LineProgress.cs">
