@@ -208,7 +208,7 @@ namespace HomePositionSimulator
             }
             else
             {
-                MessageBox.Show("옵션을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please select an option.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -225,7 +225,7 @@ namespace HomePositionSimulator
         private void btnMoveCarToBench_Click(object sender, EventArgs e)
         {
             lblStatus.Text = "상태: 차량이 벤치로 이동 중";
-            MessageBox.Show("차량을 벤치로 이동하세요.", "안내", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Move the vehicle to the bench.", "Guidance", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

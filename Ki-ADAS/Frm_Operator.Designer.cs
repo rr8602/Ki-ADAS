@@ -29,32 +29,32 @@
         private void InitializeComponent()
         {
             this.NavTop = new System.Windows.Forms.Panel();
-            this.roundLabel3 = new KI_Controls.RoundLabel();
-            this.roundLabel1 = new KI_Controls.RoundLabel();
+            this.lbl_time = new KI_Controls.RoundLabel();
+            this.lbl_modelName = new KI_Controls.RoundLabel();
             this.analogClock1 = new Ki_WAT.AnalogClock();
             this.NavBottom = new System.Windows.Forms.Panel();
             this.lbl_Toe_FL = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lbl_Toe_FR = new System.Windows.Forms.Label();
+            this.lbl_Toe_RR = new System.Windows.Forms.Label();
+            this.lbl_frcam = new System.Windows.Forms.Label();
+            this.lbl_frada = new System.Windows.Forms.Label();
+            this.lbl_rrada = new System.Windows.Forms.Label();
+            this.lbl_message = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
+            this.lbl_FRight = new System.Windows.Forms.Label();
+            this.lbl_FLeft = new System.Windows.Forms.Label();
+            this.lbl_RRight = new System.Windows.Forms.Label();
+            this.lbl_RLeft = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
+            this.lbl_elevation = new System.Windows.Forms.Label();
+            this.lbl_azimuth = new System.Windows.Forms.Label();
+            this.lbl_roll = new System.Windows.Forms.Label();
             this.NavTop.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,54 +63,56 @@
             this.NavTop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.NavTop.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.NavTop.Controls.Add(this.roundLabel3);
-            this.NavTop.Controls.Add(this.roundLabel1);
+            this.NavTop.Controls.Add(this.lbl_time);
+            this.NavTop.Controls.Add(this.lbl_modelName);
             this.NavTop.Controls.Add(this.analogClock1);
             this.NavTop.Location = new System.Drawing.Point(1, 2);
-            this.NavTop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.NavTop.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.NavTop.Name = "NavTop";
-            this.NavTop.Size = new System.Drawing.Size(1920, 173);
+            this.NavTop.Size = new System.Drawing.Size(2194, 216);
             this.NavTop.TabIndex = 9;
             this.NavTop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseDown);
             this.NavTop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseMove);
             // 
-            // roundLabel3
+            // lbl_time
             // 
-            this.roundLabel3.BackColor = System.Drawing.Color.Black;
-            this.roundLabel3.BackgroundColor = System.Drawing.Color.Black;
-            this.roundLabel3.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.roundLabel3.BorderRadius = 20;
-            this.roundLabel3.BorderSize = 0;
-            this.roundLabel3.FlatAppearance.BorderSize = 0;
-            this.roundLabel3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.roundLabel3.Font = new System.Drawing.Font("Arial", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.roundLabel3.ForeColor = System.Drawing.Color.White;
-            this.roundLabel3.Location = new System.Drawing.Point(1663, 28);
-            this.roundLabel3.Name = "roundLabel3";
-            this.roundLabel3.Size = new System.Drawing.Size(215, 114);
-            this.roundLabel3.TabIndex = 8;
-            this.roundLabel3.Text = "9999";
-            this.roundLabel3.TextColor = System.Drawing.Color.White;
-            this.roundLabel3.UseVisualStyleBackColor = false;
+            this.lbl_time.BackColor = System.Drawing.Color.Black;
+            this.lbl_time.BackgroundColor = System.Drawing.Color.Black;
+            this.lbl_time.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.lbl_time.BorderRadius = 20;
+            this.lbl_time.BorderSize = 0;
+            this.lbl_time.FlatAppearance.BorderSize = 0;
+            this.lbl_time.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.lbl_time.Font = new System.Drawing.Font("Arial", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_time.ForeColor = System.Drawing.Color.White;
+            this.lbl_time.Location = new System.Drawing.Point(1901, 35);
+            this.lbl_time.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.lbl_time.Name = "lbl_time";
+            this.lbl_time.Size = new System.Drawing.Size(246, 142);
+            this.lbl_time.TabIndex = 8;
+            this.lbl_time.Text = "9999";
+            this.lbl_time.TextColor = System.Drawing.Color.White;
+            this.lbl_time.UseVisualStyleBackColor = false;
             // 
-            // roundLabel1
+            // lbl_modelName
             // 
-            this.roundLabel1.BackColor = System.Drawing.Color.MidnightBlue;
-            this.roundLabel1.BackgroundColor = System.Drawing.Color.MidnightBlue;
-            this.roundLabel1.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.roundLabel1.BorderRadius = 20;
-            this.roundLabel1.BorderSize = 0;
-            this.roundLabel1.FlatAppearance.BorderSize = 0;
-            this.roundLabel1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.roundLabel1.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.roundLabel1.ForeColor = System.Drawing.Color.White;
-            this.roundLabel1.Location = new System.Drawing.Point(242, 28);
-            this.roundLabel1.Name = "roundLabel1";
-            this.roundLabel1.Size = new System.Drawing.Size(1396, 114);
-            this.roundLabel1.TabIndex = 6;
-            this.roundLabel1.Text = "Model Name";
-            this.roundLabel1.TextColor = System.Drawing.Color.White;
-            this.roundLabel1.UseVisualStyleBackColor = false;
+            this.lbl_modelName.BackColor = System.Drawing.Color.MidnightBlue;
+            this.lbl_modelName.BackgroundColor = System.Drawing.Color.MidnightBlue;
+            this.lbl_modelName.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.lbl_modelName.BorderRadius = 20;
+            this.lbl_modelName.BorderSize = 0;
+            this.lbl_modelName.FlatAppearance.BorderSize = 0;
+            this.lbl_modelName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.lbl_modelName.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lbl_modelName.ForeColor = System.Drawing.Color.White;
+            this.lbl_modelName.Location = new System.Drawing.Point(277, 35);
+            this.lbl_modelName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.lbl_modelName.Name = "lbl_modelName";
+            this.lbl_modelName.Size = new System.Drawing.Size(1595, 142);
+            this.lbl_modelName.TabIndex = 6;
+            this.lbl_modelName.Text = "Model Name";
+            this.lbl_modelName.TextColor = System.Drawing.Color.White;
+            this.lbl_modelName.UseVisualStyleBackColor = false;
             // 
             // analogClock1
             // 
@@ -118,12 +120,13 @@
             this.analogClock1.BorderColor = System.Drawing.Color.LightCoral;
             this.analogClock1.BorderThickness = 3;
             this.analogClock1.HourHandColor = System.Drawing.Color.Black;
-            this.analogClock1.Location = new System.Drawing.Point(23, 19);
+            this.analogClock1.Location = new System.Drawing.Point(26, 24);
+            this.analogClock1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.analogClock1.MinuteHandColor = System.Drawing.Color.Black;
             this.analogClock1.Name = "analogClock1";
             this.analogClock1.NumberFont = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.analogClock1.SecondHandColor = System.Drawing.Color.Red;
-            this.analogClock1.Size = new System.Drawing.Size(187, 114);
+            this.analogClock1.Size = new System.Drawing.Size(214, 142);
             this.analogClock1.TabIndex = 5;
             this.analogClock1.Text = "analogClock1";
             // 
@@ -131,10 +134,10 @@
             // 
             this.NavBottom.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.NavBottom.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.NavBottom.Location = new System.Drawing.Point(-347, 1627);
-            this.NavBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.NavBottom.Location = new System.Drawing.Point(-397, 2034);
+            this.NavBottom.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.NavBottom.Name = "NavBottom";
-            this.NavBottom.Size = new System.Drawing.Size(1920, 8);
+            this.NavBottom.Size = new System.Drawing.Size(2194, 10);
             this.NavBottom.TabIndex = 10;
             // 
             // lbl_Toe_FL
@@ -142,92 +145,92 @@
             this.lbl_Toe_FL.BackColor = System.Drawing.Color.Silver;
             this.lbl_Toe_FL.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_Toe_FL.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Toe_FL.Location = new System.Drawing.Point(24, 203);
+            this.lbl_Toe_FL.Location = new System.Drawing.Point(27, 254);
             this.lbl_Toe_FL.Name = "lbl_Toe_FL";
-            this.lbl_Toe_FL.Size = new System.Drawing.Size(516, 137);
+            this.lbl_Toe_FL.Size = new System.Drawing.Size(590, 171);
             this.lbl_Toe_FL.TabIndex = 93;
             this.lbl_Toe_FL.Text = "FRCAM";
             this.lbl_Toe_FL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label1
+            // lbl_Toe_FR
             // 
-            this.label1.BackColor = System.Drawing.Color.Silver;
-            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(24, 340);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(516, 137);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "F-RADAR";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_Toe_FR.BackColor = System.Drawing.Color.Silver;
+            this.lbl_Toe_FR.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_Toe_FR.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Toe_FR.Location = new System.Drawing.Point(27, 425);
+            this.lbl_Toe_FR.Name = "lbl_Toe_FR";
+            this.lbl_Toe_FR.Size = new System.Drawing.Size(590, 171);
+            this.lbl_Toe_FR.TabIndex = 94;
+            this.lbl_Toe_FR.Text = "F-RADAR";
+            this.lbl_Toe_FR.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label2
+            // lbl_Toe_RR
             // 
-            this.label2.BackColor = System.Drawing.Color.Silver;
-            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(24, 477);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(516, 137);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "R-RADAR";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_Toe_RR.BackColor = System.Drawing.Color.Silver;
+            this.lbl_Toe_RR.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_Toe_RR.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Toe_RR.Location = new System.Drawing.Point(27, 596);
+            this.lbl_Toe_RR.Name = "lbl_Toe_RR";
+            this.lbl_Toe_RR.Size = new System.Drawing.Size(590, 171);
+            this.lbl_Toe_RR.TabIndex = 95;
+            this.lbl_Toe_RR.Text = "R-RADAR";
+            this.lbl_Toe_RR.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label3
+            // lbl_frcam
             // 
-            this.label3.BackColor = System.Drawing.Color.White;
-            this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label3.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(540, 203);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(656, 137);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "-";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_frcam.BackColor = System.Drawing.Color.White;
+            this.lbl_frcam.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_frcam.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_frcam.Location = new System.Drawing.Point(617, 254);
+            this.lbl_frcam.Name = "lbl_frcam";
+            this.lbl_frcam.Size = new System.Drawing.Size(750, 171);
+            this.lbl_frcam.TabIndex = 96;
+            this.lbl_frcam.Text = "-";
+            this.lbl_frcam.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label4
+            // lbl_frada
             // 
-            this.label4.BackColor = System.Drawing.Color.White;
-            this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label4.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(540, 340);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(656, 137);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "-";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_frada.BackColor = System.Drawing.Color.White;
+            this.lbl_frada.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_frada.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_frada.Location = new System.Drawing.Point(617, 425);
+            this.lbl_frada.Name = "lbl_frada";
+            this.lbl_frada.Size = new System.Drawing.Size(750, 171);
+            this.lbl_frada.TabIndex = 97;
+            this.lbl_frada.Text = "-";
+            this.lbl_frada.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label5
+            // lbl_rrada
             // 
-            this.label5.BackColor = System.Drawing.Color.White;
-            this.label5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label5.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(540, 477);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(656, 137);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "-";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_rrada.BackColor = System.Drawing.Color.White;
+            this.lbl_rrada.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_rrada.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_rrada.Location = new System.Drawing.Point(617, 596);
+            this.lbl_rrada.Name = "lbl_rrada";
+            this.lbl_rrada.Size = new System.Drawing.Size(750, 171);
+            this.lbl_rrada.TabIndex = 98;
+            this.lbl_rrada.Text = "-";
+            this.lbl_rrada.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label6
+            // lbl_message
             // 
-            this.label6.BackColor = System.Drawing.Color.White;
-            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label6.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(24, 709);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(1884, 293);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "-";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_message.BackColor = System.Drawing.Color.White;
+            this.lbl_message.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_message.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_message.Location = new System.Drawing.Point(27, 886);
+            this.lbl_message.Name = "lbl_message";
+            this.lbl_message.Size = new System.Drawing.Size(2153, 366);
+            this.lbl_message.TabIndex = 99;
+            this.lbl_message.Text = "-";
+            this.lbl_message.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(25, 623);
+            this.label7.Location = new System.Drawing.Point(29, 779);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(298, 58);
+            this.label7.Size = new System.Drawing.Size(341, 72);
             this.label7.TabIndex = 100;
             this.label7.Text = "Message";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -237,9 +240,9 @@
             this.label8.BackColor = System.Drawing.Color.Transparent;
             this.label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label8.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(1199, 341);
+            this.label8.Location = new System.Drawing.Point(1370, 426);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(349, 67);
+            this.label8.Size = new System.Drawing.Size(399, 84);
             this.label8.TabIndex = 101;
             this.label8.Text = "LEFT";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -249,69 +252,69 @@
             this.label10.BackColor = System.Drawing.Color.Transparent;
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label10.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(1551, 341);
+            this.label10.Location = new System.Drawing.Point(1773, 426);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(349, 67);
+            this.label10.Size = new System.Drawing.Size(399, 84);
             this.label10.TabIndex = 103;
             this.label10.Text = "RIGHT";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label9
+            // lbl_FRight
             // 
-            this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label9.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(1551, 410);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(349, 67);
-            this.label9.TabIndex = 105;
-            this.label9.Text = "0.0";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_FRight.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_FRight.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_FRight.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_FRight.Location = new System.Drawing.Point(1773, 512);
+            this.lbl_FRight.Name = "lbl_FRight";
+            this.lbl_FRight.Size = new System.Drawing.Size(399, 84);
+            this.lbl_FRight.TabIndex = 105;
+            this.lbl_FRight.Text = "0.0";
+            this.lbl_FRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label11
+            // lbl_FLeft
             // 
-            this.label11.BackColor = System.Drawing.Color.Transparent;
-            this.label11.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label11.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(1199, 410);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(349, 67);
-            this.label11.TabIndex = 104;
-            this.label11.Text = "0.0";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_FLeft.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_FLeft.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_FLeft.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_FLeft.Location = new System.Drawing.Point(1370, 512);
+            this.lbl_FLeft.Name = "lbl_FLeft";
+            this.lbl_FLeft.Size = new System.Drawing.Size(399, 84);
+            this.lbl_FLeft.TabIndex = 104;
+            this.lbl_FLeft.Text = "0.0";
+            this.lbl_FLeft.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label12
+            // lbl_RRight
             // 
-            this.label12.BackColor = System.Drawing.Color.Transparent;
-            this.label12.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label12.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(1551, 546);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(349, 67);
-            this.label12.TabIndex = 109;
-            this.label12.Text = "0.0";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_RRight.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_RRight.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_RRight.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_RRight.Location = new System.Drawing.Point(1773, 682);
+            this.lbl_RRight.Name = "lbl_RRight";
+            this.lbl_RRight.Size = new System.Drawing.Size(399, 84);
+            this.lbl_RRight.TabIndex = 109;
+            this.lbl_RRight.Text = "0.0";
+            this.lbl_RRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label13
+            // lbl_RLeft
             // 
-            this.label13.BackColor = System.Drawing.Color.Transparent;
-            this.label13.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label13.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(1199, 546);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(349, 67);
-            this.label13.TabIndex = 108;
-            this.label13.Text = "0.0";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_RLeft.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_RLeft.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_RLeft.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_RLeft.Location = new System.Drawing.Point(1370, 682);
+            this.lbl_RLeft.Name = "lbl_RLeft";
+            this.lbl_RLeft.Size = new System.Drawing.Size(399, 84);
+            this.lbl_RLeft.TabIndex = 108;
+            this.lbl_RLeft.Text = "0.0";
+            this.lbl_RLeft.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label14
             // 
             this.label14.BackColor = System.Drawing.Color.Transparent;
             this.label14.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label14.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(1551, 477);
+            this.label14.Location = new System.Drawing.Point(1773, 596);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(349, 67);
+            this.label14.Size = new System.Drawing.Size(399, 84);
             this.label14.TabIndex = 107;
             this.label14.Text = "RIGHT";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -321,9 +324,9 @@
             this.label15.BackColor = System.Drawing.Color.Transparent;
             this.label15.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label15.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(1199, 477);
+            this.label15.Location = new System.Drawing.Point(1370, 596);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(349, 67);
+            this.label15.Size = new System.Drawing.Size(399, 84);
             this.label15.TabIndex = 106;
             this.label15.Text = "LEFT";
             this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -333,9 +336,9 @@
             this.label16.BackColor = System.Drawing.Color.Transparent;
             this.label16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label16.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(1199, 203);
+            this.label16.Location = new System.Drawing.Point(1370, 254);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(232, 68);
+            this.label16.Size = new System.Drawing.Size(265, 85);
             this.label16.TabIndex = 110;
             this.label16.Text = "Roll";
             this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -345,9 +348,9 @@
             this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label17.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(1433, 203);
+            this.label17.Location = new System.Drawing.Point(1638, 254);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(232, 68);
+            this.label17.Size = new System.Drawing.Size(265, 85);
             this.label17.TabIndex = 111;
             this.label17.Text = "Azimute";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -357,75 +360,75 @@
             this.label18.BackColor = System.Drawing.Color.Transparent;
             this.label18.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label18.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(1667, 203);
+            this.label18.Location = new System.Drawing.Point(1905, 254);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(232, 68);
+            this.label18.Size = new System.Drawing.Size(265, 85);
             this.label18.TabIndex = 112;
             this.label18.Text = "Elevation";
             this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label19
+            // lbl_elevation
             // 
-            this.label19.BackColor = System.Drawing.Color.Transparent;
-            this.label19.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label19.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.Location = new System.Drawing.Point(1667, 271);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(232, 68);
-            this.label19.TabIndex = 115;
-            this.label19.Text = "0.0";
-            this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_elevation.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_elevation.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_elevation.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_elevation.Location = new System.Drawing.Point(1905, 339);
+            this.lbl_elevation.Name = "lbl_elevation";
+            this.lbl_elevation.Size = new System.Drawing.Size(265, 85);
+            this.lbl_elevation.TabIndex = 115;
+            this.lbl_elevation.Text = "0.0";
+            this.lbl_elevation.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label20
+            // lbl_azimuth
             // 
-            this.label20.BackColor = System.Drawing.Color.Transparent;
-            this.label20.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label20.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.Location = new System.Drawing.Point(1433, 271);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(232, 68);
-            this.label20.TabIndex = 114;
-            this.label20.Text = "0.0";
-            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_azimuth.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_azimuth.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_azimuth.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_azimuth.Location = new System.Drawing.Point(1638, 339);
+            this.lbl_azimuth.Name = "lbl_azimuth";
+            this.lbl_azimuth.Size = new System.Drawing.Size(265, 85);
+            this.lbl_azimuth.TabIndex = 114;
+            this.lbl_azimuth.Text = "0.0";
+            this.lbl_azimuth.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label21
+            // lbl_roll
             // 
-            this.label21.BackColor = System.Drawing.Color.Transparent;
-            this.label21.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label21.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(1199, 271);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(232, 68);
-            this.label21.TabIndex = 113;
-            this.label21.Text = "0.0";
-            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_roll.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_roll.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_roll.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_roll.Location = new System.Drawing.Point(1370, 339);
+            this.lbl_roll.Name = "lbl_roll";
+            this.lbl_roll.Size = new System.Drawing.Size(265, 85);
+            this.lbl_roll.TabIndex = 113;
+            this.lbl_roll.Text = "0.0";
+            this.lbl_roll.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Frm_Operator
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1920, 1080);
-            this.Controls.Add(this.label19);
-            this.Controls.Add(this.label20);
-            this.Controls.Add(this.label21);
+            this.ClientSize = new System.Drawing.Size(2194, 1350);
+            this.Controls.Add(this.lbl_elevation);
+            this.Controls.Add(this.lbl_azimuth);
+            this.Controls.Add(this.lbl_roll);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label16);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label13);
+            this.Controls.Add(this.lbl_RRight);
+            this.Controls.Add(this.lbl_RLeft);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label15);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label11);
+            this.Controls.Add(this.lbl_FRight);
+            this.Controls.Add(this.lbl_FLeft);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lbl_message);
+            this.Controls.Add(this.lbl_rrada);
+            this.Controls.Add(this.lbl_frada);
+            this.Controls.Add(this.lbl_frcam);
+            this.Controls.Add(this.lbl_Toe_RR);
+            this.Controls.Add(this.lbl_Toe_FR);
             this.Controls.Add(this.lbl_Toe_FL);
             this.Controls.Add(this.NavTop);
             this.Controls.Add(this.NavBottom);
@@ -444,30 +447,30 @@
 
         private System.Windows.Forms.Panel NavTop;
         private System.Windows.Forms.Panel NavBottom;
-        private KI_Controls.RoundLabel roundLabel3;
-        private KI_Controls.RoundLabel roundLabel1;
+        private KI_Controls.RoundLabel lbl_time;
+        private KI_Controls.RoundLabel lbl_modelName;
         private Ki_WAT.AnalogClock analogClock1;
         private System.Windows.Forms.Label lbl_Toe_FL;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lbl_Toe_FR;
+        private System.Windows.Forms.Label lbl_Toe_RR;
+        private System.Windows.Forms.Label lbl_frcam;
+        private System.Windows.Forms.Label lbl_frada;
+        private System.Windows.Forms.Label lbl_rrada;
+        private System.Windows.Forms.Label lbl_message;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label lbl_FRight;
+        private System.Windows.Forms.Label lbl_FLeft;
+        private System.Windows.Forms.Label lbl_RRight;
+        private System.Windows.Forms.Label lbl_RLeft;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label lbl_elevation;
+        private System.Windows.Forms.Label lbl_azimuth;
+        private System.Windows.Forms.Label lbl_roll;
     }
 }

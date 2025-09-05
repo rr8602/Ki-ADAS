@@ -110,7 +110,6 @@
             this.lbl_pji.Name = "lbl_pji";
             this.lbl_pji.Size = new System.Drawing.Size(640, 95);
             this.lbl_pji.TabIndex = 21;
-            this.lbl_pji.Text = "0930365";
             this.lbl_pji.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lbl_wheelbase
@@ -122,7 +121,6 @@
             this.lbl_wheelbase.Name = "lbl_wheelbase";
             this.lbl_wheelbase.Size = new System.Drawing.Size(640, 95);
             this.lbl_wheelbase.TabIndex = 18;
-            this.lbl_wheelbase.Text = "2345";
             this.lbl_wheelbase.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label6
@@ -154,7 +152,6 @@
             this.lbl_model.Name = "lbl_model";
             this.lbl_model.Size = new System.Drawing.Size(640, 95);
             this.lbl_model.TabIndex = 17;
-            this.lbl_model.Text = "BBB PH2";
             this.lbl_model.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label2

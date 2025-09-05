@@ -36,6 +36,9 @@ namespace Ki_ADAS
         private int timeoutLimit = 30; // 30초 타임아웃
         private bool[] isTest = new bool[3]; // 각 센서별 테스트 계획 여부
 
+        public event EventHandler TestStarted;
+        public event EventHandler<ADASProcess.ADASResult> TestCompleted;
+
         private ADASProcess process;
 
         private enum CalibrationTarget
@@ -72,28 +75,29 @@ namespace Ki_ADAS
             {
                 if (vepClient == null && !vepClient.IsConnected)
                 {
-                    MessageBox.Show("VEP 클라이언트가 연결되어 있지 않습니다. 시뮬레이터를 실행하기 전에 Start 버튼을 눌러주세요.",
-                        "연결 오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("VEP client is not connected. Please press the Start button before running the simulator.",
+                        "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"VEP 클라이언트 초기화 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred during VEP client initialization: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void ProcessTimer_Tick(object sender, EventArgs e)
         {
             timeElapsed++;
-            lblTimeElapsed.Text = $"경과 시간: {timeElapsed}초";
+            lbl_time.Text = timeElapsed.ToString();
 
             // 타임아웃 체크
             if (timeElapsed > timeoutLimit && !isVEPWorking)
             {
-                lblStatus.Text = "상태: 타임아웃 - 프로세스 종료";
+                lblStatus.Text = "Status: Timeout - Process terminated";
                 lblStatus.ForeColor = Color.Red;
                 processTimer.Stop();
                 btnReset.Enabled = true;
+                TestCompleted?.Invoke(this, GetADASResult());
             }
         }
 
@@ -108,11 +112,11 @@ namespace Ki_ADAS
             currentTarget = CalibrationTarget.None;
 
             // UI 업데이트
-            lblStatus.Text = "상태: 홈 포지션";
+            lblStatus.Text = "Status: Home Position";
             lblStatus.ForeColor = Color.Green;
-            lblPositioningDevice.Text = "포지셔닝 장치: 홈";
-            lblCameraTarget.Text = "카메라 타겟: 홈";
-            lblVehicleDetect.Text = "차량 감지 센서: 꺼짐";
+            lblPositioningDevice.Text = "Positioning Device: Home";
+            lblCameraTarget.Text = "Camera Target: Home";
+            lblVehicleDetect.Text = "Vehicle Detection Sensor: Off";
 
             // 버튼 상태 업데이트
             btnSetTrafficLight.Enabled = true;
@@ -140,7 +144,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"VEP 상태 초기화 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred during VEP status initialization: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             // 상태 패널 초기화
@@ -148,6 +152,7 @@ namespace Ki_ADAS
 
             // 타이머 초기화
             processTimer.Stop();
+            TestCompleted?.Invoke(this, GetADASResult());
         }
 
         private void UpdateStatusPanels(int currentStep)
@@ -165,7 +170,7 @@ namespace Ki_ADAS
 
         private void btnSetTrafficLight_Click(object sender, EventArgs e)
         {
-            lblStatus.Text = "상태: 입구 신호등 초록색";
+            lblStatus.Text = "Status: Entrance traffic light green";
             UpdateStatusPanels(2);
             btnSetTrafficLight.Enabled = false;
             btnScanBarcode.Enabled = true;
@@ -179,7 +184,7 @@ namespace Ki_ADAS
 
                 if (selectedModel == null)
                 {
-                    MessageBox.Show($"선택된 모델 '{modelName}'에 대한 설정 정보를 찾을 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Could not find configuration information for the selected model '{modelName}'.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -187,13 +192,13 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(barcodeValue))
                 {
-                    MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Please select an item from the test list on the main screen.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
             }
 
-            lblStatus.Text = $"상태: 바코드 스캔 완료 - {barcodeValue}";
-            lblVehicleDetect.Text = "차량 감지 센서: 켜짐";
+            lblStatus.Text = $"Status: Barcode scan complete - {barcodeValue}";
+            lblVehicleDetect.Text = "Vehicle Detection Sensor: On";
             UpdateStatusPanels(4);
             btnScanBarcode.Enabled = false;
 
@@ -206,17 +211,17 @@ namespace Ki_ADAS
                 vepClient.WriteStatusZone();
             }
 
-            lblStatus.Text = $"상태: 사이클 시작 값 = {cycleValue}";
+            lblStatus.Text = $"Status: Cycle start value = {cycleValue}";
             UpdateStatusPanels(5);
             btnRequestPJI.Enabled = true;
         }
 
         private void btnRequestPJI_Click(object sender, EventArgs e)
         {
-            lblStatus.Text = "상태: PJI 요청됨";
+            lblStatus.Text = "Status: PJI requested";
             UpdateStatusPanels(6);
             btnRequestPJI.Enabled = false;
-            lblStatus.Text = "상태: PJI가 VEP로 전송됨";
+            lblStatus.Text = "Status: PJI sent to VEP";
             btnCheckVEPStatus.Enabled = true;
 
             if (vepClient != null && vepClient.IsConnected)
@@ -258,7 +263,7 @@ namespace Ki_ADAS
             }
 
             // VEP 서버에서 Transmission Zone의 ExchStatus 가 2로 변경되면, 자동으로 VEPBenchClient의 PollAllZones 에서 캐치하여 VEP로 전송됨
-            lblStatus.Text = "상태: PJI가 VEP로 전송됨";
+            lblStatus.Text = "Status: PJI sent to VEP";
             btnCheckVEPStatus.Enabled = true;
 
             Thread.Sleep(1000);
@@ -266,6 +271,7 @@ namespace Ki_ADAS
             // 타이머 시작
             timeElapsed = 0;
             processTimer.Start();
+            TestStarted?.Invoke(this, EventArgs.Empty);
         }
 
         private void btnCheckVEPStatus_Click(object sender, EventArgs e)
@@ -279,7 +285,7 @@ namespace Ki_ADAS
 
                 if (isVEPWorking)
                 {
-                    lblStatus.Text = "상태: VEP 작업 중";
+                    lblStatus.Text = "Status: VEP working";
                     UpdateStatusPanels(7);
                     btnCheckVEPStatus.Enabled = false;
                     btnSelectOption.Enabled = true;
@@ -293,12 +299,12 @@ namespace Ki_ADAS
                 }
                 else
                 {
-                    lblStatus.Text = $"상태: VEP 미작동, 대기 중... ({timeElapsed}초)";
+                    lblStatus.Text = $"Status: VEP not operating, waiting... ({timeElapsed} seconds)";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"VEP 상태 확인 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while checking VEP status: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -306,43 +312,43 @@ namespace Ki_ADAS
         {
             try
             {
-                string deviceType = "알 수 없음";
+                string deviceType = "Unknown";
 
                 if (vepClient != null && vepClient.IsConnected)
                 {
                     if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
                     {
-                        deviceType = "카메라";
+                        deviceType = "Camera";
                     }
                     else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
                     {
-                        deviceType = "우측 후방 레이더";
+                        deviceType = "Right Rear Radar";
                     }
                     else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
                     {
-                        deviceType = "좌측 후방 레이더";
+                        deviceType = "Left Rear Radar";
                     }
 
                     if (isTest[0] == true)
-                        lblStatus.Text = $"상태: 전방 카메라 옵션 선택됨 - {deviceType}";
+                        lblStatus.Text = $"Status: Front Camera option selected - {deviceType}";
                     else if (isTest[1] == true)
-                        lblStatus.Text = $"상태: 우측 후방 레이더 옵션 선택됨 - {deviceType}";
+                        lblStatus.Text = $"Status: Right Rear Radar option selected - {deviceType}";
                     else if (isTest[2] == true)
-                        lblStatus.Text = $"상태: 좌측 후방 레이더 옵션 선택됨 - {deviceType}";
+                        lblStatus.Text = $"Status: Left Rear Radar option selected - {deviceType}";
                     else
                     {
-                        MessageBox.Show("옵션을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Please select an option.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
 
                     UpdateStatusPanels(8);
                     btnSelectOption.Enabled = false;
-                    lblStatus.Text += " - 프로세스 완료";
+                    lblStatus.Text += " - Process complete";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"옵션 선택 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while selecting an option: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -353,22 +359,34 @@ namespace Ki_ADAS
 
         private void btnMoveCarToBench_Click(object sender, EventArgs e)
         {
-            lblStatus.Text = "상태: 차량이 벤치로 이동 중";
-            MessageBox.Show("차량을 벤치로 이동하세요.", "안내", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lblStatus.Text = "Status: Vehicle moving to bench";
+            MessageBox.Show("Move the vehicle to the bench.", "Guidance", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private ADASProcess.ADASResult GetADASResult()
+        {
+            return new ADASProcess.ADASResult
+            {
+                Roll = _dataManager.SynchroZone.FrontCameraAngle1,
+                Azimuth = _dataManager.SynchroZone.FrontCameraAngle2,
+                Elevation = _dataManager.SynchroZone.FrontCameraAngle3,
+                RightRearRadar = _dataManager.SynchroZone.RearRightRadarAngle,
+                LeftRearRadar = _dataManager.SynchroZone.RearLeftRadarAngle
+            };
         }
 
         private void btnStartTest_Click(object sender, EventArgs e)
         {
-            lblTestStatusValue.Text = "테스트 사이클 시작";
+            lblTestStatusValue.Text = "Test cycle started";
             btnSetTestPosition.Enabled = true;
         }
 
         private void btnSetTestPosition_Click(object sender, EventArgs e)
         {
-            lblTestStatusValue.Text = "테스트 포지션 설정 중";
-            MessageBox.Show("센터링 장치 이동, 카메라 타겟 하향, 후방 측면 레이더가 이동합니다.", "테스트 포지션", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lblTestStatusValue.Text = "Test position setting in progress";
+            MessageBox.Show("Centering device moves, camera target lowers, rear side radars move.", "Test Position", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            lblTestStatusValue.Text = "테스트 포지션 설정 완료";
+            lblTestStatusValue.Text = "Test position setting complete";
             btnSendToVEP.Enabled = true;
         }
 
@@ -385,24 +403,24 @@ namespace Ki_ADAS
                     if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
                     {
                         detectedTarget = CalibrationTarget.FrontCamera;
-                        lblTargetValue.Text = "전방 카메라";
-                        lblTestStatusValue.Text = "전방 카메라 타겟 설정됨";
+                        lblTargetValue.Text = "Front Camera";
+                        lblTestStatusValue.Text = "Front Camera target set";
                     }
                     else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
                     {
                         detectedTarget = CalibrationTarget.RightRearRadar;
-                        lblTargetValue.Text = "우측 후방 레이더";
-                        lblTestStatusValue.Text = "우측 후방 레이더 타겟 설정됨";
+                        lblTargetValue.Text = "Right Rear Radar";
+                        lblTestStatusValue.Text = "Right Rear Radar target set";
                     }
                     else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
                     {
                         detectedTarget = CalibrationTarget.LeftRearRadar;
-                        lblTargetValue.Text = "좌측 후방 레이더";
-                        lblTestStatusValue.Text = "좌측 후방 레이더 타겟 설정됨";
+                        lblTargetValue.Text = "Left Rear Radar";
+                        lblTestStatusValue.Text = "Left Rear Radar target set";
                     }
                     else
                     {
-                        MessageBox.Show("VEP에서 유효한 타겟을 감지할 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Could not detect a valid target from VEP.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -412,22 +430,22 @@ namespace Ki_ADAS
                     {
                         case CalibrationTarget.FrontCamera:
                             _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
-                            lblTargetValue.Text = "전방 카메라";
-                            lblTestStatusValue.Text = "전방 카메라 타겟(VEP Synchro 4 = 1) 설정";
+                            lblTargetValue.Text = "Front Camera";
+                            lblTestStatusValue.Text = "Front Camera target (VEP Synchro 4 = 1) set";
                             vepClient.WriteSynchroZone();
                             process.InitializeFrontCameraSteps(_dataManager);
                             break;
                         case CalibrationTarget.RightRearRadar:
                             _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
-                            lblTargetValue.Text = "우측 후방 레이더";
-                            lblTestStatusValue.Text = "우측 후방 레이더 타겟(VEP Synchro 52 = 1) 설정";
+                            lblTargetValue.Text = "Right Rear Radar";
+                            lblTestStatusValue.Text = "Right Rear Radar target (VEP Synchro 52 = 1) set";
                             vepClient.WriteSynchroZone();
                             process.InitializeRightRearRadarSteps(_dataManager);
                             break;
                         case CalibrationTarget.LeftRearRadar:
                             _dataManager.SynchroZone.SetValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX, 1);
-                            lblTargetValue.Text = "좌측 후방 레이더";
-                            lblTestStatusValue.Text = "좌측 후방 레이더 타겟(VEP Synchro 54 = 1) 설정";
+                            lblTargetValue.Text = "Left Rear Radar";
+                            lblTestStatusValue.Text = "Left Rear Radar target (VEP Synchro 54 = 1) set";
                             vepClient.WriteSynchroZone();
                             process.InitializeLeftRearRadarSteps(_dataManager);
                             break;
@@ -440,7 +458,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"VEP에 데이터 전송 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while sending data to VEP: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -449,12 +467,12 @@ namespace Ki_ADAS
             // 실제는 VEP에서 상태 확인 필요 (여기서는 5초 이상 경과하면 테스트 완료 처리)
             if (timeElapsed >= 5)
             {
-                lblTestStatusValue.Text = "테스트 완료 확인 중...";
+                lblTestStatusValue.Text = "Checking test completion...";
                 btnReadResults.Enabled = true;
             }
             else
             {
-                MessageBox.Show($"테스트가 아직 진행 중입니다. ({timeElapsed}초 경과)", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Test is still in progress. ({timeElapsed} seconds elapsed)", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -495,15 +513,15 @@ namespace Ki_ADAS
                     }
 
                     lblTestResultValue.Text = resultText;
-                    lblTestStatusValue.Text = "테스트 결과 읽기 완료";
+                    lblTestStatusValue.Text = "Test results read complete";
                     isTestCompleted = true;
                 }
                 else
                 {
                     // 실제에서는 이 부분 실행되면 안됨
-                    lblTestStatusValue.Text = "VEP 연결 안됨 - 각도값을 읽을 수 없습니다";
-                    lblTestResultValue.Text = "연결 실패";
-                    MessageBox.Show("VEP에 연결되어 있지 않아 각도값을 읽을 수 없습니다.", "연결 오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    lblTestStatusValue.Text = "VEP not connected - cannot read angle values";
+                    lblTestResultValue.Text = "Connection failed";
+                    MessageBox.Show("Not connected to VEP, cannot read angle values.", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
                 btnReset.Enabled = true;
@@ -518,7 +536,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"테스트 결과 읽기 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while reading test results: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -531,22 +549,23 @@ namespace Ki_ADAS
                 if (synTestOK == 20)
                 {
                     processTimer.Stop();
-                    lblTestStatusValue.Text = "테스트 완료";
+                    lblTestStatusValue.Text = "Test complete";
+                    TestCompleted?.Invoke(this, GetADASResult());
                 }
                 else
                 {
-                    MessageBox.Show($"VEP가 아직 종료되지 않았습니다. (Synchro 1 = {synTestOK})", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"VEP has not yet terminated. (Synchro 1 = {synTestOK})", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else
             {
-                MessageBox.Show("VEP 연결 상태를 확인할 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Cannot check VEP connection status.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void btnPrintTicket_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("티켓이 출력되었습니다.", "티켓 출력", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Ticket has been printed.", "Print Ticket", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnSaveData_Click(object sender, EventArgs e)
@@ -583,11 +602,11 @@ namespace Ki_ADAS
 
                 root.Save(xmlFilePath);
 
-                MessageBox.Show("테스트 결과가 XML로 저장되었습니다.", "데이터 저장", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Test results have been saved to XML.", "Save Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"데이터 저장 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while saving data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -616,18 +635,18 @@ namespace Ki_ADAS
 
         private void btnExitPosition_Click(object sender, EventArgs e)
         {
-            lblTestStatusValue.Text = "Exit Poisition: 카메라 타겟 홈, 센터링 장치 홈 복귀";
+            lblTestStatusValue.Text = "Exit Position: Camera target home, centering device home return";
         }
 
         private void btnMoveOut_Click(object sender, EventArgs e)
         {
-            lblTestStatusValue.Text = "차량이 벤치에서 이동됨 (Move OUt)";
+            lblTestStatusValue.Text = "Vehicle moved out of bench (Move Out)";
         }
 
         private void btnEnd_Click(object sender, EventArgs e)
         {
-            lblTestStatusValue.Text = "프로세스 종료 (End)";
-            MessageBox.Show("테스트 프로세스가 종료되었습니다.", "종료", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lblTestStatusValue.Text = "Process terminated (End)";
+            MessageBox.Show("Test process has ended.", "End", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

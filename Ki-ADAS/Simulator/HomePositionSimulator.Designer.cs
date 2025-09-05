@@ -32,7 +32,6 @@ namespace Ki_ADAS
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HomePositionSimulator));
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.pnlHomePosition = new System.Windows.Forms.Panel();
@@ -65,7 +64,7 @@ namespace Ki_ADAS
             this.lblCameraTarget = new System.Windows.Forms.Label();
             this.lblVehicleDetect = new System.Windows.Forms.Label();
             this.chkVEPWorking = new System.Windows.Forms.CheckBox();
-            this.lblTimeElapsed = new System.Windows.Forms.Label();
+            this.lbl_time = new System.Windows.Forms.Label();
             this.btnMoveCarToBench = new System.Windows.Forms.Button();
             this.grpStatus = new System.Windows.Forms.GroupBox();
             this.grpTestPosition = new System.Windows.Forms.GroupBox();
@@ -455,13 +454,16 @@ namespace Ki_ADAS
             // 
             // lblTimeElapsed
             // 
-            this.lblTimeElapsed.AutoSize = true;
-            this.lblTimeElapsed.Location = new System.Drawing.Point(467, 204);
-            this.lblTimeElapsed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblTimeElapsed.Name = "lblTimeElapsed";
-            this.lblTimeElapsed.Size = new System.Drawing.Size(105, 15);
-            this.lblTimeElapsed.TabIndex = 27;
-            this.lblTimeElapsed.Text = "경과 시간: 0초";
+            // 
+            // lbl_time
+            // 
+            this.lbl_time.AutoSize = true;
+            this.lbl_time.Location = new System.Drawing.Point(467, 204);
+            this.lbl_time.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbl_time.Name = "lbl_time";
+            this.lbl_time.Size = new System.Drawing.Size(105, 15);
+            this.lbl_time.TabIndex = 27;
+            this.lbl_time.Text = "0";
             // 
             // btnMoveCarToBench
             // 
@@ -763,7 +765,7 @@ namespace Ki_ADAS
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.grpTestPosition);
             this.Controls.Add(this.pnlTestStatus);
-            this.Controls.Add(this.lblTimeElapsed);
+            this.Controls.Add(this.lbl_time);
             this.Controls.Add(this.lblVehicleDetect);
             this.Controls.Add(this.lblCameraTarget);
             this.Controls.Add(this.lblPositioningDevice);
@@ -787,7 +789,6 @@ namespace Ki_ADAS
             this.Controls.Add(this.pnlHomePosition);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lblTitle);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HomePositionSimulator";
             this.Text = "Home Position Simulator";
@@ -852,7 +853,7 @@ namespace Ki_ADAS
         private System.Windows.Forms.Label lblCameraTarget;
         private System.Windows.Forms.Label lblVehicleDetect;
         private System.Windows.Forms.CheckBox chkVEPWorking;
-        private System.Windows.Forms.Label lblTimeElapsed;
+        private System.Windows.Forms.Label lbl_time;
         private System.Windows.Forms.Button btnMoveCarToBench;
         private System.Windows.Forms.GroupBox grpStatus;
         private System.Windows.Forms.GroupBox grpTestPosition;

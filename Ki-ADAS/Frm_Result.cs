@@ -95,12 +95,12 @@ namespace Ki_ADAS
                 }
                 else
                 {
-                    MessageBox.Show("XML 파일이 존재하지 않습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("XML file does not exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"XML 파일 로드 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while loading the XML file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -157,11 +157,11 @@ namespace Ki_ADAS
                     }
                 }
 
-                MessageBox.Show($"선택한 바코드({barcode})에 대한 상세 정보를 찾을 수 없습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Could not find details for the selected barcode ({barcode}).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"테스트 결과 상세정보 표시 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while displaying test result details: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -226,17 +226,17 @@ namespace Ki_ADAS
                     }
                     else
                     {
-                        MessageBox.Show($"{searchDate} 날짜에 대한 결과가 없습니다.", "검색 결과", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"No results found for {searchDate}.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("XML 파일이 존재하지 않습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("XML file does not exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"날짜 검색 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred during date search: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -248,7 +248,7 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(searchPji))
                 {
-                    MessageBox.Show("검색할 PJI를 입력하세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Please enter the PJI to search.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -291,17 +291,17 @@ namespace Ki_ADAS
                     }
                     else
                     {
-                        MessageBox.Show($"{searchPji}에 대한 결과가 없습니다.", "검색 결과", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"No results found for {searchPji}.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("XML 파일이 존재하지 않습니다.", "정보", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("XML file does not exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"PJI 검색 중 오류가 발생했습니다: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred during PJI search: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

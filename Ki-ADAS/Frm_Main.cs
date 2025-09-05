@@ -8,7 +8,6 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -134,7 +133,7 @@ namespace Ki_ADAS
             {
                 if (seqList.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show("테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Please select an item from the test list.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -161,7 +160,6 @@ namespace Ki_ADAS
                     _adasProcess = new ADASProcess(_vepBenchClient);
                     _adasProcess.OnProcessStepChanged += ADASProcess_OnProcessStepChanged;
                 }*/
-                // 임시 HomePositionSimulator 실행 부분 (나중에 삭제)
                 bool connected = _vepBenchClient.TestConnection();
 
                 if (connected)
@@ -169,32 +167,33 @@ namespace Ki_ADAS
                     BtnStart.Enabled = false;
                     BtnStop.Enabled = true;
 
-                    AddLogMessage("VEP 연결 성공 - 시뮬레이터를 통해 ADAS 프로세스 시작 가능");
-                    AddLogMessage("'홈 포지션 시뮬레이터' 버튼을 클릭하여 테스트를 시작하세요.");
+                    AddLogMessage("VEP connection successful - ADAS process can be started via simulator.");
 
                     _vepBenchClient.DebugMode = false;
                     _vepBenchClient.StartMonitoring();
 
-                    if (MessageBox.Show("홈 포지션 시뮬레이터를 지금 실행하시겠습니까?",
-                        "시뮬레이터 실행", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show("Do you want to run the Home Position Simulator now?",
+                        "Run Simulator", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
                         HomePositionSimulator simulator = new HomePositionSimulator(_vepBenchClient, _modelRepository, this);
+                        simulator.TestStarted += OnHomePositionSimulatorTestStarted;
+                        simulator.TestCompleted += OnHomePositionSimulatorTestCompleted;
                         simulator.Show();
                     }
                 }
                 else
                 {
-                    AddLogMessage("VEP 연결 실패 - IP 주소와 포트를 확인해주세요");
-                    MessageBox.Show($"VEP 연결에 실패했습니다. IP 주소({ipAddress})와 포트({port})를 확인하세요.",
-                        "연결 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddLogMessage("VEP connection failed - Please check IP address and port.");
+                    MessageBox.Show($"Failed to connect to VEP. Please check the IP address ({ipAddress}) and port ({port}).",
+                        "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                AddLogMessage($"오류 발생: {ex.Message}");
+                AddLogMessage($"Error occurred: {ex.Message}");
 
-                MessageBox.Show($"ADAS 프로세스 시작 중 오류가 발생했습니다: {ex.Message}",
-                    "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while starting the ADAS process: {ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 BtnStart.Enabled = true;
                 BtnStop.Enabled = false;
@@ -221,7 +220,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                AddLogMessage($"오류 발생: {ex.Message}");
+                AddLogMessage($"Error occurred: {ex.Message}");
             }*/
         }
 
@@ -233,7 +232,7 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(barcode))
                 {
-                    MessageBox.Show("바코드를 입력해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Please enter the barcode.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -243,7 +242,7 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(modelName))
                 {
-                    MessageBox.Show($"모델 코드를 찾을 수 없습니다: {modelCode}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Could not find model code: {modelCode}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -256,14 +255,14 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(newVehicle.AcceptNo))
                 {
-                    MessageBox.Show("AcceptNo 생성에 실패했습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Failed to generate AcceptNo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 bool isSaved = _infoRepository.SaveVehicleInfo(newVehicle);
                 if (!isSaved)
                 {
-                    MessageBox.Show("차량 정보 저장에 실패했습니다.", "DB 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Failed to save vehicle information.", "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -273,12 +272,12 @@ namespace Ki_ADAS
                 seqList.Items.Add(item);
 
                 txt_barcode.Clear();
-                AddLogMessage($"차량 등록 완료: {newVehicle.PJI} / {newVehicle.Model}");
+                AddLogMessage($"Vehicle registration complete: {newVehicle.PJI} / {newVehicle.Model}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"차량 등록 중 오류 발생: {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddLogMessage($"차량 등록 오류: {ex.Message}");
+                MessageBox.Show($"An error occurred during vehicle registration: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddLogMessage($"Vehicle registration error: {ex.Message}");
             }
         }
 
@@ -293,11 +292,16 @@ namespace Ki_ADAS
                 BtnStart.Enabled = true;
                 BtnStop.Enabled = false;
 
-                AddLogMessage("ADAS 프로세스 중지");
+                AddLogMessage("ADAS process stopped.");
+
+                if (m_frmParent?.User_Monitor != null)
+                {
+                    m_frmParent.User_Monitor.StopInspectionTimer();
+                }
             }
             catch (Exception ex)
             {
-                AddLogMessage($"오류 발생: {ex.Message}");
+                AddLogMessage($"Error occurred: {ex.Message}");
             }
         }
 
@@ -331,13 +335,13 @@ namespace Ki_ADAS
             {
                 BtnStart.Enabled = true;
                 BtnStop.Enabled = false;
-                AddLogMessage("ADAS 프로세스가 성공적으로 완료되었습니다.");
+                AddLogMessage("ADAS process completed successfully.");
             }
             else if (e.StateType == ADASProcess.ProcessStateType.Error)
             {
                 BtnStart.Enabled = true;
                 BtnStop.Enabled = false;
-                AddLogMessage("ADAS 프로세스가 오류로 인해 중지되었습니다.");
+                AddLogMessage("ADAS process stopped due to an error.");
             }
         }
 
@@ -381,12 +385,12 @@ namespace Ki_ADAS
                 }
                 else
                 {
-                    MessageBox.Show("ADAS 프로세스 시작에 실패했습니다.", "시작 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Failed to start ADAS process.", "Start Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"오류 발생: {ex.Message}", "예외 발생", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred: {ex.Message}", "Exception Occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -394,8 +398,57 @@ namespace Ki_ADAS
         {
             this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
             this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
+            this.seqList.SelectedIndexChanged += new System.EventHandler(this.seqList_SelectedIndexChanged);
 
             LoadRegisteredVehicles();
+
+            _adasProcess.TestStarted += OnTestStarted;
+            _adasProcess.TestCompleted += OnTestCompleted;
+        }
+
+        private void OnTestStarted(object sender, EventArgs e)
+        {
+            if (m_frmParent != null && m_frmParent.User_Monitor != null)
+            {
+                m_frmParent.User_Monitor.StartInspectionTimer();
+            }
+        }
+
+        private void OnTestCompleted(object sender, ADASProcess.ADASResult e)
+        {
+            if (m_frmParent != null && m_frmParent.User_Monitor != null)
+            {
+                m_frmParent.User_Monitor.StopInspectionTimer();
+                m_frmParent.User_Monitor.UpdateADASResult(e);
+            }
+        }
+
+        private void OnHomePositionSimulatorTestStarted(object sender, EventArgs e)
+        {
+            if (m_frmParent != null && m_frmParent.User_Monitor != null)
+            {
+                m_frmParent.User_Monitor.StartInspectionTimer();
+            }
+        }
+
+        private void OnHomePositionSimulatorTestCompleted(object sender, ADASProcess.ADASResult e)
+        {
+            if (m_frmParent != null && m_frmParent.User_Monitor != null)
+            {
+                m_frmParent.User_Monitor.StopInspectionTimer();
+                m_frmParent.User_Monitor.UpdateADASResult(e);
+            }
+        }
+
+        private void seqList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (m_frmParent != null && m_frmParent.User_Monitor != null)
+            {
+                if (seqList.SelectedItems.Count > 0)
+                {
+                    m_frmParent.User_Monitor.UpdateTestStatus(this.SelectedModelInfo);
+                }
+            }
         }
 
         private void seqList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)

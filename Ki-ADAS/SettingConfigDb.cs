@@ -48,7 +48,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show("데이터베이스 연결 설정에 실패했습니다: " + ex.Message, "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Failed to set up database connection: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

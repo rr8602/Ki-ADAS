@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ki_ADAS.DB;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,8 +14,32 @@ namespace Ki_ADAS
 {
     public partial class Frm_Operator : Form
     {
+        private ModelRepository modelRepository;
+        private Frm_Main main;
         private static Frm_Operator _instance;
         private Point mousePoint; // 현재 마우스 포인터의 좌표저장 변수 선언
+
+        private Timer inspectionTimer;
+        private int elapsedTimeInSeconds;
+
+        public void StartInspectionTimer()
+        {
+            elapsedTimeInSeconds = 0;
+            lbl_time.Text = "0";
+            inspectionTimer.Start();
+        }
+
+        public void StopInspectionTimer()
+        {
+            inspectionTimer.Stop();
+        }
+
+        private void InspectionTimer_Tick(object sender, EventArgs e)
+        {
+            elapsedTimeInSeconds++;
+            lbl_time.Text = elapsedTimeInSeconds.ToString();
+        }
+
         public static Frm_Operator Instance
         {
             get
@@ -31,6 +57,11 @@ namespace Ki_ADAS
         {
             InitializeComponent();
 
+            inspectionTimer = new Timer();
+            inspectionTimer.Interval = 1000;
+            inspectionTimer.Tick += InspectionTimer_Tick;
+
+            modelRepository = new ModelRepository(new SettingConfigDb());
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             this.UpdateStyles();
             MoveFormToSecondMonitor();
@@ -60,7 +91,7 @@ namespace Ki_ADAS
             }
             else
             {
-                MessageBox.Show("두 번째 모니터가 감지되지 않았습니다.");
+                MessageBox.Show("Second monitor not detected.");
             }
         }
 
@@ -85,6 +116,20 @@ namespace Ki_ADAS
 
           //  lblStatus.Text = status;
             //lblStatus.ForeColor = color;
+        }
+
+        public void UpdateTestStatus(Model selectedModel)
+        {
+            if (selectedModel == null) return;
+
+            Color activeColor = Color.Yellow;
+            Color defaultColor = Color.Gray;
+
+            lbl_Toe_FL.BackColor = selectedModel.Fr_IsTest ? activeColor : defaultColor;
+            lbl_Toe_FR.BackColor = selectedModel.R_IsTest ? activeColor : defaultColor;
+            lbl_Toe_RR.BackColor = selectedModel.L_IsTest ? activeColor : defaultColor;
+
+            lbl_modelName.Text = selectedModel.Name;
         }
 
         // 진행률 업데이트
@@ -182,7 +227,24 @@ namespace Ki_ADAS
                 return;
             }
 
-            roundLabel4.Text = description;
+            lbl_message.Text = description;
+        }
+
+        public void UpdateADASResult(ADASProcess.ADASResult result)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<ADASProcess.ADASResult>(UpdateADASResult), result);
+                return;
+            }
+
+            lbl_roll.Text = result.Roll.ToString("F2");
+            lbl_azimuth.Text = result.Azimuth.ToString("F2");
+            lbl_elevation.Text = result.Elevation.ToString("F2");
+            lbl_FLeft.Text = ""; // 아직 Front 정의 안함
+            lbl_FRight.Text = "";
+            lbl_RLeft.Text = result.LeftRearRadar.ToString("F2");
+            lbl_RRight.Text = result.RightRearRadar.ToString("F2");
         }
     }
 }

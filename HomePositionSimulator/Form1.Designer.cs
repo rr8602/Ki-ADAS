@@ -63,7 +63,7 @@ namespace HomePositionSimulator
             this.lblCameraTarget = new System.Windows.Forms.Label();
             this.lblVehicleDetect = new System.Windows.Forms.Label();
             this.chkVEPWorking = new System.Windows.Forms.CheckBox();
-            this.lblTimeElapsed = new System.Windows.Forms.Label();
+            this.lbl_time = new System.Windows.Forms.Label();
             this.btnMoveCarToBench = new System.Windows.Forms.Button();
             this.grpStatus = new System.Windows.Forms.GroupBox();
             this.pnlHomePosition.SuspendLayout();

@@ -31,7 +31,10 @@ namespace Ki_ADAS
         private string modelName;
         private string barcodeValue;
 
-        // 각도 측정값과 허용 범위 저장 변수
+        public event EventHandler TestStarted;
+        public event EventHandler<ADASResult> TestCompleted;
+
+        // Variables for storing angle measurements and tolerance ranges
         private double _frontCameraAngle1; // Roll
         private double _frontCameraAngle2; // Azimuth
         private double _frontCameraAngle3; // Elevation
@@ -94,6 +97,15 @@ namespace Ki_ADAS
             }
         }
 
+        public class ADASResult : EventArgs
+        {
+            public double Roll { get; set; }
+            public double Azimuth { get; set; }
+            public double Elevation { get; set; }
+            public double RightRearRadar { get; set; }
+            public double LeftRearRadar { get; set; }
+        }
+
         public ADASProcess() { }
 
         public ADASProcess(VEPBenchClient vepBenchClient, ModelRepository modelRepository, Frm_Main mainForm)
@@ -114,7 +126,7 @@ namespace Ki_ADAS
 
             // 1. 홈 포지션/초기화
             _processSteps.Add(new ADASProcessStep(
-                1, "홈 포지션 및 초기화", "초기화", () => {
+                1, "Home Position and Initialization", "Initialization", () => {
                     try
                     {
                         _dataManager.StatusZone.StartCycle = 0;
@@ -127,26 +139,26 @@ namespace Ki_ADAS
 
                         vepClient.WriteSynchroZone();
 
-                        NotifyProcessState("홈 포지션 및 초기화 완료", ProcessStateType.Info);
+                        NotifyProcessState("Home position and initialization complete", ProcessStateType.Info);
                         return true;
                     }
                     catch (Exception ex)
                     {
-                        NotifyProcessState($"초기화 실패: {ex.Message}", ProcessStateType.Error);
+                        NotifyProcessState($"Initialization failed: {ex.Message}", ProcessStateType.Error);
                         return false;
                     }
                 }));
 
             // 2. 신호등(입구) 제어 (시뮬레이션)
             _processSteps.Add(new ADASProcessStep(
-                2, "입구 신호등 초록색", "신호등", () => {
-                    NotifyProcessState("입구 신호등 초록색", ProcessStateType.Info);
+                2, "Entrance Traffic Light Green", "Traffic Light", () => {
+                    NotifyProcessState("Entrance traffic light green", ProcessStateType.Info);
                     return true;
                 }));
 
             // 3. 차량 감지 및 바코드 스캔 (시뮬레이션)
             _processSteps.Add(new ADASProcessStep(
-                3, "차량 감지 및 바코드 스캔", "바코드", () => {
+                3, "Vehicle Detection and Barcode Scan", "Barcode", () => {
 
                     if (mainForm != null)
                     {
@@ -154,42 +166,42 @@ namespace Ki_ADAS
 
                         if (selectedModel == null)
                         {
-                            MessageBox.Show($"선택된 모델 '{modelName}'에 대한 설정 정보를 찾을 수 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show($"Could not find configuration information for the selected model '{modelName}'.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
 
                         barcodeValue = selectedModel.Barcode;
 
                         if (string.IsNullOrEmpty(barcodeValue))
                         {
-                            MessageBox.Show("메인 화면의 테스트 목록에서 항목을 선택해주세요.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("Please select an item from the test list on the main screen.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
 
-                    NotifyProcessState("차량 감지 및 바코드 스캔 완료", ProcessStateType.Info);
+                    NotifyProcessState("Vehicle detection and barcode scan complete", ProcessStateType.Info);
                     return true;
                 }));
 
             // 4. 사이클 시작
             _processSteps.Add(new ADASProcessStep(
-                4, "사이클 시작", "StartCycle", () => {
+                4, "Start Cycle", "StartCycle", () => {
                     try
                     {
                         _dataManager.StatusZone.StartCycle = 1;
                         _dataManager.StatusZone.VepStatus = VEPBenchStatusZone.VepStatus_Working;
                         vepClient.WriteStatusZone();
-                        NotifyProcessState("사이클 시작", ProcessStateType.Info);
+                        NotifyProcessState("Cycle started", ProcessStateType.Info);
                         return true;
                     }
                     catch (Exception ex)
                     {
-                        NotifyProcessState($"사이클 시작 실패: {ex.Message}", ProcessStateType.Error);
+                        NotifyProcessState($"Cycle start failed: {ex.Message}", ProcessStateType.Error);
                         return false;
                     }
                 }));
 
             // 5. PJI(PII) 요청
             _processSteps.Add(new ADASProcessStep(
-                5, "PJI 요청", "PJI", () => {
+                5, "PJI Request", "PJI", () => {
                     try
                     {
                         if (isTest[0] == true)
@@ -213,42 +225,42 @@ namespace Ki_ADAS
 
                         vepClient.WriteSynchroZone();
 
-                        NotifyProcessState("PJI 요청 및 타겟 선택", ProcessStateType.Info);
+                        NotifyProcessState("PJI requested and target selected", ProcessStateType.Info);
                         return true;
                     }
                     catch (Exception ex)
                     {
-                        NotifyProcessState($"PJI 요청 실패: {ex.Message}", ProcessStateType.Error);
+                        NotifyProcessState($"PJI request failed: {ex.Message}", ProcessStateType.Error);
                         return false;
                     }
                 }));
 
             // 6. VEP 상태 확인
             _processSteps.Add(new ADASProcessStep(
-                6, "VEP 상태 확인", "VEPStatus", () => {
+                6, "Check VEP Status", "VEPStatus", () => {
                     if (_dataManager.StatusZone.VepStatus == VEPBenchStatusZone.VepStatus_Working)
                     {
-                        NotifyProcessState("VEP 작업 중", ProcessStateType.Info);
+                        NotifyProcessState("VEP working", ProcessStateType.Info);
                         return true;
                     }
 
-                    NotifyProcessState("VEP 미작동", ProcessStateType.Warning);
+                    NotifyProcessState("VEP not operating", ProcessStateType.Warning);
                     return false;
                 }));
 
             // 7. 타겟(FrontCamera/RearRadar) 선택 및 테스트 포지션 이동
             _processSteps.Add(new ADASProcessStep(
-                7, "타겟 선택 및 테스트 포지션 이동", "타겟", () => {
-                    string target = "알 수 없음";
+                7, "Target Selection and Test Position Movement", "Target", () => {
+                    string target = "Unknown";
 
                     if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
-                        target = "전방 카메라";
+                        target = "Front Camera";
                     else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
-                        target = "우측 후방 레이더";
+                        target = "Right Rear Radar";
                     else if (_dataManager.SynchroZone.GetValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
-                        target = "좌측 후방 레이더";
+                        target = "Left Rear Radar";
 
-                    NotifyProcessState($"{target} 타겟 선택 및 테스트 포지션 이동", ProcessStateType.Info);
+                    NotifyProcessState($"{target} target selected and moved to test position", ProcessStateType.Info);
                     return true;
                 }));
 
@@ -298,22 +310,22 @@ namespace Ki_ADAS
 
             // 9. 결과 판정 및 완료
             _processSteps.Add(new ADASProcessStep(
-                99, "테스트 결과 판정 및 완료", "결과", () => {
+                99, "Test Result Judgment and Completion", "Result", () => {
                     int result = _dataManager.SynchroZone.GetValue(1);
 
                     if (result == 20)
                     {
-                        NotifyProcessState("테스트 완료 (OK)", ProcessStateType.Success);
+                        NotifyProcessState("Test complete (OK)", ProcessStateType.Success);
                         return true;
                     }
                     else if (result == 21)
                     {
-                        NotifyProcessState("테스트 실패 (NOK)", ProcessStateType.Error);
+                        NotifyProcessState("Test failed (NOK)", ProcessStateType.Error);
                         return false;
                     }
                     else
                     {
-                        NotifyProcessState($"테스트 결과 미정 (Synchro 1 = {result})", ProcessStateType.Warning);
+                        NotifyProcessState($"Test result undetermined (Synchro 1 = {result})", ProcessStateType.Warning);
                         return false;
                     }
                 }));
@@ -340,7 +352,7 @@ namespace Ki_ADAS
                     LanguageResource.GetFormattedMessage("SensorTypeDetectionFail", ex.Message),
                     ProcessStateType.Error);
 
-                return 3; // 기본값으로 Front Camera 사용
+                return 3; // Use Front Camera as default
             }
         }
 
@@ -350,31 +362,31 @@ namespace Ki_ADAS
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 213,
-                "전방 카메라 - 초기화",
+                "Front Camera - Initialization",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 1",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 214,
-                "전방 카메라 - 준비 완료",
+                "Front Camera - Ready",
                 $"Synchro {_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX} = 1",
                 () => ReadSynchroValue(_dataManager.SynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX) == 1));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 213,
-                "전방 카메라 - 보정 완료",
+                "Front Camera - Calibration Complete",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 20",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 20));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 213,
-                "전방 카메라 - 보정 실패",
+                "Front Camera - Calibration Failed",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX} = 21",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX) == 21));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 320,
-                "Roll 각도 측정",
+                "Measure Roll Angle",
                 $"Synchro {_dataManager.SynchroZone.FRONT_CAMERA_ANGLE1_INDEX} = FrontCameraAngle",
                 () => {
                     _frontCameraAngle1 = ReadSynchroValue(_dataManager.SynchroZone.FRONT_CAMERA_ANGLE1_INDEX) / 100.0;
@@ -383,7 +395,7 @@ namespace Ki_ADAS
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 321,
-                "Azimuth 각도 측정",
+                "Measure Azimuth Angle",
                 $"Synchro {_dataManager.SynchroZone.FRONT_CAMERA_ANGLE2_INDEX} = FrontCameraAngle",
                 () => {
                     _frontCameraAngle2 = ReadSynchroValue(_dataManager.SynchroZone.FRONT_CAMERA_ANGLE2_INDEX) / 100.0;
@@ -392,7 +404,7 @@ namespace Ki_ADAS
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 322,
-                "Elevation 각도 측정",
+                "Measure Elevation Angle",
                 $"Synchro {_dataManager.SynchroZone.FRONT_CAMERA_ANGLE3_INDEX} = FrontCameraAngle",
                 () => {
                     _frontCameraAngle3 = ReadSynchroValue(_dataManager.SynchroZone.FRONT_CAMERA_ANGLE3_INDEX) / 100.0;
@@ -401,22 +413,22 @@ namespace Ki_ADAS
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 299,
-                "추가 시도 확인 1",
+                "Additional Attempt Check 1",
                 "Synchro 89 = 1",
                 () =>
                 {
-                    NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
+                    NotifyProcessState("Calibration angle verification complete", ProcessStateType.Success);
 
                     return ReadSynchroValue(_dataManager.SynchroZone.TRY_FRONT_CAMERA_INDEX) == 1;
                 }));
 
             _frontCameraSteps.Add(new ADASProcessStep(
                 299,
-                "추가 시도 확인 2",
+                "Additional Attempt Check 2",
                 "Synchro 89 = 2",
                 () => {
                     _currentSensorStepIndex = 0;
-                    NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
+                    NotifyProcessState("Calibration retry requested", ProcessStateType.Info);
 
                     return ReadSynchroValue(_dataManager.SynchroZone.TRY_FRONT_CAMERA_INDEX) == 2;
                 }));
@@ -428,53 +440,53 @@ namespace Ki_ADAS
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 261,
-                "우측 후방 레이더 - 초기화",
+                "Right Rear Radar - Initialization",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 1",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 262,
-                "우측 후방 레이더 - 보정 위치 확인",
+                "Right Rear Radar - Check Calibration Position",
                 $"Synchro {_dataManager.SynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX} = 1",
                 () => ReadSynchroValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX) == 1));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 261,
-                "우측 후방 레이더 - 보정 완료",
+                "Right Rear Radar - Calibration Complete",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 20",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 20));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 261,
-                "우측 후방 레이더 - 보정 실패",
+                "Right Rear Radar - Calibration Failed",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX} = 21",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 21));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 293,
-                "추가 시도 확인 1",
+                "Additional Attempt Check 1",
                 "Synchro 83 = 1",
                 () =>
                 {
-                    NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
+                    NotifyProcessState("Calibration angle verification complete", ProcessStateType.Success);
 
                     return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 1;
                 }));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 293,
-                "추가 시도 확인 2",
+                "Additional Attempt Check 2",
                 "Synchro 83 = 2",
                 () => {
                     _currentSensorStepIndex = 0;
-                    NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
+                    NotifyProcessState("Calibration retry requested", ProcessStateType.Info);
 
                     return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_RIGHT_RADAR_INDEX) == 2;
                 }));
 
             _rightRearRadarSteps.Add(new ADASProcessStep(
                 325,
-                "우측 후방 레이더 각도 측정",
+                "Measure Right Rear Radar Angle",
                 $"Synchro {_dataManager.SynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX} = RearRightRadarAngle",
                 () => {
                     _rightRearRadarAngle = ReadSynchroValue(_dataManager.SynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX) / 100.0;
@@ -488,53 +500,53 @@ namespace Ki_ADAS
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 263,
-                "좌측 후방 레이더 - 초기화",
+                "Left Rear Radar - Initialization",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 1",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 264,
-                "좌측 후방 레이더 - 보정 위치 확인",
+                "Left Rear Radar - Check Calibration Position",
                 $"Synchro {_dataManager.SynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX} = 1",
                 () => ReadSynchroValue(_dataManager.SynchroZone.SYNC_COMMAND_REAR_LEFT_RADAR_INDEX) == 1));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 263,
-                "좌측 후방 레이더 - 보정 완료",
+                "Left Rear Radar - Calibration Complete",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 20",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 20));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 263,
-                "좌측 후방 레이더 - 보정 실패",
+                "Left Rear Radar - Calibration Failed",
                 $"Synchro {_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX} = 21",
                 () => ReadSynchroValue(_dataManager.SynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 21));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 292,
-                "추가 시도 확인 1",
+                "Additional Attempt Check 1",
                 "Synchro 82 = 1",
                 () =>
                 {
-                    NotifyProcessState("보정 각도 검증 완료", ProcessStateType.Success);
+                    NotifyProcessState("Calibration angle verification complete", ProcessStateType.Success);
 
                     return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 1;
                 }));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 292,
-                "추가 시도 확인 2",
+                "Additional Attempt Check 2",
                 "Synchro 82 = 2",
                 () => {
                     _currentSensorStepIndex = 0;
-                    NotifyProcessState("보정 재시도 요청됨", ProcessStateType.Info);
+                    NotifyProcessState("Calibration retry requested", ProcessStateType.Info);
 
                     return ReadSynchroValue(_dataManager.SynchroZone.TRY_REAR_LEFT_RADAR_INDEX) == 2;
                 }));
 
             _leftRearRadarSteps.Add(new ADASProcessStep(
                 326,
-                "좌측 후방 레이더 각도 측정",
+                "Measure Left Rear Radar Angle",
                 $"Synchro {_dataManager.SynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX} = RearLeftRadarAngle",
                 () => {
                     _leftRearRadarAngle = ReadSynchroValue(_dataManager.SynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX) / 100.0;
@@ -593,7 +605,7 @@ namespace Ki_ADAS
                     _rightRearRadarAngle = angle;
 
                     NotifyProcessState(
-                        LanguageResource.GetFormattedMessage("AngleReadComplete", "우측 후방 레이더", angle),
+                        LanguageResource.GetFormattedMessage("AngleReadComplete", "Right Rear Radar", angle),
                         ProcessStateType.Info);
 
                     return (int)(angle * 100);
@@ -605,7 +617,7 @@ namespace Ki_ADAS
                     _leftRearRadarAngle = angle;
 
                     NotifyProcessState(
-                        LanguageResource.GetFormattedMessage("AngleReadComplete", "좌측 후방 레이더", angle),
+                        LanguageResource.GetFormattedMessage("AngleReadComplete", "Left Rear Radar", angle),
                         ProcessStateType.Info);
 
                     return (int)(angle * 100);
@@ -641,6 +653,8 @@ namespace Ki_ADAS
 
         public bool Start(string ipAddress, int port)
         {
+            TestStarted?.Invoke(this, EventArgs.Empty);
+
             try
             {
                 if (_isRunning)
@@ -692,6 +706,7 @@ namespace Ki_ADAS
                 vepClient.DisConnect();
 
                 NotifyProcessState(LanguageResource.GetMessage("ProcessStop"), ProcessStateType.Info);
+                TestCompleted?.Invoke(this, GetADASResult());
             }
         }
 
@@ -735,6 +750,7 @@ namespace Ki_ADAS
                 if (_currentStep >= _processSteps.Count)
                 {
                     NotifyProcessState(LanguageResource.GetMessage("ProcessComplete"), ProcessStateType.Success);
+                    TestCompleted?.Invoke(this, GetADASResult());
                 }
             }
             catch (Exception ex)
@@ -841,6 +857,18 @@ namespace Ki_ADAS
         private void NotifyProcessState(string message, ProcessStateType stateType, ADASProcessStep step = null)
         {
             OnProcessStepChanged?.Invoke(this, new ADASProcessEventArgs(message, stateType, step));
+        }
+
+        public ADASResult GetADASResult()
+        {
+            return new ADASResult
+            {
+                Roll = _frontCameraAngle1,
+                Azimuth = _frontCameraAngle2,
+                Elevation = _frontCameraAngle3,
+                RightRearRadar = _rightRearRadarAngle,
+                LeftRearRadar = _leftRearRadarAngle
+            };
         }
     }
 }
