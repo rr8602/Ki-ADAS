@@ -1,4 +1,4 @@
-﻿using Ki_ADAS.DB;
+using Ki_ADAS.DB;
 using Ki_ADAS;
 using Ki_ADAS.VEPBench;
 

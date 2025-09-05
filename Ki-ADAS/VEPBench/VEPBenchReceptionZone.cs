@@ -13,19 +13,19 @@ namespace Ki_ADAS.VEPBench
         private static int RZ_Addr = VEPBenchDataManager.Instance.DescriptionZone.ReceptionZoneAddr;
 
         // 상대 주소값
-        public int Offset_Reserved1 = RZ_Addr;
-        public int Offset_Reserved2 = RZ_Addr + 1;
-        public int Offset_AddReSize = RZ_Addr + 2;
-        public int Offset_ExchStatus = RZ_Addr + 3;
-        public int Offset_Reserved3 = RZ_Addr + 4;
-        public int Offset_Reserved4 = RZ_Addr + 5;
-        public int Offset_FctAndPCNum = RZ_Addr + 6;
-        public int Offset_Reserver5 = RZ_Addr + 7;
-        public int Offset_ProcessAndSubFct = RZ_Addr + 8;
-        public int Offset_Reserved6 = RZ_Addr + 9;
-        public int Offset_Reserved7 = RZ_Addr + 10;
-        public int Offset_Reserved8 = RZ_Addr + 11;
-        public int Offset_DataStart = RZ_Addr + 12;
+        public const int Offset_Reserved1 = 0;
+        public const int Offset_Reserved2 = 1;
+        public const int Offset_AddReSize = 2;
+        public const int Offset_ExchStatus = 3;
+        public const int Offset_Reserved3 = 4;
+        public const int Offset_Reserved4 = 5;
+        public const int Offset_FctAndPCNum = 6;
+        public const int Offset_Reserver5 = 7;
+        public const int Offset_ProcessAndSubFct = 8;
+        public const int Offset_Reserved6 = 9;
+        public const int Offset_Reserved7 = 10;
+        public const int Offset_Reserved8 = 11;
+        public const int Offset_DataStart = 12;
 
         // 기능 코드
         public const int FctCode_PJI = 6;
