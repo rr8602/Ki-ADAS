@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,14 +11,12 @@ namespace Ki_ADAS.VEPBench
         private static VEPBenchStatusZone _instance;
         private static readonly object _lock = new object();
 
-        private static int SZ_Addr = VEPBenchDataManager.Instance.DescriptionZone.StatusZoneAddr;
-
-        public int Offset_VepStatus = SZ_Addr;
-        public int Offset_VepCycleInterruption = SZ_Addr + 1;
-        public int Offset_VepCycleEnd = SZ_Addr + 2;
-        public int Offset_BenchCycleInterruption = SZ_Addr + 3;
-        public int Offset_BenchCycleEnd = SZ_Addr + 4;
-        public int Offset_StartCycle = SZ_Addr + 5;
+        public static int Offset_VepStatus = 0;
+        public static int Offset_VepCycleInterruption = 1;
+        public static int Offset_VepCycleEnd = 2;
+        public static int Offset_BenchCycleInterruption = 3;
+        public static int Offset_BenchCycleEnd = 4;
+        public static int Offset_StartCycle = 5;
 
         public const ushort VepStatus_Undefined = 0;
         public const ushort VepStatus_Waiting = 1;
@@ -37,6 +35,31 @@ namespace Ki_ADAS.VEPBench
         public void ResetChangedState()
         {
             _isChanged = false;
+        }
+
+        private ushort[] _values;
+
+        public ushort this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= (_values?.Length ?? 0))
+                    throw new IndexOutOfRangeException("Index out of range for VEPBenchSynchro values.");
+
+                return _values[index];
+            }
+            set
+            {
+                if (index < 0 || index >= (_values?.Length ?? 0))
+                    throw new IndexOutOfRangeException("Index out of range for VEPBenchSynchro values.");
+
+                _values[index] = value;
+            }
+        }
+
+        public void SetValue(int index, ushort value)
+        {
+            this[index] = value;
         }
 
         public static VEPBenchStatusZone Instance

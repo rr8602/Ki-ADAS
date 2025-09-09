@@ -55,10 +55,10 @@ namespace Ki_ADAS.VEPBench
             StatusZoneAddr = 18;
             StatusZoneSize = 10;
             SynchroZoneAddr = 28;
-            SynchroZoneSize = 40;
-            TransmissionZoneAddr = 68;
+            SynchroZoneSize = 190;
+            TransmissionZoneAddr = 218;
             TransmissionZoneSize = 60;
-            ReceptionZoneAddr = 128;
+            ReceptionZoneAddr = 278;
             ReceptionZoneSize = 60;
             AdditionalTZAddr = 1000;
             AdditionalTZSize = 2000;

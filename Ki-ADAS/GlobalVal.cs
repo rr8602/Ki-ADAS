@@ -1,16 +1,14 @@
-﻿using System;
+﻿using Ki_ADAS.VEPBench;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Ki_ADAS
 {
-    public class VEP_Data
-    {
-        public string aa = "";
-    }
-
     public class Digital_Input
     {
         public bool bFrontDetect = false;
@@ -34,12 +32,11 @@ namespace Ki_ADAS
         public static GlobalVal Instance => _instance.Value;
         private GlobalVal()
         {
-            _VEP = new VEP_Data();
+            _VEP = new VEPBenchDataManager();
             _PLC = new PLC();
         }
-        public VEP_Data _VEP;
+
+        public VEPBenchDataManager _VEP;
         public PLC _PLC;
-
-
     }
 }

@@ -126,8 +126,6 @@ namespace Ki_ADAS
             }
         }
 
-        
-
         private void BtnConfigSave_Click(object sender, EventArgs e)
         {
             _iniFile.WriteValue(CONFIG_SECTION, VEP_IP_KEY, TxtVepIp.Text);
@@ -170,8 +168,6 @@ namespace Ki_ADAS
             }
         }
 
-        
-
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtModel.Text))
@@ -183,34 +179,7 @@ namespace Ki_ADAS
                 return;
             }
 
-            var newModel = new Model
-            {
-                Name = txtModel.Text.Trim(),
-                Barcode = txtBarcode.Text.Trim(),
-                Wheelbase = ParseNullableDouble(txtWheelbase.Text),
-                Fr_Distance = ParseNullableDouble(txtDistance.Text),
-                Fr_Height = ParseNullableDouble(txtHeight.Text),
-                Fr_InterDistance = ParseNullableDouble(txtInterDistance.Text),
-                Fr_Htu = ParseNullableDouble(txtHtu.Text),
-                Fr_Htl = ParseNullableDouble(txtHtl.Text),
-                Fr_Ts = ParseNullableDouble(txtTs.Text),
-                Fr_AlignmentAxeOffset = ParseNullableDouble(txtOffset.Text),
-                Fr_Vv = ParseNullableDouble(txtVv.Text),
-                Fr_StCt = ParseNullableDouble(txtStCt.Text),
-                Fr_IsTest = chkIsFrontCameraTest.Checked,
-                R_X = ParseNullableDouble(txtRX.Text),
-                R_Y = ParseNullableDouble(txtRY.Text),
-                R_Z = ParseNullableDouble(txtRZ.Text),
-                R_Angle = ParseNullableDouble(txtRAngle.Text),
-                R_IsTest = chkIsRearRightRadar.Checked,
-                L_X = ParseNullableDouble(txtLX.Text),
-                L_Y = ParseNullableDouble(txtLY.Text),
-                L_Z = ParseNullableDouble(txtLZ.Text),
-                L_Angle = ParseNullableDouble(txtLAngle.Text),
-                L_IsTest = chkIsRearLeftRadar.Checked
-            };
-
-            if (_modelRepository.AddModel(newModel))
+            if (_modelRepository.AddModel(_modelRepository.GetModelDetails(txtModel.Text)))
             {
                 MessageBox.Show(LanguageResource.GetMessage("ModelAddSuccess"),
                                 LanguageResource.GetMessage("Information"),
@@ -244,34 +213,7 @@ namespace Ki_ADAS
 
             string oldModelName = modelList.SelectedItems[0].Text;
 
-            var updatedModel = new Model
-            {
-                Name = txtModel.Text.Trim(),
-                Barcode = txtBarcode.Text.Trim(),
-                Wheelbase = ParseNullableDouble(txtWheelbase.Text),
-                Fr_Distance = ParseNullableDouble(txtDistance.Text),
-                Fr_Height = ParseNullableDouble(txtHeight.Text),
-                Fr_InterDistance = ParseNullableDouble(txtInterDistance.Text),
-                Fr_Htu = ParseNullableDouble(txtHtu.Text),
-                Fr_Htl = ParseNullableDouble(txtHtl.Text),
-                Fr_Ts = ParseNullableDouble(txtTs.Text),
-                Fr_AlignmentAxeOffset = ParseNullableDouble(txtOffset.Text),
-                Fr_Vv = ParseNullableDouble(txtVv.Text),
-                Fr_StCt = ParseNullableDouble(txtStCt.Text),
-                Fr_IsTest = chkIsFrontCameraTest.Checked,
-                R_X = ParseNullableDouble(txtRX.Text),
-                R_Y = ParseNullableDouble(txtRY.Text),
-                R_Z = ParseNullableDouble(txtRZ.Text),
-                R_Angle = ParseNullableDouble(txtRAngle.Text),
-                R_IsTest = chkIsRearRightRadar.Checked,
-                L_X = ParseNullableDouble(txtLX.Text),
-                L_Y = ParseNullableDouble(txtLY.Text),
-                L_Z = ParseNullableDouble(txtLZ.Text),
-                L_Angle = ParseNullableDouble(txtLAngle.Text),
-                L_IsTest = chkIsRearLeftRadar.Checked
-            };
-
-            if (_modelRepository.UpdateModel(updatedModel, oldModelName))
+            if (_modelRepository.UpdateModel(_modelRepository.GetModelDetails(txtModel.Text), oldModelName))
             {
                 MessageBox.Show(LanguageResource.GetMessage("ModelUpdateSuccess"),
                                 LanguageResource.GetMessage("Information"),
@@ -363,19 +305,27 @@ namespace Ki_ADAS
             txtStCt.Text = string.Empty;
             chkIsFrontCameraTest.Checked = false;
 
-            // Rear Right Radar 섹션
-            txtRX.Text = string.Empty;
-            txtRY.Text = string.Empty;
-            txtRZ.Text = string.Empty;
-            txtRAngle.Text = string.Empty;
-            chkIsRearRightRadar.Checked = false;
+            // Rear Radar 섹션
+            txtRLX.Text = string.Empty;
+            txtRLY.Text = string.Empty;
+            txtRLZ.Text = string.Empty;
+            txtRLAngle.Text = string.Empty;
+            txtRRX.Text = string.Empty;
+            txtRRY.Text = string.Empty;
+            txtRRZ.Text = string.Empty;
+            txtRRAngle.Text = string.Empty;
+            chkIsRearRadar.Checked = false;
 
-            // Rear Left Radar 섹션
-            txtLX.Text = string.Empty;
-            txtLY.Text = string.Empty;
-            txtLZ.Text = string.Empty;
-            txtLAngle.Text = string.Empty;
-            chkIsRearLeftRadar.Checked = false;
+            // Front Radar 섹션
+            txtFLX.Text = string.Empty;
+            txtFLY.Text = string.Empty;
+            txtFLZ.Text = string.Empty;
+            txtFLAngle.Text = string.Empty;
+            txtFRX.Text = string.Empty;
+            txtFRY.Text = string.Empty;
+            txtFRZ.Text = string.Empty;
+            txtFRAngle.Text = string.Empty;
+            chkIsFrontRadar.Checked = false;
         }
 
         private void modelList_MouseClick(object sender, MouseEventArgs e)
@@ -391,26 +341,40 @@ namespace Ki_ADAS
                 {
                     txtBarcode.Text = selectedModel.Barcode;
                     txtWheelbase.Text = selectedModel.Wheelbase?.ToString();
-                    txtDistance.Text = selectedModel.Fr_Distance?.ToString();
-                    txtHeight.Text = selectedModel.Fr_Height?.ToString();
-                    txtInterDistance.Text = selectedModel.Fr_InterDistance?.ToString();
-                    txtHtu.Text = selectedModel.Fr_Htu?.ToString();
-                    txtHtl.Text = selectedModel.Fr_Htl?.ToString();
-                    txtTs.Text = selectedModel.Fr_Ts?.ToString();
-                    txtOffset.Text = selectedModel.Fr_AlignmentAxeOffset?.ToString();
-                    txtVv.Text = selectedModel.Fr_Vv?.ToString();
-                    txtStCt.Text = selectedModel.Fr_StCt?.ToString();
-                    chkIsFrontCameraTest.Checked = selectedModel.Fr_IsTest;
-                    txtRX.Text = selectedModel.R_X?.ToString();
-                    txtRY.Text = selectedModel.R_Y?.ToString();
-                    txtRZ.Text = selectedModel.R_Z?.ToString();
-                    txtRAngle.Text = selectedModel.R_Angle?.ToString();
-                    chkIsRearRightRadar.Checked = selectedModel.R_IsTest;
-                    txtLX.Text = selectedModel.L_X?.ToString();
-                    txtLY.Text = selectedModel.L_Y?.ToString();
-                    txtLZ.Text = selectedModel.L_Z?.ToString();
-                    txtLAngle.Text = selectedModel.L_Angle?.ToString();
-                    chkIsRearLeftRadar.Checked = selectedModel.L_IsTest;
+
+                    // Front Camera
+                    txtDistance.Text = selectedModel.FC_Distance?.ToString();
+                    txtHeight.Text = selectedModel.FC_Height?.ToString();
+                    txtInterDistance.Text = selectedModel.FC_InterDistance?.ToString();
+                    txtHtu.Text = selectedModel.FC_Htu?.ToString();
+                    txtHtl.Text = selectedModel.FC_Htl?.ToString();
+                    txtTs.Text = selectedModel.FC_Ts?.ToString();
+                    txtOffset.Text = selectedModel.FC_AlignmentAxeOffset?.ToString();
+                    txtVv.Text = selectedModel.FC_Vv?.ToString();
+                    txtStCt.Text = selectedModel.FC_StCt?.ToString();
+                    chkIsFrontCameraTest.Checked = selectedModel.FC_IsTest;
+
+                    // Front Radar
+                    txtFLX.Text = selectedModel.FR_X?.ToString();
+                    txtFLY.Text = selectedModel.FR_Y?.ToString();
+                    txtFLZ.Text = selectedModel.FR_Z?.ToString();
+                    txtFLAngle.Text = selectedModel.FR_Angle?.ToString();
+                    txtFRX.Text = selectedModel.FL_X?.ToString();
+                    txtFRY.Text = selectedModel.FL_Y?.ToString();
+                    txtFRZ.Text = selectedModel.FL_Z?.ToString();
+                    txtFRAngle.Text = selectedModel.FL_Angle?.ToString();
+                    chkIsFrontRadar.Checked = selectedModel.F_IsTest;
+
+                    // Rear Radar
+                    txtRLX.Text = selectedModel.RR_X?.ToString();
+                    txtRLY.Text = selectedModel.RR_Y?.ToString();
+                    txtRLZ.Text = selectedModel.RR_Z?.ToString();
+                    txtRLAngle.Text = selectedModel.RR_Angle?.ToString();
+                    txtRRX.Text = selectedModel.RL_X?.ToString();
+                    txtRRY.Text = selectedModel.RL_Y?.ToString();
+                    txtRRZ.Text = selectedModel.RL_Z?.ToString();
+                    txtRRAngle.Text = selectedModel.RL_Angle?.ToString();
+                    chkIsRearRadar.Checked = selectedModel.R_IsTest;
                 }
                 else
                 {

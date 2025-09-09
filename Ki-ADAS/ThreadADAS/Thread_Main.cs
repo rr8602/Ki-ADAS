@@ -1,7 +1,10 @@
 ﻿using Ki_ADAS.DB;
+using Ki_ADAS.VEPBench;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,13 +15,18 @@ namespace Ki_ADAS
     {
         private Thread _testThread = null;
         GlobalVal _GV;
-        private Thread_FRCam _Thread_FRCam = null;
-        private Thread_FRCam _Thread_FrontRadar = null;
-        private Thread_FRCam _Thread_RearRadar = null;
+        private GlobalVal _vepManager;
+        private VEPBenchClient _client;
+        private Thread_FRCam _frCam = null;
+        private Thread_FrontRadar _frontRadar = null;
+        private Thread_RearRadar _rearRadar = null;
+        private Result _result;
+        private ResultRepository _resultRepository;
+        private Frm_Main _main;
 
         private bool m_bRun = false;
         private bool m_bExitStep = false;
-        private int m_nState = 0;        
+        private int m_nState = 0;
         public bool m_bPassNext = false;
 
         private bool m_bBarcode = false;
@@ -42,17 +50,25 @@ namespace Ki_ADAS
                    (GetAsyncKeyState(0x6B) & 0x8000) != 0;
         }
 
-        public Thread_Main()
+        public Thread_Main(Frm_Main main, VEPBenchClient client, SettingConfigDb db)
         {
             _GV = GlobalVal.Instance;
+            _result = new Result();
+            _resultRepository = new ResultRepository(db);
+            _client = client;
+            _frCam = new Thread_FRCam(_client, main, _result);
+            _frontRadar = new Thread_FrontRadar(_client, main, _result);
+            _rearRadar = new Thread_RearRadar(_client, main, _result);
+            _main = main;
         }
 
         public void SetBarcode(Info pInfo, Model pModel)
         {
             Cur_Info = pInfo;
-            Cur_Model = pModel; 
+            Cur_Model = pModel;
             m_bBarcode = true;
         }
+
         public int StartThread()
         {
             try
@@ -123,13 +139,15 @@ namespace Ki_ADAS
             m_nState = state;
             m_bPassNext = false;
         }
+
         private void Main_Thread(Object obj)
         {
             try
             {
                 UI_Update_Message("Main Thread Start");
-                
+
                 SetState(TS.STEP_MAIN_WAIT);
+
                 while (true)
                 {
                     if (!m_bRun) break;
@@ -138,22 +156,87 @@ namespace Ki_ADAS
                     if (m_nState == TS.STEP_MAIN_WAIT)
                     {
                         _DoMainInitial();
+                        _main.AddLogMessage("[Main] Main Wait");
                     }
                     else if (m_nState == TS.STEP_MAIN_BARCODE_WAIT)
                     {
                         _DoMainBarcodeWait();
+                        _main.AddLogMessage("[Main] Main Barcode Wait");
                     }
                     else if (m_nState == TS.STEP_MAIN_CHECK_DETECTION_SENSOR)
                     {
                         _DoMainCheck_Detect();
+                        _main.AddLogMessage("[Main] Main Check Detection Sensor");
                     }
                     else if (m_nState == TS.STEP_MAIN_PRESS_START_BUTTON)
                     {
                         _DoMainPressCycle();
+                        _main.AddLogMessage("[Main] Main Press Start Button");
                     }
-                    else if (m_nState == TS.STEP_MAIN_CYCLE_FINISH) 
+                    else if (m_nState == TS.STEP_MAIN_CENTERING_ON)
+                    {
+                        _DoMainCenteringOn();
+                        _main.AddLogMessage("[Main] Main Centering On");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_PEV_START_CYCLE)
+                    {
+                        _DoMainPEVStartCycle();
+                        _main.AddLogMessage("[Main] Main PEV Start Cycle");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_PEV_SEND_PJI)
+                    {
+                        _DoMainPEVSendPJI();
+                        _main.AddLogMessage("[Main] Main PEV Send PJI");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_PEV_READY)
+                    {
+                        _DoMainPEVReady();
+                        _main.AddLogMessage("[Main] Main PEV Ready");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_START_EACH_THREAD)
+                    {
+                        _DoMainStartEachThread();
+                        _main.AddLogMessage("[Main] Main Start Each Thread");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_WAIT_TEST_COMPLETE)
+                    {
+                        _DoMainWaitTestComplete();
+                        _main.AddLogMessage("[Main] Main Wait Test Complete");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_CENTERING_HOME)
+                    {
+                        _DoMainCenteringHome();
+                        _main.AddLogMessage("[Main] Main Centering Home");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_WAIT_TARGET_HOME)
+                    {
+                        _DoMainWaitTargetHome();
+                        _main.AddLogMessage("[Main] Main Wait Target Home");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_DATA_SAVE)
+                    {
+                        _DoMainDataSave();
+                        _main.AddLogMessage("[Main] Main Data Save");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_TICKET_PRINT)
+                    {
+                        _DoMainTicketPrint();
+                        _main.AddLogMessage("[Main] Main Ticket Print");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_GRET_COMM)
+                    {
+                        _DoMainGRETComm();
+                        _main.AddLogMessage("[Main] Main Gret Comm");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_WAIT_GO_OUT)
+                    {
+                        _DoMainWaitGoOut();
+                        _main.AddLogMessage("[Main] Main Wait Go Out");
+                    }
+                    else if (m_nState == TS.STEP_MAIN_CYCLE_FINISH)
                     {
                         _DoMainFinishCycle();
+                        _main.AddLogMessage("[Main] Main Cycle Finish");
                     }
                 }
             }
@@ -167,7 +250,7 @@ namespace Ki_ADAS
             try
             {
                 UI_Update_Message("_DoMainInitial");
-                
+
                 //변수들 초기화
                 m_bBarcode = false;
                 m_bPassNext = false;
@@ -176,7 +259,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                
+
             }
         }
         private void _DoMainBarcodeWait()
@@ -194,6 +277,19 @@ namespace Ki_ADAS
                         break;
                     }
                     Thread.Sleep(10);
+                }
+
+                if (_main.IsHandleCreated)
+                {
+                    var info = (Info)null;
+                    var model = (Model)null;
+
+                    _main.Invoke(new Action(() => {
+                        info = _main.SelectedVehicleInfo;
+                        model = _main.SelectedModelInfo;
+                    }));
+
+                    SetBarcode(info, model);
                 }
 
                 SetState(TS.STEP_MAIN_CHECK_DETECTION_SENSOR);
@@ -263,13 +359,193 @@ namespace Ki_ADAS
                     //if (PLC.DI.CenteringOn) break;
                     Thread.Sleep(10);
                 }
-                SetState(TS.STEP_MAIN_CYCLE_FINISH);
+                SetState(TS.STEP_MAIN_PEV_START_CYCLE);
             }
             catch (Exception ex)
             {
 
             }
         }
+
+        private void _DoMainPEVStartCycle()
+        {
+            try
+            {
+                _GV._VEP.StatusZone.StartCycle = 1;
+                _client.WriteStatusZone();
+
+                SetState(TS.STEP_MAIN_PEV_SEND_PJI);
+            }
+            catch { }
+        }
+
+        private void _DoMainPEVSendPJI()
+        {
+            try
+            {
+                _GV._VEP.TransmissionZone.ExchStatus = 2; // VEP 서버
+
+                // PJI 정보 전송
+                if (Cur_Model != null &&
+                    _GV._VEP.TransmissionZone.ExchStatus == 2 &&
+                    _GV._VEP.TransmissionZone.AddTzSize == 0 &&
+                    _GV._VEP.TransmissionZone.FctCode == 6 &&
+                    _GV._VEP.TransmissionZone.PCNum == 1 &&
+                    _GV._VEP.TransmissionZone.ProcessCode == 1 &&
+                    _GV._VEP.TransmissionZone.SubFctCode == 0)
+                {
+                    _GV._VEP.TransmissionZone.ExchStatus = 1;
+
+                    if (Cur_Info != null && !string.IsNullOrEmpty(Cur_Info.PJI))
+                    {
+                        byte[] bytes = Encoding.Unicode.GetBytes(Cur_Info.PJI);
+                        ushort[] pjiData = new ushort[(bytes.Length + 1) / 2];
+                        Buffer.BlockCopy(bytes, 0, pjiData, 0, bytes.Length);
+                        _GV._VEP.ReceptionZone.Data = pjiData;
+                    }
+                    else
+                    {
+                        _GV._VEP.ReceptionZone.Data = new ushort[0];
+                    }
+
+                    _GV._VEP.StatusZone.VepStatus = 2; // VEP 서버
+                    _GV._VEP.ReceptionZone.ExchStatus = 2;
+                    _GV._VEP.StatusZone.StartCycle = 0;
+
+                    _client.WriteTransmissionZone();
+                    _client.WriteReceptionZone();
+                    _client.WriteStatusZone();
+                }
+
+                SetState(TS.STEP_MAIN_PEV_READY);
+            }
+            catch { }
+        }
+
+        // Check VEP Status
+        private void _DoMainPEVReady()
+        {
+            try
+            {
+                if (_GV._VEP.StatusZone.VepStatus == 2)
+                {
+                    SetState(TS.STEP_MAIN_START_EACH_THREAD);
+                }
+            }
+            catch { }
+        }
+
+        private void _DoMainStartEachThread()
+        {
+            try
+            {
+                if (_frCam.StartThread() == 1 && _frontRadar.StartThread() == 1 && _rearRadar.StartThread() == 1)
+                {
+                    _result.StartTime = DateTime.Now;
+                    SetState(TS.STEP_MAIN_WAIT_TEST_COMPLETE);
+                }
+            }
+            catch { }
+        }
+
+        private void _DoMainWaitTestComplete()
+        {
+            try
+            {
+                while (true)
+                {
+                    if (CheckLoopExit())
+                        break;
+
+                    Thread.Sleep(10);
+                }
+
+                _result.EndTime = DateTime.Now;
+                SetState(TS.STEP_MAIN_CENTERING_HOME);
+            }
+            catch { }
+        }
+
+        private void _DoMainCenteringHome()
+        {
+            try
+            {
+                while (true)
+                {
+                    if (CheckLoopExit())
+                        break;
+
+                    Thread.Sleep(10);
+                }
+
+                SetState(TS.STEP_MAIN_WAIT_TARGET_HOME);
+            }
+            catch { }
+        }
+
+        private void _DoMainWaitTargetHome()
+        {
+            try
+            {
+                while (true)
+                {
+                    if (CheckLoopExit())
+                        break;
+
+                    Thread.Sleep(10);
+                }
+
+                SetState(TS.STEP_MAIN_DATA_SAVE);
+            }
+            catch { }
+        }
+
+        private void _DoMainDataSave()
+        {
+            try
+            {
+                Result result = CreateResultInfo();
+                _resultRepository.SaveResult(result);
+
+                SetState(TS.STEP_MAIN_TICKET_PRINT);
+            }
+            catch { }
+        }
+
+        private void _DoMainTicketPrint()
+        {
+            try
+            {
+                SetState(TS.STEP_MAIN_GRET_COMM);
+            }
+            catch { }
+        }
+
+        private void _DoMainGRETComm()
+        {
+            try
+            {
+                SetState(TS.STEP_MAIN_WAIT_GO_OUT);
+            }
+            catch { }
+        }
+
+        private void _DoMainWaitGoOut()
+        {
+            try
+            {
+                while (true)
+                {
+                    if (CheckLoopExit())
+                        break;
+                    Thread.Sleep(10);
+                }
+
+                SetState(TS.STEP_MAIN_CYCLE_FINISH);
+            }
+            catch { }
+        }
+
         private void _DoMainFinishCycle()
         {
             try
@@ -285,7 +561,19 @@ namespace Ki_ADAS
             }
         }
 
-
-
+        private Result CreateResultInfo()
+        {
+            return new Result
+            {
+                AcceptNo = Cur_Info?.AcceptNo ?? string.Empty,
+                PJI = Cur_Info?.PJI ?? string.Empty,
+                Model = Cur_Model?.Name ?? string.Empty,
+                StartTime = _result.StartTime,
+                EndTime = _result.EndTime,
+                FC_IsOk = _frCam?.Result.RR_IsOk ?? false,
+                FR_IsOk = _frontRadar?.Result.RR_IsOk ?? false,
+                RR_IsOk = _rearRadar?.Result.RR_IsOk ?? false,
+            };
+        }
     }
 }

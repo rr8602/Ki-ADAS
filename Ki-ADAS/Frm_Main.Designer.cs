@@ -281,10 +281,10 @@
             this.btn_register.BackColor = System.Drawing.Color.Silver;
             this.btn_register.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_register.ForeColor = System.Drawing.Color.Teal;
-            this.btn_register.Location = new System.Drawing.Point(942, 460);
+            this.btn_register.Location = new System.Drawing.Point(954, 347);
             this.btn_register.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btn_register.Name = "btn_register";
-            this.btn_register.Size = new System.Drawing.Size(143, 95);
+            this.btn_register.Size = new System.Drawing.Size(127, 95);
             this.btn_register.TabIndex = 168;
             this.btn_register.Text = "Register";
             this.btn_register.UseVisualStyleBackColor = false;
@@ -336,7 +336,6 @@
             this.BtnTestModbus.TabIndex = 174;
             this.BtnTestModbus.Text = "Test";
             this.BtnTestModbus.UseVisualStyleBackColor = false;
-            this.BtnTestModbus.Click += new System.EventHandler(this.BtnTestModbus_Click);
             // 
             // Frm_Main
             // 

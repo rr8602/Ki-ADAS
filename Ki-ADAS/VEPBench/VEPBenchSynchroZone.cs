@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,33 +11,68 @@ namespace Ki_ADAS.VEPBench
         private static VEPBenchSynchroZone _instance;
         private static readonly object _lock = new object();
 
-        private static int SY_Addr = VEPBenchDataManager.Instance.DescriptionZone.SynchroZoneAddr;
-
-        public const int SYNCHRO_SIZE_PART1 = 123; // 123 / 67 크기로 잘라서 사용
+        public const int SYNCHRO_SIZE_PART1 = 123;
         public const int SYNCHRO_SIZE_PART2 = 67;
         public const int DEFAULT_SYNCHRO_SIZE = SYNCHRO_SIZE_PART1 + SYNCHRO_SIZE_PART2;
 
         // 디바이스 타입 인덱스
-        public int DEVICE_TYPE_FRONT_CAMERA_INDEX = SY_Addr + 3;
-        public int DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX = SY_Addr + 51;
-        public int DEVICE_TYPE_REAR_LEFT_RADAR_INDEX = SY_Addr + 53;
+        public static int DEVICE_TYPE_FRONT_CAMERA_INDEX = 3;
+        public static int DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX = 51;
+        public static int DEVICE_TYPE_REAR_LEFT_RADAR_INDEX = 53;
+        public static int DEVICE_TYPE_FRONT_RIGHT_RADAR_INDEX = 55;
+        public static int DEVICE_TYPE_FRONT_LEFT_RADAR_INDEX = 57;
 
         // 동기화 명령 인덱스
-        public int SYNC_COMMAND_FRONT_CAMERA_INDEX = SY_Addr + 4;
-        public int SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX = SY_Addr + 52;
-        public int SYNC_COMMAND_REAR_LEFT_RADAR_INDEX = SY_Addr + 54;
+        public static int SYNC_COMMAND_FRONT_CAMERA_INDEX = 4;
+        public static int SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX = 52;
+        public static int SYNC_COMMAND_REAR_LEFT_RADAR_INDEX = 54;
+        public static int SYNC_COMMAND_FRONT_RIGHT_RADAR_INDEX = 56;
+        public static int SYNC_COMMAND_FRONT_LEFT_RADAR_INDEX = 58;
 
         // 각도값 인덱스 상수
-        public int FRONT_CAMERA_ANGLE1_INDEX = SY_Addr + 110; // Roll
-        public int FRONT_CAMERA_ANGLE2_INDEX = SY_Addr + 111; // Azimuth
-        public int FRONT_CAMERA_ANGLE3_INDEX = SY_Addr + 112; // Elevation
-        public int REAR_RIGHT_RADAR_ANGLE_INDEX = SY_Addr + 115;
-        public int REAR_LEFT_RADAR_ANGLE_INDEX = SY_Addr + 116;
+        public static int FRONT_CAMERA_ANGLE1_INDEX = 110; // Roll
+        public static int FRONT_CAMERA_ANGLE2_INDEX = 111; // Azimuth
+        public static int FRONT_CAMERA_ANGLE3_INDEX = 112; // Elevation
+        public static int REAR_RIGHT_RADAR_ANGLE_INDEX = 115;
+        public static int REAR_LEFT_RADAR_ANGLE_INDEX = 116;
+        public static int FRONT_RIGHT_RADAR_ANGLE_INDEX = 117;
+        public static int FRONT_LEFT_RADAR_ANGLE_INDEX = 118;
+
+        // Front Camera Send Info 상수
+        public static int FRONT_CAMERA_DISTANCE_INDEX = 15;
+        public static int FRONT_CAMERA_HEIGHT_INDEX = 16;
+        public static int FRONT_CAMERA_INTERDISTANCE_INDEX = 17;
+        public static int FRONT_CAMERA_HTU_INDEX = 29;
+        public static int FRONT_CAMERA_HTL_INDEX = 30;
+        public static int FRONT_CAMERA_TS_INDEX = 31;
+        public static int FRONT_CAMERA_ALLIGNMENTAXEOFFSET_INDEX = 32;
+        public static int FRONT_CAMERA_VV_INDEX = 33;
+        public static int FRONT_CAMERA_STCT_INDEX = 34;
+
+        // Rear Radar Send Info 상수
+        public static int REAR_RADAR_LH_XPOSITION_INDEX = 67;
+        public static int REAR_RADAR_LH_YPOSITION_INDEX = 68;
+        public static int REAR_RADAR_LH_ZPOSITION_INDEX = 69;
+        public static int REAR_RADAR_LH_ANGLE_INDEX = 70;
+        public static int REAR_RADAR_RH_XPOSITION_INDEX = 71;
+        public static int REAR_RADAR_RH_YPOSITION_INDEX = 72;
+        public static int REAR_RADAR_RH_ZPOSITION_INDEX = 73;
+        public static int REAR_RADAR_RH_ANGLE_INDEX = 74;
+
+        // Front Radar Send Info 상수
+        public static int FRONT_RADAR_LH_XPOSITION_INDEX = 95;
+        public static int FRONT_RADAR_LH_YPOSITION_INDEX = 96;
+        public static int FRONT_RADAR_LH_ZPOSITION_INDEX = 97;
+        public static int FRONT_RADAR_LH_ANGLE_INDEX = 98;
+        public static int FRONT_RADAR_RH_XPOSITION_INDEX = 99;
+        public static int FRONT_RADAR_RH_YPOSITION_INDEX = 100;
+        public static int FRONT_RADAR_RH_ZPOSITION_INDEX = 101;
+        public static int FRONT_RADAR_RH_ANGLE_INDEX = 102;
 
         // Try / Retry 여부 인덱스 상수
-        public int TRY_FRONT_CAMERA_INDEX = SY_Addr + 89;
-        public int TRY_REAR_RIGHT_RADAR_INDEX = SY_Addr + 83;
-        public int TRY_REAR_LEFT_RADAR_INDEX = SY_Addr + 82;
+        public int TRY_FRONT_CAMERA_INDEX = 89;
+        public int TRY_REAR_RIGHT_RADAR_INDEX = 83;
+        public int TRY_REAR_LEFT_RADAR_INDEX = 82;
 
         public static VEPBenchSynchroZone Instance
         {
@@ -51,7 +86,6 @@ namespace Ki_ADAS.VEPBench
                             _instance = new VEPBenchSynchroZone();
                     }
                 }
-
                 return _instance;
             }
         }
@@ -77,7 +111,6 @@ namespace Ki_ADAS.VEPBench
             }
         }
 
-        // 실제에서는 각도 값을 Read만 하고, Write 하지 않으므로 getter/setter가 필요 없음 (시뮬레이션을 위해 잠시 삭제 보류)
         public double FrontCameraAngle1
         {
             get => _values.Length > FRONT_CAMERA_ANGLE1_INDEX ? _values[FRONT_CAMERA_ANGLE1_INDEX] / 100.0 : 0.0;

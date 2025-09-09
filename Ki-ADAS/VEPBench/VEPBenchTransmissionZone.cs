@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,12 +16,12 @@ namespace Ki_ADAS.VEPBench
         public const int Offset_Reserved2 = 1;
         public const int Offset_AddTSize = 2;
         public const int Offset_ExchStatus = 3;
+        public const int Offset_Reserved3 = 4;
         public const int Offset_Reserved4 = 5;
         public const int Offset_FctAndPCNum = 6;
         public const int Offset_Reserver5 = 7;
         public const int Offset_ProcessAndSubFct = 8;
         public const int Offset_Reserved6 = 9;
-        public const int Offset_Reserved3 = 4;
         public const int Offset_Reserved7 = 10;
         public const int Offset_Reserved8 = 11;
         public const int Offset_DataStart = 12;

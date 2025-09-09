@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +10,8 @@ namespace Ki_ADAS.VEPBench
     {
         private static VEPBenchReceptionZone _instance;
         private static readonly object _lock = new object();
-        private static int RZ_Addr = VEPBenchDataManager.Instance.DescriptionZone.ReceptionZoneAddr;
 
-        // 상대 주소값
+        // 주소값
         public const int Offset_Reserved1 = 0;
         public const int Offset_Reserved2 = 1;
         public const int Offset_AddReSize = 2;
@@ -65,7 +64,6 @@ namespace Ki_ADAS.VEPBench
                             _instance = new VEPBenchReceptionZone();
                     }
                 }
-
                 return _instance;
             }
         }
@@ -113,13 +111,10 @@ namespace Ki_ADAS.VEPBench
             {
                 for (int i = 0; i < dataSize; i++)
                 {
-                    if (Offset_DataStart + i < registers.Length)
+                    if (Data[i] != registers[Offset_DataStart + i])
                     {
-                        if (Data[i] != registers[Offset_DataStart + i])
-                        {
-                            Data[i] = registers[Offset_DataStart + i];
-                            changed = true;
-                        }
+                        Data[i] = registers[Offset_DataStart + i];
+                        changed = true;
                     }
                 }
             }
@@ -169,6 +164,7 @@ namespace Ki_ADAS.VEPBench
         public void SetResponseCompleted()
         {
             ExchStatus = ExchStatus_Response;
+
         }
 
         public void SetResponseReady()

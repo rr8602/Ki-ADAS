@@ -36,26 +36,40 @@ namespace Ki_ADAS.DB
                                     Name = GetSafeString(reader, "Name"),
                                     Barcode = GetSafeString(reader, "Barcode"),
                                     Wheelbase = GetSafeNullableDouble(reader, "Wheelbase"),
-                                    Fr_Distance = GetSafeNullableDouble(reader, "Fr_Distance"),
-                                    Fr_Height = GetSafeNullableDouble(reader, "Fr_Height"),
-                                    Fr_InterDistance = GetSafeNullableDouble(reader, "Fr_InterDistance"),
-                                    Fr_Htu = GetSafeNullableDouble(reader, "Fr_Htu"),
-                                    Fr_Htl = GetSafeNullableDouble(reader, "Fr_Htl"),
-                                    Fr_Ts = GetSafeNullableDouble(reader, "Fr_Ts"),
-                                    Fr_AlignmentAxeOffset = GetSafeNullableDouble(reader, "Fr_AlignmentAxeOffset"),
-                                    Fr_Vv = GetSafeNullableDouble(reader, "Fr_Vv"),
-                                    Fr_StCt = GetSafeNullableDouble(reader, "Fr_StCt"),
-                                    Fr_IsTest = GetSafeBool(reader, "Fr_IsTest"),
-                                    R_X = GetSafeNullableDouble(reader, "R_X"),
-                                    R_Y = GetSafeNullableDouble(reader, "R_Y"),
-                                    R_Z = GetSafeNullableDouble(reader, "R_Z"),
-                                    R_Angle = GetSafeNullableDouble(reader, "R_Angle"),
-                                    R_IsTest = GetSafeBool(reader, "R_IsTest"),
-                                    L_X = GetSafeNullableDouble(reader, "L_X"),
-                                    L_Y = GetSafeNullableDouble(reader, "L_Y"),
-                                    L_Z = GetSafeNullableDouble(reader, "L_Z"),
-                                    L_Angle = GetSafeNullableDouble(reader, "L_Angle"),
-                                    L_IsTest = GetSafeBool(reader, "L_IsTest")
+
+                                    // Front Camera
+                                    FC_Distance = GetSafeNullableDouble(reader, "FC_Distance"),
+                                    FC_Height = GetSafeNullableDouble(reader, "FC_Height"),
+                                    FC_InterDistance = GetSafeNullableDouble(reader, "FC_InterDistance"),
+                                    FC_Htu = GetSafeNullableDouble(reader, "FC_Htu"),
+                                    FC_Htl = GetSafeNullableDouble(reader, "FC_Htl"),
+                                    FC_Ts = GetSafeNullableDouble(reader, "FC_Ts"),
+                                    FC_AlignmentAxeOffset = GetSafeNullableDouble(reader, "FC_AlignmentAxeOffset"),
+                                    FC_Vv = GetSafeNullableDouble(reader, "FC_Vv"),
+                                    FC_StCt = GetSafeNullableDouble(reader, "FC_StCt"),
+                                    FC_IsTest = GetSafeBool(reader, "FC_IsTest"),
+
+                                    // Frpmt Radar
+                                    FR_X = GetSafeNullableDouble(reader, "FR_X"),
+                                    FR_Y = GetSafeNullableDouble(reader, "FR_Y"),
+                                    FR_Z = GetSafeNullableDouble(reader, "FR_Z"),
+                                    FR_Angle = GetSafeNullableDouble(reader, "FR_Angle"),
+                                    FL_X = GetSafeNullableDouble(reader, "FL_X"),
+                                    FL_Y = GetSafeNullableDouble(reader, "FL_Y"),
+                                    FL_Z = GetSafeNullableDouble(reader, "FL_Z"),
+                                    FL_Angle = GetSafeNullableDouble(reader, "FL_Angle"),
+                                    F_IsTest = GetSafeBool(reader, "F_IsTest"),
+
+                                    // Rear Radar
+                                    RR_X = GetSafeNullableDouble(reader, "RR_X"),
+                                    RR_Y = GetSafeNullableDouble(reader, "RR_Y"),
+                                    RR_Z = GetSafeNullableDouble(reader, "RR_Z"),
+                                    RR_Angle = GetSafeNullableDouble(reader, "RR_Angle"),
+                                    RL_X = GetSafeNullableDouble(reader, "RL_X"),
+                                    RL_Y = GetSafeNullableDouble(reader, "RL_Y"),
+                                    RL_Z = GetSafeNullableDouble(reader, "RL_Z"),
+                                    RL_Angle = GetSafeNullableDouble(reader, "RL_Angle"),
+                                    R_IsTest = GetSafeBool(reader, "R_IsTest")
                                 });
                             }
                         }
@@ -138,26 +152,36 @@ namespace Ki_ADAS.DB
                                     Name = GetSafeString(reader, "Name"),
                                     Barcode = GetSafeString(reader, "Barcode"),
                                     Wheelbase = GetSafeNullableDouble(reader, "Wheelbase"),
-                                    Fr_Distance = GetSafeNullableDouble(reader, "Fr_Distance"),
-                                    Fr_Height = GetSafeNullableDouble(reader, "Fr_Height"),
-                                    Fr_InterDistance = GetSafeNullableDouble(reader, "Fr_InterDistance"),
-                                    Fr_Htu = GetSafeNullableDouble(reader, "Fr_Htu"),
-                                    Fr_Htl = GetSafeNullableDouble(reader, "Fr_Htl"),
-                                    Fr_Ts = GetSafeNullableDouble(reader, "Fr_Ts"),
-                                    Fr_AlignmentAxeOffset = GetSafeNullableDouble(reader, "Fr_AlignmentAxeOffset"),
-                                    Fr_Vv = GetSafeNullableDouble(reader, "Fr_Vv"),
-                                    Fr_StCt = GetSafeNullableDouble(reader, "Fr_StCt"),
-                                    Fr_IsTest = GetSafeBool(reader, "Fr_IsTest"),
-                                    R_X = GetSafeNullableDouble(reader, "R_X"),
-                                    R_Y = GetSafeNullableDouble(reader, "R_Y"),
-                                    R_Z = GetSafeNullableDouble(reader, "R_Z"),
-                                    R_Angle = GetSafeNullableDouble(reader, "R_Angle"),
-                                    R_IsTest = GetSafeBool(reader, "R_IsTest"),
-                                    L_X = GetSafeNullableDouble(reader, "L_X"),
-                                    L_Y = GetSafeNullableDouble(reader, "L_Y"),
-                                    L_Z = GetSafeNullableDouble(reader, "L_Z"),
-                                    L_Angle = GetSafeNullableDouble(reader, "L_Angle"),
-                                    L_IsTest = GetSafeBool(reader, "L_IsTest")
+                                    FC_Distance = GetSafeNullableDouble(reader, "FC_Distance"),
+                                    FC_Height = GetSafeNullableDouble(reader, "FC_Height"),
+                                    FC_InterDistance = GetSafeNullableDouble(reader, "FC_InterDistance"),
+                                    FC_Htu = GetSafeNullableDouble(reader, "FC_Htu"),
+                                    FC_Htl = GetSafeNullableDouble(reader, "FC_Htl"),
+                                    FC_Ts = GetSafeNullableDouble(reader, "FC_Ts"),
+                                    FC_AlignmentAxeOffset = GetSafeNullableDouble(reader, "FC_AlignmentAxeOffset"),
+                                    FC_Vv = GetSafeNullableDouble(reader, "FC_Vv"),
+                                    FC_StCt = GetSafeNullableDouble(reader, "FC_StCt"),
+                                    FC_IsTest = GetSafeBool(reader, "FC_IsTest"),
+
+                                    FR_X = GetSafeNullableDouble(reader, "FR_X"),
+                                    FR_Y = GetSafeNullableDouble(reader, "FR_Y"),
+                                    FR_Z = GetSafeNullableDouble(reader, "FR_Z"),
+                                    FR_Angle = GetSafeNullableDouble(reader, "FR_Angle"),
+                                    FL_X = GetSafeNullableDouble(reader, "FL_X"),
+                                    FL_Y = GetSafeNullableDouble(reader, "FL_Y"),
+                                    FL_Z = GetSafeNullableDouble(reader, "FL_Z"),
+                                    FL_Angle = GetSafeNullableDouble(reader, "FL_Angle"),
+                                    F_IsTest = GetSafeBool(reader, "F_IsTest"),
+
+                                    RR_X = GetSafeNullableDouble(reader, "RR_X"),
+                                    RR_Y = GetSafeNullableDouble(reader, "RR_Y"),
+                                    RR_Z = GetSafeNullableDouble(reader, "RR_Z"),
+                                    RR_Angle = GetSafeNullableDouble(reader, "RR_Angle"),
+                                    RL_X = GetSafeNullableDouble(reader, "RL_X"),
+                                    RL_Y = GetSafeNullableDouble(reader, "RL_Y"),
+                                    RL_Z = GetSafeNullableDouble(reader, "RL_Z"),
+                                    RL_Angle = GetSafeNullableDouble(reader, "RL_Angle"),
+                                    R_IsTest = GetSafeBool(reader, "R_IsTest")
                                 };
                             }
                         }
@@ -198,26 +222,40 @@ namespace Ki_ADAS.DB
                         cmd.Parameters.AddWithValue("Name", model.Name);
                         cmd.Parameters.AddWithValue("Barcode", model.Barcode);
                         cmd.Parameters.AddWithValue("Wheelbase", (object)model.Wheelbase ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Distance", (object)model.Fr_Distance ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Height", (object)model.Fr_Height ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_InterDistance", (object)model.Fr_InterDistance ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Htu", (object)model.Fr_Htu ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Htl", (object)model.Fr_Htl ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Ts", (object)model.Fr_Ts ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_AlignmentAxeOffset", (object)model.Fr_AlignmentAxeOffset ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Vv", (object)model.Fr_Vv ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_StCt", (object)model.Fr_StCt ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_IsTest", model.Fr_IsTest);
-                        cmd.Parameters.AddWithValue("R_X", (object)model.R_X ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("R_Y", (object)model.R_Y ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("R_Z", (object)model.R_Z ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("R_Angle", (object)model.R_Angle ?? DBNull.Value);
+
+                        // Front Camera
+                        cmd.Parameters.AddWithValue("FC_Distance", (object)model.FC_Distance ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Height", (object)model.FC_Height ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_InterDistance", (object)model.FC_InterDistance ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Htu", (object)model.FC_Htu ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Htl", (object)model.FC_Htl ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Ts", (object)model.FC_Ts ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_AlignmentAxeOffset", (object)model.FC_AlignmentAxeOffset ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Vv", (object)model.FC_Vv ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_StCt", (object)model.FC_StCt ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_IsTest", model.FC_IsTest);
+
+                        // Front Radar
+                        cmd.Parameters.AddWithValue("FR_X", (object)model.FR_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FR_Y", (object)model.FR_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FR_Z", (object)model.FR_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FR_Angle", (object)model.FR_Angle ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_X", (object)model.FL_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_Y", (object)model.FL_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_Z", (object)model.FL_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_Angle", (object)model.FL_Angle ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("F_IsTest", model.F_IsTest);
+
+                        // Rear Radar
+                        cmd.Parameters.AddWithValue("RR_X", (object)model.RR_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RR_Y", (object)model.RR_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RR_Z", (object)model.RR_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RR_Angle", (object)model.RR_Angle ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RL_X", (object)model.RL_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RRL_Y", (object)model.RL_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RL_Z", (object)model.RL_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RL_Angle", (object)model.RL_Angle ?? DBNull.Value);
                         cmd.Parameters.AddWithValue("R_IsTest", model.R_IsTest);
-                        cmd.Parameters.AddWithValue("L_X", (object)model.L_X ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_Y", (object)model.L_Y ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_Z", (object)model.L_Z ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_Angle", (object)model.L_Angle ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_IsTest", model.L_IsTest);
 
                         return cmd.ExecuteNonQuery() > 0;
                     }
@@ -256,26 +294,42 @@ namespace Ki_ADAS.DB
                         cmd.Parameters.AddWithValue("Name", model.Name);
                         cmd.Parameters.AddWithValue("Barcode", model.Barcode);
                         cmd.Parameters.AddWithValue("Wheelbase", (object)model.Wheelbase ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Distance", (object)model.Fr_Distance ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Height", (object)model.Fr_Height ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_InterDistance", (object)model.Fr_InterDistance ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Htu", (object)model.Fr_Htu ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Htl", (object)model.Fr_Htl ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Ts", (object)model.Fr_Ts ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_AlignmentAxeOffset", (object)model.Fr_AlignmentAxeOffset ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_Vv", (object)model.Fr_Vv ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_StCt", (object)model.Fr_StCt ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("Fr_IsTest", model.Fr_IsTest);
-                        cmd.Parameters.AddWithValue("R_X", (object)model.R_X ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("R_Y", (object)model.R_Y ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("R_Z", (object)model.R_Z ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("R_Angle", (object)model.R_Angle ?? DBNull.Value);
+
+                        // Front Camera
+                        cmd.Parameters.AddWithValue("FC_Distance", (object)model.FC_Distance ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Height", (object)model.FC_Height ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_InterDistance", (object)model.FC_InterDistance ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Htu", (object)model.FC_Htu ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Htl", (object)model.FC_Htl ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Ts", (object)model.FC_Ts ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_AlignmentAxeOffset", (object)model.FC_AlignmentAxeOffset ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_Vv", (object)model.FC_Vv ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_StCt", (object)model.FC_StCt ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FC_IsTest", model.FC_IsTest);
+                        cmd.Parameters.AddWithValue("OldName", oldModelName);
+
+                        // Front Radar
+                        cmd.Parameters.AddWithValue("FR_X", (object)model.FR_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FR_Y", (object)model.FR_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FR_Z", (object)model.FR_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FR_Angle", (object)model.FR_Angle ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_X", (object)model.FL_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_Y", (object)model.FL_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_Z", (object)model.FL_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("FL_Angle", (object)model.FL_Angle ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("F_IsTest", model.F_IsTest);
+                        cmd.Parameters.AddWithValue("OldName", oldModelName);
+
+                        // Rear Radar
+                        cmd.Parameters.AddWithValue("RR_X", (object)model.RR_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RR_Y", (object)model.RR_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RR_Z", (object)model.RR_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RR_Angle", (object)model.RR_Angle ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RL_X", (object)model.RL_X ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RL_Y", (object)model.RL_Y ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RL_Z", (object)model.RL_Z ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("RL_Angle", (object)model.RL_Angle ?? DBNull.Value);
                         cmd.Parameters.AddWithValue("R_IsTest", model.R_IsTest);
-                        cmd.Parameters.AddWithValue("L_X", (object)model.L_X ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_Y", (object)model.L_Y ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_Z", (object)model.L_Z ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_Angle", (object)model.L_Angle ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("L_IsTest", model.L_IsTest);
                         cmd.Parameters.AddWithValue("OldName", oldModelName);
 
                         return cmd.ExecuteNonQuery() > 0;

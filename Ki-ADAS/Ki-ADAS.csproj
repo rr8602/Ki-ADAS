@@ -77,7 +77,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ADASProcess.cs" />
     <Compile Include="ArrowButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -87,6 +86,8 @@
     <Compile Include="CClock.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DB\Result.cs" />
+    <Compile Include="DB\ResultRepository.cs" />
     <Compile Include="Define.cs" />
     <Compile Include="DB\Info.cs" />
     <Compile Include="DB\Model.cs" />
@@ -157,17 +158,11 @@
     <Compile Include="Language\LanguageResource.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="SettingConfigDb.cs" />
-    <Compile Include="Simulator\HomePositionSimulator.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Simulator\HomePositionSimulator.Designer.cs">
-      <DependentUpon>HomePositionSimulator.cs</DependentUpon>
-    </Compile>
     <Compile Include="snap7.net.cs" />
     <Compile Include="ThreadADAS\Thread_FRCam.cs" />
     <Compile Include="ThreadADAS\Thread_FrontRadar.cs" />
     <Compile Include="ThreadADAS\Thread_Main.cs" />
-    <Compile Include="ThreadADAS\Thread_RearCam.cs" />
+    <Compile Include="ThreadADAS\Thread_RearRadar.cs" />
     <Compile Include="VEPBench\VEPBenchClient.cs" />
     <Compile Include="VEPBench\VEPBenchDescriptionZone.cs" />
     <Compile Include="VEPBench\VEPBenchReceptionZone.cs" />
@@ -212,9 +207,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Simulator\HomePositionSimulator.resx">
-      <DependentUpon>HomePositionSimulator.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

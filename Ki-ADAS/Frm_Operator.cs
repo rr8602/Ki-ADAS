@@ -125,9 +125,9 @@ namespace Ki_ADAS
             Color activeColor = Color.Yellow;
             Color defaultColor = Color.Gray;
 
-            lbl_Toe_FL.BackColor = selectedModel.Fr_IsTest ? activeColor : defaultColor;
-            lbl_Toe_FR.BackColor = selectedModel.R_IsTest ? activeColor : defaultColor;
-            lbl_Toe_RR.BackColor = selectedModel.L_IsTest ? activeColor : defaultColor;
+            lbl_Toe_FL.BackColor = selectedModel.FC_IsTest ? activeColor : defaultColor;
+            lbl_Toe_FR.BackColor = selectedModel.F_IsTest ? activeColor : defaultColor;
+            lbl_Toe_RR.BackColor = selectedModel.R_IsTest ? activeColor : defaultColor;
 
             lbl_modelName.Text = selectedModel.Name;
         }
@@ -230,7 +230,7 @@ namespace Ki_ADAS
             lbl_message.Text = description;
         }
 
-        public void UpdateADASResult(ADASProcess.ADASResult result)
+        /*public void UpdateADASResult(ADASProcess.ADASResult result)
         {
             if (this.InvokeRequired)
             {
@@ -245,6 +245,6 @@ namespace Ki_ADAS
             lbl_FRight.Text = "";
             lbl_RLeft.Text = result.LeftRearRadar.ToString("F2");
             lbl_RRight.Text = result.RightRearRadar.ToString("F2");
-        }
+        }*/
     }
 }
