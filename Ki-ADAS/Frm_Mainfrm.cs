@@ -53,6 +53,15 @@ namespace Ki_ADAS
             m_frmMain = new Frm_Main(_db, _vepBenchClient);
             m_frmConfig = new Frm_Config(_db);
             m_frmVEP = new Frm_VEP(_vepBenchClient);
+
+            try
+            {
+                _vepBenchClient.PerformInitialRead();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"초기 Modbus 데이터 읽기 실패: {ex.Message}");
+            }
         }
         private void Frm_Mainfrm_Load(object sender, EventArgs e)
         {

@@ -24,20 +24,32 @@ namespace Ki_ADAS
 
         public void StartInspectionTimer()
         {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(StartInspectionTimer));
+                return;
+            }
+
             elapsedTimeInSeconds = 0;
-            lbl_time.Text = "0";
+            rlbl_time.Text = "0";
             inspectionTimer.Start();
         }
 
         public void StopInspectionTimer()
         {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(StopInspectionTimer));
+                return;
+            }
+
             inspectionTimer.Stop();
         }
 
         private void InspectionTimer_Tick(object sender, EventArgs e)
         {
             elapsedTimeInSeconds++;
-            lbl_time.Text = elapsedTimeInSeconds.ToString();
+            rlbl_time.Text = elapsedTimeInSeconds.ToString();
         }
 
         public static Frm_Operator Instance
@@ -129,7 +141,7 @@ namespace Ki_ADAS
             lbl_Toe_FR.BackColor = selectedModel.F_IsTest ? activeColor : defaultColor;
             lbl_Toe_RR.BackColor = selectedModel.R_IsTest ? activeColor : defaultColor;
 
-            lbl_modelName.Text = selectedModel.Name;
+            rlbl_modelName.Text = selectedModel.Name;
         }
 
         // 진행률 업데이트

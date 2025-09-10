@@ -249,8 +249,6 @@ namespace Ki_ADAS
         {
             try
             {
-                UI_Update_Message("_DoMainInitial");
-
                 //변수들 초기화
                 m_bBarcode = false;
                 m_bPassNext = false;
@@ -266,7 +264,6 @@ namespace Ki_ADAS
         {
             try
             {
-                UI_Update_Message("_DoMainBarcode");
                 while (true)
                 {
                     if (CheckLoopExit())
@@ -276,7 +273,7 @@ namespace Ki_ADAS
                     {
                         break;
                     }
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 
                 if (_main.IsHandleCreated)
@@ -303,7 +300,6 @@ namespace Ki_ADAS
         {
             try
             {
-                UI_Update_Message("_DoMainCheck_Detect");
                 while (true)
                 {
                     if (CheckLoopExit())
@@ -311,7 +307,7 @@ namespace Ki_ADAS
 
                     //차량 진입 시
                     //if (PLC.DI.FDetect &&  PLC.DI.RDetect) break;
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 
                 SetState(TS.STEP_MAIN_PRESS_START_BUTTON);
@@ -325,7 +321,6 @@ namespace Ki_ADAS
         {
             try
             {
-                UI_Update_Message("_DoMainPressCycle");
                 while (true)
                 {
                     if (CheckLoopExit())
@@ -333,7 +328,7 @@ namespace Ki_ADAS
 
                     // 시작버튼 클릭시
                     // if (PLC.DI.PressStart) break;
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
                 SetState(TS.STEP_MAIN_CENTERING_ON);
             }
@@ -347,7 +342,6 @@ namespace Ki_ADAS
         {
             try
             {
-                UI_Update_Message("_DoMainCenteringOn");
                 // 루프 들어가기전에 센터링 신호 전송
                 // PLC.DO.CenterOn = true ;
                 while (true)
@@ -357,7 +351,7 @@ namespace Ki_ADAS
 
                     // 시작버튼 클릭시
                     //if (PLC.DI.CenteringOn) break;
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
                 SetState(TS.STEP_MAIN_PEV_START_CYCLE);
             }
@@ -387,14 +381,14 @@ namespace Ki_ADAS
 
                 // PJI 정보 전송
                 if (Cur_Model != null &&
-                    _GV._VEP.TransmissionZone.ExchStatus == 2 &&
+                    _GV._VEP.TransmissionZone.ExchStatus == VEPBenchTransmissionZone.ExchStatus_Request &&
                     _GV._VEP.TransmissionZone.AddTzSize == 0 &&
                     _GV._VEP.TransmissionZone.FctCode == 6 &&
                     _GV._VEP.TransmissionZone.PCNum == 1 &&
                     _GV._VEP.TransmissionZone.ProcessCode == 1 &&
                     _GV._VEP.TransmissionZone.SubFctCode == 0)
                 {
-                    _GV._VEP.TransmissionZone.ExchStatus = 1;
+                    _GV._VEP.TransmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
 
                     if (Cur_Info != null && !string.IsNullOrEmpty(Cur_Info.PJI))
                     {
@@ -409,7 +403,7 @@ namespace Ki_ADAS
                     }
 
                     _GV._VEP.StatusZone.VepStatus = 2; // VEP 서버
-                    _GV._VEP.ReceptionZone.ExchStatus = 2;
+                    _GV._VEP.ReceptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Ready;
                     _GV._VEP.StatusZone.StartCycle = 0;
 
                     _client.WriteTransmissionZone();
@@ -441,6 +435,7 @@ namespace Ki_ADAS
             {
                 if (_frCam.StartThread() == 1 && _frontRadar.StartThread() == 1 && _rearRadar.StartThread() == 1)
                 {
+                    _main.m_frmParent.User_Monitor.StartInspectionTimer();
                     _result.StartTime = DateTime.Now;
                     SetState(TS.STEP_MAIN_WAIT_TEST_COMPLETE);
                 }
@@ -457,9 +452,10 @@ namespace Ki_ADAS
                     if (CheckLoopExit())
                         break;
 
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 
+                _main.m_frmParent.User_Monitor.StopInspectionTimer();
                 _result.EndTime = DateTime.Now;
                 SetState(TS.STEP_MAIN_CENTERING_HOME);
             }
@@ -475,7 +471,7 @@ namespace Ki_ADAS
                     if (CheckLoopExit())
                         break;
 
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 
                 SetState(TS.STEP_MAIN_WAIT_TARGET_HOME);
@@ -492,7 +488,7 @@ namespace Ki_ADAS
                     if (CheckLoopExit())
                         break;
 
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 
                 SetState(TS.STEP_MAIN_DATA_SAVE);
@@ -538,7 +534,7 @@ namespace Ki_ADAS
                 {
                     if (CheckLoopExit())
                         break;
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 
                 SetState(TS.STEP_MAIN_CYCLE_FINISH);
@@ -550,7 +546,6 @@ namespace Ki_ADAS
         {
             try
             {
-                UI_Update_Message("_DoMainFinishCycle");
                 // 사이클 종료시 처리 하는 함수
                 Thread.Sleep(10);
                 SetState(TS.STEP_MAIN_WAIT);

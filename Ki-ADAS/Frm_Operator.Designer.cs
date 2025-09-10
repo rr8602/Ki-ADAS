@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             this.NavTop = new System.Windows.Forms.Panel();
-            this.lbl_time = new KI_Controls.RoundLabel();
-            this.lbl_modelName = new KI_Controls.RoundLabel();
-            this.analogClock1 = new Ki_WAT.AnalogClock();
             this.NavBottom = new System.Windows.Forms.Panel();
             this.lbl_Toe_FL = new System.Windows.Forms.Label();
             this.lbl_Toe_FR = new System.Windows.Forms.Label();
@@ -55,6 +52,9 @@
             this.lbl_elevation = new System.Windows.Forms.Label();
             this.lbl_azimuth = new System.Windows.Forms.Label();
             this.lbl_roll = new System.Windows.Forms.Label();
+            this.rlbl_time = new KI_Controls.RoundLabel();
+            this.rlbl_modelName = new KI_Controls.RoundLabel();
+            this.analogClock1 = new Ki_WAT.AnalogClock();
             this.NavTop.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,79 +63,23 @@
             this.NavTop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.NavTop.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.NavTop.Controls.Add(this.lbl_time);
-            this.NavTop.Controls.Add(this.lbl_modelName);
+            this.NavTop.Controls.Add(this.rlbl_time);
+            this.NavTop.Controls.Add(this.rlbl_modelName);
             this.NavTop.Controls.Add(this.analogClock1);
             this.NavTop.Location = new System.Drawing.Point(1, 2);
-            this.NavTop.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.NavTop.Margin = new System.Windows.Forms.Padding(5);
             this.NavTop.Name = "NavTop";
             this.NavTop.Size = new System.Drawing.Size(2194, 216);
             this.NavTop.TabIndex = 9;
             this.NavTop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseDown);
             this.NavTop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseMove);
             // 
-            // lbl_time
-            // 
-            this.lbl_time.BackColor = System.Drawing.Color.Black;
-            this.lbl_time.BackgroundColor = System.Drawing.Color.Black;
-            this.lbl_time.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.lbl_time.BorderRadius = 20;
-            this.lbl_time.BorderSize = 0;
-            this.lbl_time.FlatAppearance.BorderSize = 0;
-            this.lbl_time.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lbl_time.Font = new System.Drawing.Font("Arial", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_time.ForeColor = System.Drawing.Color.White;
-            this.lbl_time.Location = new System.Drawing.Point(1901, 35);
-            this.lbl_time.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.lbl_time.Name = "lbl_time";
-            this.lbl_time.Size = new System.Drawing.Size(246, 142);
-            this.lbl_time.TabIndex = 8;
-            this.lbl_time.Text = "9999";
-            this.lbl_time.TextColor = System.Drawing.Color.White;
-            this.lbl_time.UseVisualStyleBackColor = false;
-            // 
-            // lbl_modelName
-            // 
-            this.lbl_modelName.BackColor = System.Drawing.Color.MidnightBlue;
-            this.lbl_modelName.BackgroundColor = System.Drawing.Color.MidnightBlue;
-            this.lbl_modelName.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.lbl_modelName.BorderRadius = 20;
-            this.lbl_modelName.BorderSize = 0;
-            this.lbl_modelName.FlatAppearance.BorderSize = 0;
-            this.lbl_modelName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lbl_modelName.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lbl_modelName.ForeColor = System.Drawing.Color.White;
-            this.lbl_modelName.Location = new System.Drawing.Point(277, 35);
-            this.lbl_modelName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.lbl_modelName.Name = "lbl_modelName";
-            this.lbl_modelName.Size = new System.Drawing.Size(1595, 142);
-            this.lbl_modelName.TabIndex = 6;
-            this.lbl_modelName.Text = "Model Name";
-            this.lbl_modelName.TextColor = System.Drawing.Color.White;
-            this.lbl_modelName.UseVisualStyleBackColor = false;
-            // 
-            // analogClock1
-            // 
-            this.analogClock1.BackColor = System.Drawing.Color.White;
-            this.analogClock1.BorderColor = System.Drawing.Color.LightCoral;
-            this.analogClock1.BorderThickness = 3;
-            this.analogClock1.HourHandColor = System.Drawing.Color.Black;
-            this.analogClock1.Location = new System.Drawing.Point(26, 24);
-            this.analogClock1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.analogClock1.MinuteHandColor = System.Drawing.Color.Black;
-            this.analogClock1.Name = "analogClock1";
-            this.analogClock1.NumberFont = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.analogClock1.SecondHandColor = System.Drawing.Color.Red;
-            this.analogClock1.Size = new System.Drawing.Size(214, 142);
-            this.analogClock1.TabIndex = 5;
-            this.analogClock1.Text = "analogClock1";
-            // 
             // NavBottom
             // 
             this.NavBottom.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.NavBottom.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.NavBottom.Location = new System.Drawing.Point(-397, 2034);
-            this.NavBottom.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.NavBottom.Margin = new System.Windows.Forms.Padding(5);
             this.NavBottom.Name = "NavBottom";
             this.NavBottom.Size = new System.Drawing.Size(2194, 10);
             this.NavBottom.TabIndex = 10;
@@ -403,6 +347,62 @@
             this.lbl_roll.Text = "0.0";
             this.lbl_roll.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // rlbl_time
+            // 
+            this.rlbl_time.BackColor = System.Drawing.Color.Black;
+            this.rlbl_time.BackgroundColor = System.Drawing.Color.Black;
+            this.rlbl_time.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.rlbl_time.BorderRadius = 20;
+            this.rlbl_time.BorderSize = 0;
+            this.rlbl_time.FlatAppearance.BorderSize = 0;
+            this.rlbl_time.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.rlbl_time.Font = new System.Drawing.Font("Arial", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rlbl_time.ForeColor = System.Drawing.Color.White;
+            this.rlbl_time.Location = new System.Drawing.Point(1901, 35);
+            this.rlbl_time.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.rlbl_time.Name = "rlbl_time";
+            this.rlbl_time.Size = new System.Drawing.Size(246, 142);
+            this.rlbl_time.TabIndex = 8;
+            this.rlbl_time.Text = "9999";
+            this.rlbl_time.TextColor = System.Drawing.Color.White;
+            this.rlbl_time.UseVisualStyleBackColor = false;
+            // 
+            // rlbl_modelName
+            // 
+            this.rlbl_modelName.BackColor = System.Drawing.Color.MidnightBlue;
+            this.rlbl_modelName.BackgroundColor = System.Drawing.Color.MidnightBlue;
+            this.rlbl_modelName.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.rlbl_modelName.BorderRadius = 20;
+            this.rlbl_modelName.BorderSize = 0;
+            this.rlbl_modelName.FlatAppearance.BorderSize = 0;
+            this.rlbl_modelName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.rlbl_modelName.Font = new System.Drawing.Font("굴림", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.rlbl_modelName.ForeColor = System.Drawing.Color.White;
+            this.rlbl_modelName.Location = new System.Drawing.Point(277, 35);
+            this.rlbl_modelName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.rlbl_modelName.Name = "rlbl_modelName";
+            this.rlbl_modelName.Size = new System.Drawing.Size(1595, 142);
+            this.rlbl_modelName.TabIndex = 6;
+            this.rlbl_modelName.Text = "Model Name";
+            this.rlbl_modelName.TextColor = System.Drawing.Color.White;
+            this.rlbl_modelName.UseVisualStyleBackColor = false;
+            // 
+            // analogClock1
+            // 
+            this.analogClock1.BackColor = System.Drawing.Color.White;
+            this.analogClock1.BorderColor = System.Drawing.Color.LightCoral;
+            this.analogClock1.BorderThickness = 3;
+            this.analogClock1.HourHandColor = System.Drawing.Color.Black;
+            this.analogClock1.Location = new System.Drawing.Point(26, 24);
+            this.analogClock1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.analogClock1.MinuteHandColor = System.Drawing.Color.Black;
+            this.analogClock1.Name = "analogClock1";
+            this.analogClock1.NumberFont = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.analogClock1.SecondHandColor = System.Drawing.Color.Red;
+            this.analogClock1.Size = new System.Drawing.Size(214, 142);
+            this.analogClock1.TabIndex = 5;
+            this.analogClock1.Text = "analogClock1";
+            // 
             // Frm_Operator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -447,8 +447,8 @@
 
         private System.Windows.Forms.Panel NavTop;
         private System.Windows.Forms.Panel NavBottom;
-        private KI_Controls.RoundLabel lbl_time;
-        private KI_Controls.RoundLabel lbl_modelName;
+        private KI_Controls.RoundLabel rlbl_time;
+        private KI_Controls.RoundLabel rlbl_modelName;
         private Ki_WAT.AnalogClock analogClock1;
         private System.Windows.Forms.Label lbl_Toe_FL;
         private System.Windows.Forms.Label lbl_Toe_FR;

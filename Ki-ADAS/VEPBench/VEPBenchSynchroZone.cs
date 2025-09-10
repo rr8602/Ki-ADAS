@@ -90,10 +90,10 @@ namespace Ki_ADAS.VEPBench
             }
         }
 
-        private ushort[] _values;
+        private int[] _values;
         public int Size => _values.Length;
 
-        public ushort this[int index]
+        public int this[int index]
         {
             get
             {
@@ -111,34 +111,46 @@ namespace Ki_ADAS.VEPBench
             }
         }
 
-        public double FrontCameraAngle1
+        public int FrontCameraAngle1
         {
-            get => _values.Length > FRONT_CAMERA_ANGLE1_INDEX ? _values[FRONT_CAMERA_ANGLE1_INDEX] / 100.0 : 0.0;
-            set => _values[FRONT_CAMERA_ANGLE1_INDEX] = (ushort)(value * 100);
+            get => _values.Length > FRONT_CAMERA_ANGLE1_INDEX ? _values[FRONT_CAMERA_ANGLE1_INDEX] / 100 : 0;
+            set => _values[FRONT_CAMERA_ANGLE1_INDEX] = (int)(value * 100);
         }
 
-        public double FrontCameraAngle2
+        public int FrontCameraAngle2
         {
-            get => _values.Length > FRONT_CAMERA_ANGLE2_INDEX ? _values[FRONT_CAMERA_ANGLE2_INDEX] / 100.0 : 0.0;
-            set => _values[FRONT_CAMERA_ANGLE2_INDEX] = (ushort)(value * 100);
+            get => _values.Length > FRONT_CAMERA_ANGLE2_INDEX ? _values[FRONT_CAMERA_ANGLE2_INDEX] / 100 : 0;
+            set => _values[FRONT_CAMERA_ANGLE2_INDEX] = (int)(value * 100);
         }
 
-        public double FrontCameraAngle3
+        public int FrontCameraAngle3
         {
-            get => _values.Length > FRONT_CAMERA_ANGLE3_INDEX ? _values[FRONT_CAMERA_ANGLE3_INDEX] / 100.0 : 0.0;
-            set => _values[FRONT_CAMERA_ANGLE3_INDEX] = (ushort)(value * 100);
+            get => _values.Length > FRONT_CAMERA_ANGLE3_INDEX ? _values[FRONT_CAMERA_ANGLE3_INDEX] / 100 : 0;
+            set => _values[FRONT_CAMERA_ANGLE3_INDEX] = (int)(value * 100);
         }
 
-        public double RearRightRadarAngle
+        public int RearRightRadarAngle
         {
-            get => _values.Length > REAR_RIGHT_RADAR_ANGLE_INDEX ? _values[REAR_RIGHT_RADAR_ANGLE_INDEX] / 100.0 : 0.0;
-            set => _values[REAR_RIGHT_RADAR_ANGLE_INDEX] = (ushort)(value * 100);
+            get => _values.Length > REAR_RIGHT_RADAR_ANGLE_INDEX ? _values[REAR_RIGHT_RADAR_ANGLE_INDEX] / 100 : 0;
+            set => _values[REAR_RIGHT_RADAR_ANGLE_INDEX] = (int)(value * 100);
         }
 
-        public double RearLeftRadarAngle
+        public int RearLeftRadarAngle
         {
-            get => _values.Length > REAR_LEFT_RADAR_ANGLE_INDEX ? _values[REAR_LEFT_RADAR_ANGLE_INDEX] / 100.0 : 0.0;
-            set => _values[REAR_LEFT_RADAR_ANGLE_INDEX] = (ushort)(value * 100);
+            get => _values.Length > REAR_LEFT_RADAR_ANGLE_INDEX ? _values[REAR_LEFT_RADAR_ANGLE_INDEX] / 100 : 0;
+            set => _values[REAR_LEFT_RADAR_ANGLE_INDEX] = (int)(value * 100);
+        }
+
+        public int FrontRightRadarAngle
+        {
+            get => _values.Length > FRONT_RIGHT_RADAR_ANGLE_INDEX ? _values[FRONT_RIGHT_RADAR_ANGLE_INDEX] / 100 : 0;
+            set => _values[FRONT_RIGHT_RADAR_ANGLE_INDEX] = (int)(value * 100);
+        }
+
+        public int FrontLeftRadarAngle
+        {
+            get => _values.Length > FRONT_LEFT_RADAR_ANGLE_INDEX ? _values[FRONT_LEFT_RADAR_ANGLE_INDEX] / 100 : 0;
+            set => _values[FRONT_LEFT_RADAR_ANGLE_INDEX] = (int)(value * 100);
         }
 
         private bool _isChanged;
@@ -151,7 +163,7 @@ namespace Ki_ADAS.VEPBench
 
         public VEPBenchSynchroZone(int size = DEFAULT_SYNCHRO_SIZE)
         {
-            _values = new ushort[size];
+            _values = new int[size];
             ResetAllValues();
             _isChanged = false;
         }
@@ -181,7 +193,7 @@ namespace Ki_ADAS.VEPBench
 
             if (_values.Length != registers.Length)
             {
-                _values = new ushort[registers.Length];
+                _values = new int[registers.Length];
                 changed = true;
             }
 
@@ -203,7 +215,11 @@ namespace Ki_ADAS.VEPBench
         public ushort[] ToRegisters()
         {
             ushort[] result = new ushort[_values.Length];
-            Array.Copy(_values, result, _values.Length);
+
+            for (int i = 0; i < _values.Length; i++)
+            {
+                result[i] = Convert.ToUInt16(_values[i]);
+            }
 
             return result;
         }
@@ -221,21 +237,9 @@ namespace Ki_ADAS.VEPBench
             this[index] = value;
         }
 
-        public ushort GetValue(int index)
+        public int GetValue(int index)
         {
             return this[index];
-        }
-
-        public int GetDetectedDeviceType()
-        {
-            if (GetValue(DEVICE_TYPE_FRONT_CAMERA_INDEX) == 1)
-                return DEVICE_TYPE_FRONT_CAMERA_INDEX;
-            else if (GetValue(DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX) == 1)
-                return DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX;
-            else if (GetValue(DEVICE_TYPE_REAR_LEFT_RADAR_INDEX) == 1)
-                return DEVICE_TYPE_REAR_LEFT_RADAR_INDEX;
-            else
-                return 0;
         }
     }
 }

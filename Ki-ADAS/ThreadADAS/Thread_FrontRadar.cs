@@ -219,7 +219,8 @@ namespace Ki_ADAS
                         SetState(TS.STEP_FRADAR_TARGET_MOVE_COMPLETE);
                         break;
                     }
-                    Thread.Sleep(50);
+
+                    Thread.Sleep(100);
                 }
             }
             catch { }
@@ -291,7 +292,8 @@ namespace Ki_ADAS
                         SetState(TS.STEP_FRADAR_FINISH);
                         break;
                     }
-                    Thread.Sleep(50);
+
+                    Thread.Sleep(100);
                 }
             }
             catch { }

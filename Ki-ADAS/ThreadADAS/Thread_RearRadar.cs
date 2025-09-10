@@ -218,7 +218,7 @@ namespace Ki_ADAS
                         SetRRState(TS.STEP_RRADAR_TARGET_MOVE_COMPLETE);
                         break;
                     }
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
             }
             catch { }
@@ -290,7 +290,7 @@ namespace Ki_ADAS
                         SetRRState(TS.STEP_RRADAR_FINISH);
                         break;
                     }
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
             }
             catch { }

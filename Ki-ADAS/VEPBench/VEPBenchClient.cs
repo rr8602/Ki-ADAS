@@ -52,16 +52,88 @@ namespace Ki_ADAS
         }
 
         // Zone 변경 이벤트
-        public EventHandler<VEPBenchDescriptionZone> DescriptionZoneRead;
-        public EventHandler<VEPBenchStatusZone> StatusZoneChanged;
-        public EventHandler<VEPBenchSynchroZone> SynchroZoneChanged;
-        public EventHandler<VEPBenchTransmissionZone> TransmissionZoneChanged;
-        public EventHandler<VEPBenchReceptionZone> ReceptionZoneChanged;
+        private EventHandler<VEPBenchDescriptionZone> _descriptionZoneRead;
+        public event EventHandler<VEPBenchDescriptionZone> DescriptionZoneRead
+        {
+            add
+            {
+                _descriptionZoneRead += value;
+                OnDescriptionZoneRead();
+            }
+
+            remove { _descriptionZoneRead -= value; }
+        }
+
+        private EventHandler<VEPBenchStatusZone> _statusZoneChanged;
+        public event EventHandler<VEPBenchStatusZone> StatusZoneChanged
+        {
+            add
+            {
+                _statusZoneChanged += value;
+                OnStatusZoneChanged();
+            }
+
+            remove { _statusZoneChanged -= value; }
+        }
+
+        private EventHandler<VEPBenchSynchroZone> _synchroZoneChanged;
+        public event EventHandler<VEPBenchSynchroZone> SynchroZoneChanged
+        {
+            add
+            {
+                _synchroZoneChanged += value;
+                OnSynchroZoneChanged();
+            }
+
+            remove { _synchroZoneChanged -= value; }
+        }
+
+        private EventHandler<VEPBenchTransmissionZone> _transmissionZoneChanged;
+        public event EventHandler<VEPBenchTransmissionZone> TransmissionZoneChanged
+        {
+            add
+            {
+                _transmissionZoneChanged += value;
+                OnTransmissionZoneChanged();
+            }
+
+            remove { _transmissionZoneChanged -= value; }
+        }
+
+        private EventHandler<VEPBenchReceptionZone> _receptionZoneChanged;
+        public event EventHandler<VEPBenchReceptionZone> ReceptionZoneChanged
+        {
+            add
+            {
+                _receptionZoneChanged += value;
+                OnReceptionZoneChanged();
+            }
+
+            remove { _receptionZoneChanged -= value; }
+        }
 
         public VEPBenchClient(string ip, int port)
         {
             _ip = ip;
             _port = port;
+        }
+
+        public void PerformInitialRead()
+        {
+            try
+            {
+                if (!IsConnected)
+                {
+                    Connect();
+                }
+
+                PollAllZones();
+                LogMessage("초기 Modbus 데이터 읽기 완료.");
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"초기 Modbus 데이터 읽기 오류: {ex.Message}");
+            }
         }
 
         public void InitializeAndReadDescriptionZone()
@@ -302,7 +374,6 @@ namespace Ki_ADAS
                 {
                     OnTransmissionZoneChanged();
                     _vepManager.TransmissionZone.ResetChangedState();
-                    ProcessTransmissionRequest();
                 }
 
                 if (_vepManager.ReceptionZone.IsChanged)
@@ -518,22 +589,6 @@ namespace Ki_ADAS
             }
         }
 
-        private void ProcessTransmissionRequest()
-        {
-            var txZone = _vepManager.TransmissionZone;
-
-            if (txZone.ExchStatus == VEPBenchTransmissionZone.ExchStatus_Request)
-            {
-                LogMessage($"Transmission Zone 요청 감지: FctCode={txZone.GetFctCodeString()}, PCNum={txZone.PCNum}");
-
-                txZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
-                WriteTransmissionZone();
-
-                _vepManager.ReceptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Ready;
-                WriteReceptionZone();
-            }
-        }
-
         // 연결 상태 확인
         private void CheckConnection()
         {
@@ -546,27 +601,27 @@ namespace Ki_ADAS
 
         protected virtual void OnDescriptionZoneRead()
         {
-            DescriptionZoneRead?.Invoke(this, _vepManager.DescriptionZone);
+            _descriptionZoneRead?.Invoke(this, _vepManager.DescriptionZone);
         }
 
         protected virtual void OnStatusZoneChanged()
         {
-            StatusZoneChanged?.Invoke(this, _vepManager.StatusZone);
+            _statusZoneChanged?.Invoke(this, _vepManager.StatusZone);
         }
 
         protected virtual void OnSynchroZoneChanged()
         {
-            SynchroZoneChanged?.Invoke(this, _vepManager.SynchroZone);
+            _synchroZoneChanged?.Invoke(this, _vepManager.SynchroZone);
         }
 
         protected virtual void OnTransmissionZoneChanged()
         {
-            TransmissionZoneChanged?.Invoke(this, _vepManager.TransmissionZone);
+            _transmissionZoneChanged?.Invoke(this, _vepManager.TransmissionZone);
         }
 
         protected virtual void OnReceptionZoneChanged()
         {
-            ReceptionZoneChanged?.Invoke(this, _vepManager.ReceptionZone);
+            _receptionZoneChanged?.Invoke(this, _vepManager.ReceptionZone);
         }
 
         // 로깅
