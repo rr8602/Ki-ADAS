@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Snap7;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,22 +50,8 @@ namespace Ki_ADAS.VEPBench
             _isChanged = false;
         }
 
-        // 각 구역별 Length
         public VEPBenchDescriptionZone()
         {
-            ValidityIndicator = 0;
-            StatusZoneAddr = 18;
-            StatusZoneSize = 10;
-            SynchroZoneAddr = 28;
-            SynchroZoneSize = 190;
-            TransmissionZoneAddr = 218;
-            TransmissionZoneSize = 60;
-            ReceptionZoneAddr = 278;
-            ReceptionZoneSize = 60;
-            AdditionalTZAddr = 1000;
-            AdditionalTZSize = 2000;
-            AdditionalRZAddr = 3000;
-            AdditionalRZSize = 2000;
             _isChanged = false;
         }
 

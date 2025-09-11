@@ -261,7 +261,7 @@ namespace Ki_ADAS
         {
             this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
             this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
-            this.seqList.SelectedIndexChanged += new System.EventHandler(this.seqList_SelectedIndexChanged);
+            this.seqList.SelectedIndexChanged += new EventHandler(this.seqList_SelectedIndexChanged);
 
             LoadRegisteredVehicles();
         }

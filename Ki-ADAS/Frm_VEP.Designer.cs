@@ -37,25 +37,6 @@
             this.cmbValueList = new System.Windows.Forms.ComboBox();
             this.btnEditValue = new System.Windows.Forms.Button();
             this.txtEditValue = new System.Windows.Forms.TextBox();
-            this.gbFrontLeftRardar = new Ki_ADAS.ThickGroupBox();
-            this.lblS06 = new System.Windows.Forms.Label();
-            this.txtFrontRightRadarAngle = new System.Windows.Forms.TextBox();
-            this.gbFrontRightRardar = new Ki_ADAS.ThickGroupBox();
-            this.lblS05 = new System.Windows.Forms.Label();
-            this.txtFrontLeftRadarAngle = new System.Windows.Forms.TextBox();
-            this.gbRearLeftRardar = new Ki_ADAS.ThickGroupBox();
-            this.lblS04 = new System.Windows.Forms.Label();
-            this.txtRearLeftRadarAngle = new System.Windows.Forms.TextBox();
-            this.gbRearRightRardar = new Ki_ADAS.ThickGroupBox();
-            this.lblS03 = new System.Windows.Forms.Label();
-            this.txtRearRightRadarAngle = new System.Windows.Forms.TextBox();
-            this.gbFrontCamera = new Ki_ADAS.ThickGroupBox();
-            this.lblS00 = new System.Windows.Forms.Label();
-            this.txtFrontCameraAngle2 = new System.Windows.Forms.TextBox();
-            this.txtFrontCameraAngle3 = new System.Windows.Forms.TextBox();
-            this.lblS02 = new System.Windows.Forms.Label();
-            this.txtFrontCameraAngle1 = new System.Windows.Forms.TextBox();
-            this.lblS01 = new System.Windows.Forms.Label();
             this.label45 = new System.Windows.Forms.Label();
             this.txtReData = new System.Windows.Forms.RichTextBox();
             this.txtTzData = new System.Windows.Forms.RichTextBox();
@@ -128,6 +109,29 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.lstSynchroZone = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.gbFrontLeftRardar = new Ki_ADAS.ThickGroupBox();
+            this.lblS06 = new System.Windows.Forms.Label();
+            this.txtFrontRightRadarAngle = new System.Windows.Forms.TextBox();
+            this.gbFrontRightRardar = new Ki_ADAS.ThickGroupBox();
+            this.lblS05 = new System.Windows.Forms.Label();
+            this.txtFrontLeftRadarAngle = new System.Windows.Forms.TextBox();
+            this.gbRearLeftRardar = new Ki_ADAS.ThickGroupBox();
+            this.lblS04 = new System.Windows.Forms.Label();
+            this.txtRearLeftRadarAngle = new System.Windows.Forms.TextBox();
+            this.gbRearRightRardar = new Ki_ADAS.ThickGroupBox();
+            this.lblS03 = new System.Windows.Forms.Label();
+            this.txtRearRightRadarAngle = new System.Windows.Forms.TextBox();
+            this.gbFrontCamera = new Ki_ADAS.ThickGroupBox();
+            this.lblS00 = new System.Windows.Forms.Label();
+            this.txtFrontCameraAngle2 = new System.Windows.Forms.TextBox();
+            this.txtFrontCameraAngle3 = new System.Windows.Forms.TextBox();
+            this.lblS02 = new System.Windows.Forms.Label();
+            this.txtFrontCameraAngle1 = new System.Windows.Forms.TextBox();
+            this.lblS01 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.gbFrontLeftRardar.SuspendLayout();
@@ -139,6 +143,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lstSynchroZone);
             this.panel1.Controls.Add(this.btnEditTExchStatus);
             this.panel1.Controls.Add(this.btnEditRExchStatus);
             this.panel1.Controls.Add(this.btnEditStartCycle);
@@ -256,7 +261,7 @@
             this.btnEditStartCycle.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.btnEditStartCycle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEditStartCycle.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.btnEditStartCycle.Location = new System.Drawing.Point(1056, 469);
+            this.btnEditStartCycle.Location = new System.Drawing.Point(1056, 455);
             this.btnEditStartCycle.Name = "btnEditStartCycle";
             this.btnEditStartCycle.Size = new System.Drawing.Size(163, 71);
             this.btnEditStartCycle.TabIndex = 265;
@@ -270,7 +275,7 @@
             this.groupBox6.Controls.Add(this.btnEditValue);
             this.groupBox6.Controls.Add(this.txtEditValue);
             this.groupBox6.Font = new System.Drawing.Font("굴림", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.groupBox6.Location = new System.Drawing.Point(1245, 452);
+            this.groupBox6.Location = new System.Drawing.Point(1654, 546);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(349, 90);
             this.groupBox6.TabIndex = 264;
@@ -282,13 +287,13 @@
             this.cmbValueList.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.cmbValueList.FormattingEnabled = true;
             this.cmbValueList.Items.AddRange(new object[] {
-            "S_00",
-            "S_01",
-            "S_02",
-            "S_03",
-            "S_04",
-            "S_05",
-            "S_06"});
+            "110",
+            "111",
+            "112",
+            "115",
+            "116",
+            "117",
+            "118"});
             this.cmbValueList.Location = new System.Drawing.Point(6, 43);
             this.cmbValueList.Name = "cmbValueList";
             this.cmbValueList.Size = new System.Drawing.Size(121, 28);
@@ -314,263 +319,6 @@
             this.txtEditValue.Name = "txtEditValue";
             this.txtEditValue.Size = new System.Drawing.Size(123, 30);
             this.txtEditValue.TabIndex = 263;
-            // 
-            // gbFrontLeftRardar
-            // 
-            this.gbFrontLeftRardar.BorderColor = System.Drawing.Color.RoyalBlue;
-            this.gbFrontLeftRardar.BorderWidth = 2;
-            this.gbFrontLeftRardar.Controls.Add(this.lblS06);
-            this.gbFrontLeftRardar.Controls.Add(this.txtFrontRightRadarAngle);
-            this.gbFrontLeftRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbFrontLeftRardar.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.gbFrontLeftRardar.Location = new System.Drawing.Point(1245, 388);
-            this.gbFrontLeftRardar.Name = "gbFrontLeftRardar";
-            this.gbFrontLeftRardar.Size = new System.Drawing.Size(227, 53);
-            this.gbFrontLeftRardar.TabIndex = 262;
-            this.gbFrontLeftRardar.TabStop = false;
-            this.gbFrontLeftRardar.Text = "Front Left Radar";
-            this.gbFrontLeftRardar.TitleBackColor = System.Drawing.Color.Transparent;
-            this.gbFrontLeftRardar.TitleForeColor = System.Drawing.Color.Empty;
-            // 
-            // lblS06
-            // 
-            this.lblS06.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblS06.ForeColor = System.Drawing.Color.Black;
-            this.lblS06.Location = new System.Drawing.Point(6, 23);
-            this.lblS06.Name = "lblS06";
-            this.lblS06.Size = new System.Drawing.Size(114, 24);
-            this.lblS06.TabIndex = 135;
-            this.lblS06.Tag = "";
-            this.lblS06.Text = "118 : S_06";
-            this.lblS06.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtFrontRightRadarAngle
-            // 
-            this.txtFrontRightRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFrontRightRadarAngle.Location = new System.Drawing.Point(126, 23);
-            this.txtFrontRightRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtFrontRightRadarAngle.Multiline = true;
-            this.txtFrontRightRadarAngle.Name = "txtFrontRightRadarAngle";
-            this.txtFrontRightRadarAngle.ReadOnly = true;
-            this.txtFrontRightRadarAngle.Size = new System.Drawing.Size(90, 24);
-            this.txtFrontRightRadarAngle.TabIndex = 165;
-            this.txtFrontRightRadarAngle.Tag = "";
-            // 
-            // gbFrontRightRardar
-            // 
-            this.gbFrontRightRardar.BorderColor = System.Drawing.Color.RoyalBlue;
-            this.gbFrontRightRardar.BorderWidth = 2;
-            this.gbFrontRightRardar.Controls.Add(this.lblS05);
-            this.gbFrontRightRardar.Controls.Add(this.txtFrontLeftRadarAngle);
-            this.gbFrontRightRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbFrontRightRardar.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.gbFrontRightRardar.Location = new System.Drawing.Point(1245, 331);
-            this.gbFrontRightRardar.Name = "gbFrontRightRardar";
-            this.gbFrontRightRardar.Size = new System.Drawing.Size(227, 51);
-            this.gbFrontRightRardar.TabIndex = 263;
-            this.gbFrontRightRardar.TabStop = false;
-            this.gbFrontRightRardar.Text = "Front Right Radar";
-            this.gbFrontRightRardar.TitleBackColor = System.Drawing.Color.Transparent;
-            this.gbFrontRightRardar.TitleForeColor = System.Drawing.Color.Empty;
-            // 
-            // lblS05
-            // 
-            this.lblS05.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblS05.ForeColor = System.Drawing.Color.Black;
-            this.lblS05.Location = new System.Drawing.Point(6, 23);
-            this.lblS05.Name = "lblS05";
-            this.lblS05.Size = new System.Drawing.Size(114, 24);
-            this.lblS05.TabIndex = 135;
-            this.lblS05.Tag = "";
-            this.lblS05.Text = "117 : S_05";
-            this.lblS05.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtFrontLeftRadarAngle
-            // 
-            this.txtFrontLeftRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFrontLeftRadarAngle.Location = new System.Drawing.Point(126, 23);
-            this.txtFrontLeftRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtFrontLeftRadarAngle.Multiline = true;
-            this.txtFrontLeftRadarAngle.Name = "txtFrontLeftRadarAngle";
-            this.txtFrontLeftRadarAngle.ReadOnly = true;
-            this.txtFrontLeftRadarAngle.Size = new System.Drawing.Size(90, 24);
-            this.txtFrontLeftRadarAngle.TabIndex = 165;
-            this.txtFrontLeftRadarAngle.Tag = "";
-            // 
-            // gbRearLeftRardar
-            // 
-            this.gbRearLeftRardar.BorderColor = System.Drawing.Color.RoyalBlue;
-            this.gbRearLeftRardar.BorderWidth = 2;
-            this.gbRearLeftRardar.Controls.Add(this.lblS04);
-            this.gbRearLeftRardar.Controls.Add(this.txtRearLeftRadarAngle);
-            this.gbRearLeftRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbRearLeftRardar.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.gbRearLeftRardar.Location = new System.Drawing.Point(1245, 272);
-            this.gbRearLeftRardar.Name = "gbRearLeftRardar";
-            this.gbRearLeftRardar.Size = new System.Drawing.Size(227, 53);
-            this.gbRearLeftRardar.TabIndex = 261;
-            this.gbRearLeftRardar.TabStop = false;
-            this.gbRearLeftRardar.Text = "Rear Left Radar";
-            this.gbRearLeftRardar.TitleBackColor = System.Drawing.Color.Transparent;
-            this.gbRearLeftRardar.TitleForeColor = System.Drawing.Color.Empty;
-            // 
-            // lblS04
-            // 
-            this.lblS04.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblS04.ForeColor = System.Drawing.Color.Black;
-            this.lblS04.Location = new System.Drawing.Point(6, 23);
-            this.lblS04.Name = "lblS04";
-            this.lblS04.Size = new System.Drawing.Size(114, 24);
-            this.lblS04.TabIndex = 135;
-            this.lblS04.Tag = "";
-            this.lblS04.Text = "116 : S_04";
-            this.lblS04.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtRearLeftRadarAngle
-            // 
-            this.txtRearLeftRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtRearLeftRadarAngle.Location = new System.Drawing.Point(126, 23);
-            this.txtRearLeftRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtRearLeftRadarAngle.Multiline = true;
-            this.txtRearLeftRadarAngle.Name = "txtRearLeftRadarAngle";
-            this.txtRearLeftRadarAngle.ReadOnly = true;
-            this.txtRearLeftRadarAngle.Size = new System.Drawing.Size(90, 24);
-            this.txtRearLeftRadarAngle.TabIndex = 165;
-            this.txtRearLeftRadarAngle.Tag = "";
-            // 
-            // gbRearRightRardar
-            // 
-            this.gbRearRightRardar.BorderColor = System.Drawing.Color.RoyalBlue;
-            this.gbRearRightRardar.BorderWidth = 2;
-            this.gbRearRightRardar.Controls.Add(this.lblS03);
-            this.gbRearRightRardar.Controls.Add(this.txtRearRightRadarAngle);
-            this.gbRearRightRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbRearRightRardar.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.gbRearRightRardar.Location = new System.Drawing.Point(1245, 215);
-            this.gbRearRightRardar.Name = "gbRearRightRardar";
-            this.gbRearRightRardar.Size = new System.Drawing.Size(227, 51);
-            this.gbRearRightRardar.TabIndex = 261;
-            this.gbRearRightRardar.TabStop = false;
-            this.gbRearRightRardar.Text = "Rear Right Radar";
-            this.gbRearRightRardar.TitleBackColor = System.Drawing.Color.Transparent;
-            this.gbRearRightRardar.TitleForeColor = System.Drawing.Color.Empty;
-            // 
-            // lblS03
-            // 
-            this.lblS03.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblS03.ForeColor = System.Drawing.Color.Black;
-            this.lblS03.Location = new System.Drawing.Point(6, 23);
-            this.lblS03.Name = "lblS03";
-            this.lblS03.Size = new System.Drawing.Size(114, 24);
-            this.lblS03.TabIndex = 135;
-            this.lblS03.Tag = "";
-            this.lblS03.Text = "115 : S_03";
-            this.lblS03.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtRearRightRadarAngle
-            // 
-            this.txtRearRightRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtRearRightRadarAngle.Location = new System.Drawing.Point(126, 23);
-            this.txtRearRightRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtRearRightRadarAngle.Multiline = true;
-            this.txtRearRightRadarAngle.Name = "txtRearRightRadarAngle";
-            this.txtRearRightRadarAngle.ReadOnly = true;
-            this.txtRearRightRadarAngle.Size = new System.Drawing.Size(90, 24);
-            this.txtRearRightRadarAngle.TabIndex = 165;
-            this.txtRearRightRadarAngle.Tag = "";
-            // 
-            // gbFrontCamera
-            // 
-            this.gbFrontCamera.BorderColor = System.Drawing.Color.RoyalBlue;
-            this.gbFrontCamera.BorderWidth = 2;
-            this.gbFrontCamera.Controls.Add(this.lblS00);
-            this.gbFrontCamera.Controls.Add(this.txtFrontCameraAngle2);
-            this.gbFrontCamera.Controls.Add(this.txtFrontCameraAngle3);
-            this.gbFrontCamera.Controls.Add(this.lblS02);
-            this.gbFrontCamera.Controls.Add(this.txtFrontCameraAngle1);
-            this.gbFrontCamera.Controls.Add(this.lblS01);
-            this.gbFrontCamera.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbFrontCamera.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.gbFrontCamera.Location = new System.Drawing.Point(1245, 68);
-            this.gbFrontCamera.Name = "gbFrontCamera";
-            this.gbFrontCamera.Size = new System.Drawing.Size(227, 141);
-            this.gbFrontCamera.TabIndex = 260;
-            this.gbFrontCamera.TabStop = false;
-            this.gbFrontCamera.Text = "Front Camera";
-            this.gbFrontCamera.TitleBackColor = System.Drawing.Color.Transparent;
-            this.gbFrontCamera.TitleForeColor = System.Drawing.Color.Empty;
-            // 
-            // lblS00
-            // 
-            this.lblS00.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblS00.ForeColor = System.Drawing.Color.Black;
-            this.lblS00.Location = new System.Drawing.Point(6, 23);
-            this.lblS00.Name = "lblS00";
-            this.lblS00.Size = new System.Drawing.Size(114, 24);
-            this.lblS00.TabIndex = 135;
-            this.lblS00.Tag = "";
-            this.lblS00.Text = "110 : S_00";
-            this.lblS00.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtFrontCameraAngle2
-            // 
-            this.txtFrontCameraAngle2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFrontCameraAngle2.Location = new System.Drawing.Point(125, 63);
-            this.txtFrontCameraAngle2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtFrontCameraAngle2.Multiline = true;
-            this.txtFrontCameraAngle2.Name = "txtFrontCameraAngle2";
-            this.txtFrontCameraAngle2.ReadOnly = true;
-            this.txtFrontCameraAngle2.Size = new System.Drawing.Size(91, 24);
-            this.txtFrontCameraAngle2.TabIndex = 259;
-            this.txtFrontCameraAngle2.Tag = "";
-            // 
-            // txtFrontCameraAngle3
-            // 
-            this.txtFrontCameraAngle3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFrontCameraAngle3.Location = new System.Drawing.Point(126, 108);
-            this.txtFrontCameraAngle3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtFrontCameraAngle3.Multiline = true;
-            this.txtFrontCameraAngle3.Name = "txtFrontCameraAngle3";
-            this.txtFrontCameraAngle3.ReadOnly = true;
-            this.txtFrontCameraAngle3.Size = new System.Drawing.Size(90, 24);
-            this.txtFrontCameraAngle3.TabIndex = 257;
-            this.txtFrontCameraAngle3.Tag = "";
-            // 
-            // lblS02
-            // 
-            this.lblS02.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblS02.ForeColor = System.Drawing.Color.Black;
-            this.lblS02.Location = new System.Drawing.Point(6, 106);
-            this.lblS02.Name = "lblS02";
-            this.lblS02.Size = new System.Drawing.Size(114, 24);
-            this.lblS02.TabIndex = 256;
-            this.lblS02.Tag = "";
-            this.lblS02.Text = "112 : S_02";
-            this.lblS02.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtFrontCameraAngle1
-            // 
-            this.txtFrontCameraAngle1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFrontCameraAngle1.Location = new System.Drawing.Point(126, 23);
-            this.txtFrontCameraAngle1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtFrontCameraAngle1.Multiline = true;
-            this.txtFrontCameraAngle1.Name = "txtFrontCameraAngle1";
-            this.txtFrontCameraAngle1.ReadOnly = true;
-            this.txtFrontCameraAngle1.Size = new System.Drawing.Size(90, 24);
-            this.txtFrontCameraAngle1.TabIndex = 165;
-            this.txtFrontCameraAngle1.Tag = "";
-            // 
-            // lblS01
-            // 
-            this.lblS01.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblS01.ForeColor = System.Drawing.Color.Black;
-            this.lblS01.Location = new System.Drawing.Point(6, 63);
-            this.lblS01.Name = "lblS01";
-            this.lblS01.Size = new System.Drawing.Size(114, 24);
-            this.lblS01.TabIndex = 258;
-            this.lblS01.Tag = "";
-            this.lblS01.Text = "111 : S_01";
-            this.lblS01.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label45
             // 
@@ -1298,6 +1046,296 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // lstSynchroZone
+            // 
+            this.lstSynchroZone.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.lstSynchroZone.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lstSynchroZone.GridLines = true;
+            this.lstSynchroZone.HideSelection = false;
+            this.lstSynchroZone.Location = new System.Drawing.Point(1245, 68);
+            this.lstSynchroZone.Name = "lstSynchroZone";
+            this.lstSynchroZone.Size = new System.Drawing.Size(510, 458);
+            this.lstSynchroZone.TabIndex = 268;
+            this.lstSynchroZone.UseCompatibleStateImageBehavior = false;
+            this.lstSynchroZone.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Address";
+            this.columnHeader1.Width = 140;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Synchro";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader2.Width = 140;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Value";
+            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader3.Width = 140;
+            // 
+            // gbFrontLeftRardar
+            // 
+            this.gbFrontLeftRardar.BorderColor = System.Drawing.Color.RoyalBlue;
+            this.gbFrontLeftRardar.BorderWidth = 2;
+            this.gbFrontLeftRardar.Controls.Add(this.lblS06);
+            this.gbFrontLeftRardar.Controls.Add(this.txtFrontRightRadarAngle);
+            this.gbFrontLeftRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.gbFrontLeftRardar.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.gbFrontLeftRardar.Location = new System.Drawing.Point(1825, 388);
+            this.gbFrontLeftRardar.Name = "gbFrontLeftRardar";
+            this.gbFrontLeftRardar.Size = new System.Drawing.Size(178, 53);
+            this.gbFrontLeftRardar.TabIndex = 262;
+            this.gbFrontLeftRardar.TabStop = false;
+            this.gbFrontLeftRardar.Text = "Front Left Radar";
+            this.gbFrontLeftRardar.TitleBackColor = System.Drawing.Color.Transparent;
+            this.gbFrontLeftRardar.TitleForeColor = System.Drawing.Color.Empty;
+            // 
+            // lblS06
+            // 
+            this.lblS06.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblS06.ForeColor = System.Drawing.Color.Black;
+            this.lblS06.Location = new System.Drawing.Point(6, 23);
+            this.lblS06.Name = "lblS06";
+            this.lblS06.Size = new System.Drawing.Size(60, 24);
+            this.lblS06.TabIndex = 135;
+            this.lblS06.Tag = "";
+            this.lblS06.Text = "118 : ";
+            this.lblS06.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtFrontRightRadarAngle
+            // 
+            this.txtFrontRightRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFrontRightRadarAngle.Location = new System.Drawing.Point(73, 23);
+            this.txtFrontRightRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontRightRadarAngle.Multiline = true;
+            this.txtFrontRightRadarAngle.Name = "txtFrontRightRadarAngle";
+            this.txtFrontRightRadarAngle.ReadOnly = true;
+            this.txtFrontRightRadarAngle.Size = new System.Drawing.Size(90, 24);
+            this.txtFrontRightRadarAngle.TabIndex = 165;
+            this.txtFrontRightRadarAngle.Tag = "";
+            // 
+            // gbFrontRightRardar
+            // 
+            this.gbFrontRightRardar.BorderColor = System.Drawing.Color.RoyalBlue;
+            this.gbFrontRightRardar.BorderWidth = 2;
+            this.gbFrontRightRardar.Controls.Add(this.lblS05);
+            this.gbFrontRightRardar.Controls.Add(this.txtFrontLeftRadarAngle);
+            this.gbFrontRightRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.gbFrontRightRardar.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.gbFrontRightRardar.Location = new System.Drawing.Point(1825, 331);
+            this.gbFrontRightRardar.Name = "gbFrontRightRardar";
+            this.gbFrontRightRardar.Size = new System.Drawing.Size(178, 51);
+            this.gbFrontRightRardar.TabIndex = 263;
+            this.gbFrontRightRardar.TabStop = false;
+            this.gbFrontRightRardar.Text = "Front Right Radar";
+            this.gbFrontRightRardar.TitleBackColor = System.Drawing.Color.Transparent;
+            this.gbFrontRightRardar.TitleForeColor = System.Drawing.Color.Empty;
+            // 
+            // lblS05
+            // 
+            this.lblS05.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblS05.ForeColor = System.Drawing.Color.Black;
+            this.lblS05.Location = new System.Drawing.Point(6, 23);
+            this.lblS05.Name = "lblS05";
+            this.lblS05.Size = new System.Drawing.Size(60, 24);
+            this.lblS05.TabIndex = 135;
+            this.lblS05.Tag = "";
+            this.lblS05.Text = "117 : ";
+            this.lblS05.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtFrontLeftRadarAngle
+            // 
+            this.txtFrontLeftRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFrontLeftRadarAngle.Location = new System.Drawing.Point(72, 23);
+            this.txtFrontLeftRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontLeftRadarAngle.Multiline = true;
+            this.txtFrontLeftRadarAngle.Name = "txtFrontLeftRadarAngle";
+            this.txtFrontLeftRadarAngle.ReadOnly = true;
+            this.txtFrontLeftRadarAngle.Size = new System.Drawing.Size(90, 24);
+            this.txtFrontLeftRadarAngle.TabIndex = 165;
+            this.txtFrontLeftRadarAngle.Tag = "";
+            // 
+            // gbRearLeftRardar
+            // 
+            this.gbRearLeftRardar.BorderColor = System.Drawing.Color.RoyalBlue;
+            this.gbRearLeftRardar.BorderWidth = 2;
+            this.gbRearLeftRardar.Controls.Add(this.lblS04);
+            this.gbRearLeftRardar.Controls.Add(this.txtRearLeftRadarAngle);
+            this.gbRearLeftRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.gbRearLeftRardar.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.gbRearLeftRardar.Location = new System.Drawing.Point(1825, 272);
+            this.gbRearLeftRardar.Name = "gbRearLeftRardar";
+            this.gbRearLeftRardar.Size = new System.Drawing.Size(178, 53);
+            this.gbRearLeftRardar.TabIndex = 261;
+            this.gbRearLeftRardar.TabStop = false;
+            this.gbRearLeftRardar.Text = "Rear Left Radar";
+            this.gbRearLeftRardar.TitleBackColor = System.Drawing.Color.Transparent;
+            this.gbRearLeftRardar.TitleForeColor = System.Drawing.Color.Empty;
+            // 
+            // lblS04
+            // 
+            this.lblS04.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblS04.ForeColor = System.Drawing.Color.Black;
+            this.lblS04.Location = new System.Drawing.Point(6, 23);
+            this.lblS04.Name = "lblS04";
+            this.lblS04.Size = new System.Drawing.Size(60, 24);
+            this.lblS04.TabIndex = 135;
+            this.lblS04.Tag = "";
+            this.lblS04.Text = "116 : ";
+            this.lblS04.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtRearLeftRadarAngle
+            // 
+            this.txtRearLeftRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRearLeftRadarAngle.Location = new System.Drawing.Point(73, 23);
+            this.txtRearLeftRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtRearLeftRadarAngle.Multiline = true;
+            this.txtRearLeftRadarAngle.Name = "txtRearLeftRadarAngle";
+            this.txtRearLeftRadarAngle.ReadOnly = true;
+            this.txtRearLeftRadarAngle.Size = new System.Drawing.Size(90, 24);
+            this.txtRearLeftRadarAngle.TabIndex = 165;
+            this.txtRearLeftRadarAngle.Tag = "";
+            // 
+            // gbRearRightRardar
+            // 
+            this.gbRearRightRardar.BorderColor = System.Drawing.Color.RoyalBlue;
+            this.gbRearRightRardar.BorderWidth = 2;
+            this.gbRearRightRardar.Controls.Add(this.lblS03);
+            this.gbRearRightRardar.Controls.Add(this.txtRearRightRadarAngle);
+            this.gbRearRightRardar.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.gbRearRightRardar.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.gbRearRightRardar.Location = new System.Drawing.Point(1825, 215);
+            this.gbRearRightRardar.Name = "gbRearRightRardar";
+            this.gbRearRightRardar.Size = new System.Drawing.Size(178, 51);
+            this.gbRearRightRardar.TabIndex = 261;
+            this.gbRearRightRardar.TabStop = false;
+            this.gbRearRightRardar.Text = "Rear Right Radar";
+            this.gbRearRightRardar.TitleBackColor = System.Drawing.Color.Transparent;
+            this.gbRearRightRardar.TitleForeColor = System.Drawing.Color.Empty;
+            // 
+            // lblS03
+            // 
+            this.lblS03.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblS03.ForeColor = System.Drawing.Color.Black;
+            this.lblS03.Location = new System.Drawing.Point(6, 23);
+            this.lblS03.Name = "lblS03";
+            this.lblS03.Size = new System.Drawing.Size(60, 24);
+            this.lblS03.TabIndex = 135;
+            this.lblS03.Tag = "";
+            this.lblS03.Text = "115 : ";
+            this.lblS03.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtRearRightRadarAngle
+            // 
+            this.txtRearRightRadarAngle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRearRightRadarAngle.Location = new System.Drawing.Point(72, 22);
+            this.txtRearRightRadarAngle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtRearRightRadarAngle.Multiline = true;
+            this.txtRearRightRadarAngle.Name = "txtRearRightRadarAngle";
+            this.txtRearRightRadarAngle.ReadOnly = true;
+            this.txtRearRightRadarAngle.Size = new System.Drawing.Size(90, 24);
+            this.txtRearRightRadarAngle.TabIndex = 165;
+            this.txtRearRightRadarAngle.Tag = "";
+            // 
+            // gbFrontCamera
+            // 
+            this.gbFrontCamera.BorderColor = System.Drawing.Color.RoyalBlue;
+            this.gbFrontCamera.BorderWidth = 2;
+            this.gbFrontCamera.Controls.Add(this.lblS00);
+            this.gbFrontCamera.Controls.Add(this.txtFrontCameraAngle2);
+            this.gbFrontCamera.Controls.Add(this.txtFrontCameraAngle3);
+            this.gbFrontCamera.Controls.Add(this.lblS02);
+            this.gbFrontCamera.Controls.Add(this.txtFrontCameraAngle1);
+            this.gbFrontCamera.Controls.Add(this.lblS01);
+            this.gbFrontCamera.Font = new System.Drawing.Font("굴림", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.gbFrontCamera.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.gbFrontCamera.Location = new System.Drawing.Point(1825, 68);
+            this.gbFrontCamera.Name = "gbFrontCamera";
+            this.gbFrontCamera.Size = new System.Drawing.Size(178, 141);
+            this.gbFrontCamera.TabIndex = 260;
+            this.gbFrontCamera.TabStop = false;
+            this.gbFrontCamera.Text = "Front Camera";
+            this.gbFrontCamera.TitleBackColor = System.Drawing.Color.Transparent;
+            this.gbFrontCamera.TitleForeColor = System.Drawing.Color.Empty;
+            // 
+            // lblS00
+            // 
+            this.lblS00.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblS00.ForeColor = System.Drawing.Color.Black;
+            this.lblS00.Location = new System.Drawing.Point(6, 23);
+            this.lblS00.Name = "lblS00";
+            this.lblS00.Size = new System.Drawing.Size(60, 24);
+            this.lblS00.TabIndex = 135;
+            this.lblS00.Tag = "";
+            this.lblS00.Text = "110 : ";
+            this.lblS00.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtFrontCameraAngle2
+            // 
+            this.txtFrontCameraAngle2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFrontCameraAngle2.Location = new System.Drawing.Point(72, 63);
+            this.txtFrontCameraAngle2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontCameraAngle2.Multiline = true;
+            this.txtFrontCameraAngle2.Name = "txtFrontCameraAngle2";
+            this.txtFrontCameraAngle2.ReadOnly = true;
+            this.txtFrontCameraAngle2.Size = new System.Drawing.Size(91, 24);
+            this.txtFrontCameraAngle2.TabIndex = 259;
+            this.txtFrontCameraAngle2.Tag = "";
+            // 
+            // txtFrontCameraAngle3
+            // 
+            this.txtFrontCameraAngle3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFrontCameraAngle3.Location = new System.Drawing.Point(72, 107);
+            this.txtFrontCameraAngle3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontCameraAngle3.Multiline = true;
+            this.txtFrontCameraAngle3.Name = "txtFrontCameraAngle3";
+            this.txtFrontCameraAngle3.ReadOnly = true;
+            this.txtFrontCameraAngle3.Size = new System.Drawing.Size(90, 24);
+            this.txtFrontCameraAngle3.TabIndex = 257;
+            this.txtFrontCameraAngle3.Tag = "";
+            // 
+            // lblS02
+            // 
+            this.lblS02.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblS02.ForeColor = System.Drawing.Color.Black;
+            this.lblS02.Location = new System.Drawing.Point(6, 106);
+            this.lblS02.Name = "lblS02";
+            this.lblS02.Size = new System.Drawing.Size(60, 24);
+            this.lblS02.TabIndex = 256;
+            this.lblS02.Tag = "";
+            this.lblS02.Text = "112 : ";
+            this.lblS02.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtFrontCameraAngle1
+            // 
+            this.txtFrontCameraAngle1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFrontCameraAngle1.Location = new System.Drawing.Point(72, 23);
+            this.txtFrontCameraAngle1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtFrontCameraAngle1.Multiline = true;
+            this.txtFrontCameraAngle1.Name = "txtFrontCameraAngle1";
+            this.txtFrontCameraAngle1.ReadOnly = true;
+            this.txtFrontCameraAngle1.Size = new System.Drawing.Size(90, 24);
+            this.txtFrontCameraAngle1.TabIndex = 165;
+            this.txtFrontCameraAngle1.Tag = "";
+            // 
+            // lblS01
+            // 
+            this.lblS01.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblS01.ForeColor = System.Drawing.Color.Black;
+            this.lblS01.Location = new System.Drawing.Point(6, 63);
+            this.lblS01.Name = "lblS01";
+            this.lblS01.Size = new System.Drawing.Size(60, 24);
+            this.lblS01.TabIndex = 258;
+            this.lblS01.Tag = "";
+            this.lblS01.Text = "111 : ";
+            this.lblS01.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // Frm_VEP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -1425,5 +1463,9 @@
         private System.Windows.Forms.Button btnEditStartCycle;
         private System.Windows.Forms.Button btnEditTExchStatus;
         private System.Windows.Forms.Button btnEditRExchStatus;
+        private System.Windows.Forms.ListView lstSynchroZone;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
     }
 }

@@ -26,11 +26,11 @@ namespace Ki_ADAS
         private bool _isConnected = false;
 
         // 시작 주소 값
-        private ushort Addr_Validity = VEPBenchDataManager.Instance.DescriptionZone.ValidityIndicator;
-        private ushort Addr_StatusZone = VEPBenchDataManager.Instance.DescriptionZone.StatusZoneAddr;
-        private ushort Addr_SynchroZone = VEPBenchDataManager.Instance.DescriptionZone.SynchroZoneAddr;
-        private ushort Addr_TransmissionZone = VEPBenchDataManager.Instance.DescriptionZone.TransmissionZoneAddr;
-        private ushort Addr_ReceptionZone = VEPBenchDataManager.Instance.DescriptionZone.ReceptionZoneAddr;
+        private ushort Addr_Validity;
+        private ushort Addr_StatusZone;
+        private ushort Addr_SynchroZone;
+        private ushort Addr_TransmissionZone;
+        private ushort Addr_ReceptionZone;
 
         public bool IsConnected => _isConnected && _tcpClient != null && _tcpClient.Connected;
 
@@ -42,14 +42,7 @@ namespace Ki_ADAS
         private CancellationTokenSource _cancellationTokenSouce = null;
         private int _pollingIntervalMs = 1000;
 
-        private VEPBenchDataManager _vepManager = GlobalVal.Instance._VEP;
-
-        // 폴링 주기 설정
-        public int PollingIntervalMs
-        {
-            get { return _pollingIntervalMs; }
-            set { _pollingIntervalMs = Math.Max(100, value); }
-        }
+        private VEPBenchDataManager _vepManager;
 
         // Zone 변경 이벤트
         private EventHandler<VEPBenchDescriptionZone> _descriptionZoneRead;
@@ -112,28 +105,20 @@ namespace Ki_ADAS
             remove { _receptionZoneChanged -= value; }
         }
 
-        public VEPBenchClient(string ip, int port)
+        public VEPBenchClient(string ip, int port, VEPBenchDataManager vepManager)
         {
             _ip = ip;
             _port = port;
+            _vepManager = vepManager;
         }
 
-        public void PerformInitialRead()
+        private void InitializeAddresses()
         {
-            try
-            {
-                if (!IsConnected)
-                {
-                    Connect();
-                }
-
-                PollAllZones();
-                LogMessage("초기 Modbus 데이터 읽기 완료.");
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"초기 Modbus 데이터 읽기 오류: {ex.Message}");
-            }
+            Addr_Validity = _vepManager.DescriptionZone.ValidityIndicator;
+            Addr_StatusZone = _vepManager.DescriptionZone.StatusZoneAddr;
+            Addr_SynchroZone = _vepManager.DescriptionZone.SynchroZoneAddr;
+            Addr_TransmissionZone = _vepManager.DescriptionZone.TransmissionZoneAddr;
+            Addr_ReceptionZone = _vepManager.DescriptionZone.ReceptionZoneAddr;
         }
 
         public void InitializeAndReadDescriptionZone()
@@ -143,7 +128,8 @@ namespace Ki_ADAS
                 if (!IsConnected)
                     Connect();
 
-                var descriptionZone = ReadDescriptionZone();
+                ReadDescriptionZone();
+                InitializeAddresses();
                 OnDescriptionZoneRead();
 
                 LogMessage("Description Zone 초기 읽기 완료");
@@ -272,7 +258,6 @@ namespace Ki_ADAS
 
                 try
                 {
-                    InitializeAndReadDescriptionZone();
                     PollAllZones();
 
                     while (!token.IsCancellationRequested)
@@ -482,6 +467,8 @@ namespace Ki_ADAS
                  $"StartCycle={_vepManager.StatusZone.StartCycle}, " +
                  $"VepCycleEnd={_vepManager.StatusZone.VepCycleEnd}, " +
                  $"BenchCycleEnd={_vepManager.StatusZone.BenchCycleEnd}");
+
+                OnStatusZoneChanged();
             }
             catch (Exception ex)
             {
@@ -540,6 +527,8 @@ namespace Ki_ADAS
                         $"FrontCameraAngle (Elevation) ={_vepManager.SynchroZone.FrontCameraAngle3}, " +
                         $"RearRightRadarAngle={_vepManager.SynchroZone.RearRightRadarAngle}, " +
                         $"RearLeftRadarAngle={_vepManager.SynchroZone.RearLeftRadarAngle}");
+
+                OnSynchroZoneChanged();
             }
             catch (Exception ex)
             {
@@ -558,6 +547,8 @@ namespace Ki_ADAS
                 ushort[] data = _vepManager.ReceptionZone.ToRegisters();
                 _modbusMaster.WriteMultipleRegisters(1, Addr_ReceptionZone, data);
                 LogMessage($"수신 영역 쓰기: {string.Join(", ", data)}");
+
+                OnReceptionZoneChanged();
             }
             catch (Exception ex)
             {
@@ -581,6 +572,8 @@ namespace Ki_ADAS
                   $"FctCode={_vepManager.TransmissionZone.FctCode}, " +
                   $"PCNum={_vepManager.TransmissionZone.PCNum}, " +
                   $"DataSize={_vepManager.TransmissionZone.Data.Length}");
+
+                OnTransmissionZoneChanged();
             }
             catch (Exception ex)
             {

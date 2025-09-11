@@ -19,18 +19,19 @@ namespace Ki_ADAS
 
         private int m_nCurrentFrmIdx = Def.FOM_IDX_MAIN;
 
-        private SettingConfigDb _db;
+        public SettingConfigDb _db;
         private Form m_ActiveSubForm;
         public Frm_Main m_frmMain;
         public Frm_Config m_frmConfig;
         public Frm_Calibration m_frmCalibration = new Frm_Calibration();
         public Frm_Manual m_frmManual = new Frm_Manual();
-        public Frm_Result m_frmResult = new Frm_Result();
+        public Frm_Result m_frmResult;
         public Frm_VEP m_frmVEP;
         public Frm_Operator User_Monitor = null;
+        public VEPBenchDescriptionZone _descriptionZone = null;
         private List<Button> m_NavButtons = new List<Button>();
+        private GlobalVal gv;
 
-        private VEPBenchClient _vepBenchClient;
         private IniFile _iniFile;
         public static string ipAddress;
         public static int port;
@@ -44,24 +45,21 @@ namespace Ki_ADAS
             InitializeComponent();
             _db = dbInstance;
 
+            // Read network configuration
             string iniPath = System.IO.Path.Combine(Application.StartupPath, "config.ini");
             _iniFile = new IniFile(iniPath);
             ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
             port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
-            _vepBenchClient = new VEPBenchClient(ipAddress, port);
 
-            m_frmMain = new Frm_Main(_db, _vepBenchClient);
+            gv = GlobalVal.Instance;
+            gv.InitializeVepSystem(ipAddress, port);
+
+            m_frmMain = new Frm_Main(_db, gv._Client);
             m_frmConfig = new Frm_Config(_db);
-            m_frmVEP = new Frm_VEP(_vepBenchClient);
-
-            try
-            {
-                _vepBenchClient.PerformInitialRead();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"초기 Modbus 데이터 읽기 실패: {ex.Message}");
-            }
+            m_frmVEP = new Frm_VEP(gv._Client);
+            m_frmResult = new Frm_Result(_db);
+            m_frmCalibration = new Frm_Calibration();
+            m_frmManual = new Frm_Manual();
         }
         private void Frm_Mainfrm_Load(object sender, EventArgs e)
         {

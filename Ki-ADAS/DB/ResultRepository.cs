@@ -20,26 +20,132 @@ namespace Ki_ADAS.DB
 
         public List<Result> GetResultInfo()
         {
+            List<Result> results = new List<Result>();
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
                     con.Open();
-                    const string query = "SELECT * FROM Result";
+                    string todayDate = DateTime.Now.ToString("yyyyMMdd");
+                    const string query = "SELECT * FROM Result WHERE LEFT(AcceptNo, 8) = ? ORDER BY AcceptNo";
 
                     using (var cmd = new OleDbCommand(query, con))
                     {
-                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.AddWithValue("todayDate", todayDate);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                results.Add(new Result
+                                {
+                                    AcceptNo = reader["AcceptNo"].ToString(),
+                                    PJI = reader["PJI"].ToString(),
+                                    Model = reader["Model"].ToString(),
+                                    StartTime = Convert.ToDateTime(reader["StartTime"]), 
+                                    EndTime = Convert.ToDateTime(reader["EndTime"]), 
+                                    FC_IsOk = Convert.ToBoolean(reader["FC_IsOk"]), 
+                                    FR_IsOk = Convert.ToBoolean(reader["FR_IsOk"]), 
+                                    RR_IsOk = Convert.ToBoolean(reader["RR_IsOk"])
+                                });
+                            }
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show($"Error retrieving Result info: {ex.Message}", "Database Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                MessageBox.Show($"Error retrieving Result info: {ex.Message}", "Database Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                 return null;
             }
 
-            return new List<Result>();
+            return results;
+        }
+
+        public List<Result> GetResultInfoByDate(string date) 
+        {
+            List<Result> results = new List<Result>();
+            try
+            {
+                using (var con = new OleDbConnection(db.connectionString))
+                {
+                    con.Open();
+                    const string query = "SELECT * FROM Result WHERE LEFT(AcceptNo, 8) = ? ORDER BY AcceptNo";
+
+                    using (var cmd = new OleDbCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("date", date);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                results.Add(new Result
+                                {
+                                    AcceptNo = reader["AcceptNo"].ToString(),
+                                    PJI = reader["PJI"].ToString(),
+                                    Model = reader["Model"].ToString(),
+                                    StartTime = Convert.ToDateTime(reader["StartTime"]), 
+                                    EndTime = Convert.ToDateTime(reader["EndTime"]), 
+                                    FC_IsOk = Convert.ToBoolean(reader["FC_IsOk"]), 
+                                    FR_IsOk = Convert.ToBoolean(reader["FR_IsOk"]), 
+                                    RR_IsOk = Convert.ToBoolean(reader["RR_IsOk"])
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error retrieving Result info by date: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+
+            return results;
+        }
+
+        public List<Result> GetResultInfoByPji(string pji)
+        {
+            List<Result> results = new List<Result>();
+            try
+            {
+                using (var con = new OleDbConnection(db.connectionString))
+                {
+                    con.Open();
+                    const string query = "SELECT * FROM Result WHERE PJI = ? ORDER BY AcceptNo";
+
+                    using (var cmd = new OleDbCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("pji", pji);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                results.Add(new Result
+                                {
+                                    AcceptNo = reader["AcceptNo"].ToString(),
+                                    PJI = reader["PJI"].ToString(),
+                                    Model = reader["Model"].ToString(),
+                                    StartTime = Convert.ToDateTime(reader["StartTime"]), 
+                                    EndTime = Convert.ToDateTime(reader["EndTime"]), 
+                                    FC_IsOk = Convert.ToBoolean(reader["FC_IsOk"]), 
+                                    FR_IsOk = Convert.ToBoolean(reader["FR_IsOk"]), 
+                                    RR_IsOk = Convert.ToBoolean(reader["RR_IsOk"])
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error retrieving Result info by PJI: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+
+            return results;
         }
 
         public bool SaveResult(Result result)
@@ -71,11 +177,11 @@ namespace Ki_ADAS.DB
                         {
                             cmd.Parameters.AddWithValue("PJI", result.PJI);
                             cmd.Parameters.AddWithValue("Model", result.Model);
-                            cmd.Parameters.AddWithValue("StartTime", result.StartTime);
-                            cmd.Parameters.AddWithValue("EndTime", result.EndTime);
-                            cmd.Parameters.AddWithValue("FC_IsOk", result.FC_IsOk);
-                            cmd.Parameters.AddWithValue("FR_IsOk", result.FR_IsOk);
-                            cmd.Parameters.AddWithValue("RR_IsOk", result.RR_IsOk);
+                            cmd.Parameters.AddWithValue("StartTime", result.StartTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                            cmd.Parameters.AddWithValue("EndTime", result.EndTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                            cmd.Parameters.AddWithValue("FC_IsOk", result.FC_IsOk ? 1 : 0);
+                            cmd.Parameters.AddWithValue("FR_IsOk", result.FR_IsOk ? 1 : 0);
+                            cmd.Parameters.AddWithValue("RR_IsOk", result.RR_IsOk ? 1 : 0);
                             cmd.Parameters.AddWithValue("AcceptNo", result.AcceptNo);
 
                             return cmd.ExecuteNonQuery() > 0;
@@ -93,11 +199,11 @@ namespace Ki_ADAS.DB
                             cmd.Parameters.AddWithValue("AcceptNo", result.AcceptNo);
                             cmd.Parameters.AddWithValue("PJI", result.PJI);
                             cmd.Parameters.AddWithValue("Model", result.Model);
-                            cmd.Parameters.AddWithValue("StartTime", result.StartTime);
-                            cmd.Parameters.AddWithValue("EndTime", result.EndTime);
-                            cmd.Parameters.AddWithValue("FC_IsOk", result.FC_IsOk);
-                            cmd.Parameters.AddWithValue("FR_IsOk", result.FR_IsOk);
-                            cmd.Parameters.AddWithValue("RR_IsOk", result.RR_IsOk);
+                            cmd.Parameters.AddWithValue("StartTime", result.StartTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                            cmd.Parameters.AddWithValue("EndTime", result.EndTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                            cmd.Parameters.AddWithValue("FC_IsOk", result.FC_IsOk ? 1 : 0);
+                            cmd.Parameters.AddWithValue("FR_IsOk", result.FR_IsOk ? 1 : 0);
+                            cmd.Parameters.AddWithValue("RR_IsOk", result.RR_IsOk ? 1 : 0);
 
                             return cmd.ExecuteNonQuery() > 0;
                         }

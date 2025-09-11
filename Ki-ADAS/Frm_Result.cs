@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Ki_ADAS.DB;
+using Ki_ADAS.VEPBench;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,87 +18,36 @@ namespace Ki_ADAS
     public partial class Frm_Result : Form
     {
         private Frm_Mainfrm m_frmParent = null;
+        private ResultRepository _resultRepository;
+        private VEPBenchDataManager _vepManager = GlobalVal.Instance._VEP;
 
-        private string _pji;
-        private DateTime _meaDate;
-        private double _frontCameraAngle1;
-        private double _frontCameraAngle2;
-        private double _frontCameraAngle3;
-        private double _rearRightRadarAngle;
-        private double _rearLeftRadarAngle;
-
-        public Frm_Result(
-            string pji,
-            double frontCameraAngle1,
-            double frontCameraAngle2,
-            double frontCameraAngle3,
-            double rearRightRadarAngle,
-            double rearLeftRadarAngle)
+        public Frm_Result(SettingConfigDb db)
         {
             InitializeComponent();
 
-            _pji = pji;
-            _frontCameraAngle1 = frontCameraAngle1;
-            _frontCameraAngle2 = frontCameraAngle2;
-            _frontCameraAngle3 = frontCameraAngle3;
-            _rearRightRadarAngle = rearRightRadarAngle;
-            _rearLeftRadarAngle = rearLeftRadarAngle;
+            _resultRepository = new ResultRepository(db);
 
-            lblBarcode.Text = _pji;
-            lblRoll.Text = _frontCameraAngle1.ToString("F2");
-            lblAzimuth.Text = _frontCameraAngle2.ToString("F2");
-            lblElevation.Text = _frontCameraAngle3.ToString("F2");
-            lblRearRightRadarAngle.Text = _rearRightRadarAngle.ToString("F2");
-            lblRearLeftRadarAngle.Text = _rearLeftRadarAngle.ToString("F2");
+            SetAngleInfo();
         }
 
-        private void LoadPjiListFromXml()
+        private void LoadInfoList()
         {
             try
             {
-                string xmlFilePath = Application.StartupPath;
-                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
-
                 seqList.Items.Clear();
-                int totalCount = 0;
 
-                if (xmlFiles.Length > 0)
+                var results = _resultRepository.GetResultInfo();
+
+                if (results == null || results.Count == 0)
                 {
-                    Array.Sort(xmlFiles, (a, b) => string.Compare(b, a)); // 최신 파일이 먼저 오도록 정렬
-
-                    foreach (string file in xmlFiles)
-                    {
-                        try
-                        {
-                            XElement root = XElement.Load(file);
-                            var results = root.Elements("TestResults");
-
-                            foreach (var result in results)
-                            {
-                                string barcode = result.Element("Barcode")?.Value;
-
-                                if (!string.IsNullOrEmpty(barcode))
-                                {
-                                    seqList.Items.Add(barcode);
-                                    totalCount++;
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (seqList.Items.Count > 0)
-                    {
-                        seqList.Items[0].Selected = true;
-                        seqList.Focus();
-                    }
+                    return;
                 }
-                else
+
+                foreach (var result in results)
                 {
-                    MessageBox.Show("XML file does not exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    var item = new ListViewItem(result.AcceptNo);
+                    item.SubItems.Add(result.PJI);
+                    seqList.Items.Add(item);
                 }
             }
             catch (Exception ex)
@@ -106,58 +58,16 @@ namespace Ki_ADAS
 
         private void seqList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (seqList.SelectedItems.Count > 0)
-            {
-                string selectedBarcode = seqList.SelectedItems[0].Text;
-                DisplayTestResultDetails(selectedBarcode);
-            }
-        }
-
-        private void DisplayTestResultDetails(string barcode)
-        {
             try
             {
-                string xmlFilePath = Application.StartupPath;
-                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
-
-                foreach (string file in xmlFiles)
+                if (seqList.SelectedItems.Count > 0)
                 {
-                    try
-                    {
-                        XElement root = XElement.Load(file);
-                        var results = root.Elements("TestResults");
-
-                        foreach (var result in results)
-                        {
-                            string currentBarcode = result.Element("Barcode")?.Value;
-
-                            if (currentBarcode == barcode)
-                            {
-                                lblBarcode.Text = currentBarcode;
-
-                                double frontCameraAngle1 = double.Parse(result.Element("FrontCameraAngle1")?.Value ?? "0");
-                                double frontCameraAngle2 = double.Parse(result.Element("FrontCameraAngle2")?.Value ?? "0");
-                                double frontCameraAngle3 = double.Parse(result.Element("FrontCameraAngle3")?.Value ?? "0");
-                                double rearRightRadarAngle = double.Parse(result.Element("RearRightRadarAngle")?.Value ?? "0");
-                                double rearLeftRadarAngle = double.Parse(result.Element("RearLeftRadarAngle")?.Value ?? "0");
-
-                                lblRoll.Text = frontCameraAngle1.ToString("F2");
-                                lblAzimuth.Text = frontCameraAngle2.ToString("F2");
-                                lblElevation.Text = frontCameraAngle3.ToString("F2");
-                                lblRearRightRadarAngle.Text = rearRightRadarAngle.ToString("F2");
-                                lblRearLeftRadarAngle.Text = rearLeftRadarAngle.ToString("F2");
-
-                                return;
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
+                    SetAngleInfo();
                 }
-
-                MessageBox.Show($"Could not find details for the selected barcode ({barcode}).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                {
+                    MessageBox.Show("Select a test result to view details.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -165,19 +75,29 @@ namespace Ki_ADAS
             }
         }
 
-        public Frm_Result()
-        {
-            InitializeComponent();
-        }
-
         public void SetParent(Frm_Mainfrm f)
         {
             m_frmParent = f;
         }
 
+        private void SetAngleInfo()
+        {
+            lblRoll.Text = _vepManager.SynchroZone.FrontCameraAngle1.ToString();
+            lblAzimuth.Text = _vepManager.SynchroZone.FrontCameraAngle2.ToString();
+            lblElevation.Text = _vepManager.SynchroZone.FrontCameraAngle3.ToString();
+            lblRearRightRadarAngle.Text = _vepManager.SynchroZone.RearRightRadarAngle.ToString();
+            lblRearLeftRadarAngle.Text = _vepManager.SynchroZone.RearLeftRadarAngle.ToString();
+            lblFrontRightRadarAngle.Text = _vepManager.SynchroZone.FrontRightRadarAngle.ToString();
+            lblFrontLeftRadarAngle.Text = _vepManager.SynchroZone.FrontLeftRadarAngle.ToString();
+        }
+
         private void Frm_Result_Load(object sender, EventArgs e)
         {
-            LoadPjiListFromXml();
+            this.seqList.OwnerDraw = true;
+            this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
+            this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
+
+            LoadInfoList();
             dateTimePicker1.Value = DateTime.Now;
         }
 
@@ -185,53 +105,29 @@ namespace Ki_ADAS
         {
             try
             {
-                string searchDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-                string xmlFilePath = Application.StartupPath;
-                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
-
                 seqList.Items.Clear();
+
+                var resultsByDate = _resultRepository.GetResultInfoByDate(dateTimePicker1.Value.ToString("yyyyMMdd"));
                 int count = 0;
 
-                if (xmlFiles.Length > 0)
+                if (resultsByDate == null || resultsByDate.Count == 0)
                 {
-                    foreach (string file in xmlFiles)
-                    {
-                        try
-                        {
-                            XElement root = XElement.Load(file);
-                            var results = root.Elements("TestResults");
-
-                            foreach (var result in results)
-                            {
-                                string timestamp = result.Element("Timestamp")?.Value;
-                                string barcode = result.Element("Barcode")?.Value;
-
-                                if (!string.IsNullOrEmpty(timestamp) && timestamp.StartsWith(searchDate))
-                                {
-                                    seqList.Items.Add(barcode);
-                                    count++;
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (count > 0)
-                    {
-                        seqList.Items[0].Selected = true;
-                        seqList.Focus();
-                    }
-                    else
-                    {
-                        MessageBox.Show($"No results found for {searchDate}.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
+                    MessageBox.Show($"No results found for {dateTimePicker1.Value:yyyy-MM-dd}.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
                 }
-                else
+
+                foreach (var result in resultsByDate)
                 {
-                    MessageBox.Show("XML file does not exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    var item = new ListViewItem(result.AcceptNo);
+                    item.SubItems.Add(result.PJI);
+                    seqList.Items.Add(item);
+                    count++;
+                }
+
+                if (count > 0)
+                {
+                    seqList.Items[0].Selected = true;
+                    seqList.Focus();
                 }
             }
             catch (Exception ex)
@@ -244,64 +140,62 @@ namespace Ki_ADAS
         {
             try
             {
-                string searchPji = txtPji.Text.Trim();
+                seqList.Items.Clear();
 
-                if (string.IsNullOrEmpty(searchPji))
+                var resultsByPji = _resultRepository.GetResultInfoByPji(txtPji.Text.Trim());
+                int count = 0;
+
+                if (resultsByPji == null || resultsByPji.Count == 0)
                 {
-                    MessageBox.Show("Please enter the PJI to search.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("No results found for the specified PJI.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
-                string xmlFilePath = Application.StartupPath;
-                string[] xmlFiles = Directory.GetFiles(xmlFilePath, "test_result_*.xml");
-
-                seqList.Items.Clear();
-                int count = 0;
-
-                if (xmlFiles.Length > 0)
+                foreach (var result in resultsByPji)
                 {
-                    foreach (string file in xmlFiles)
-                    {
-                        try
-                        {
-                            XElement root = XElement.Load(file);
-                            var results = root.Elements("TestResults");
-
-                            foreach (var result in results)
-                            {
-                                string barcode = result.Element("Barcode")?.Value;
-
-                                if (!string.IsNullOrEmpty(barcode) && barcode.Contains(searchPji))
-                                {
-                                    seqList.Items.Add(barcode);
-                                    count++;
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (count > 0)
-                    {
-                        seqList.Items[0].Selected = true;
-                        seqList.Focus();
-                    }
-                    else
-                    {
-                        MessageBox.Show($"No results found for {searchPji}.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
+                    var item = new ListViewItem(result.AcceptNo);
+                    item.SubItems.Add(result.PJI);
+                    seqList.Items.Add(item);
+                    count++;
                 }
-                else
+
+                if (count > 0)
                 {
-                    MessageBox.Show("XML file does not exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    seqList.Items[0].Selected = true;
+                    seqList.Focus();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred during PJI search: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void seqList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            using (StringFormat sf = new StringFormat())
+            {
+                sf.Alignment = StringAlignment.Center;
+                sf.LineAlignment = StringAlignment.Center;
+
+                e.DrawBackground();
+                e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.seqList.ForeColor), e.Bounds, sf);
+            }
+        }
+
+        private void seqList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+
+            if (e.Item.Selected)
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
+            }
+            else
+            {
+                e.DrawBackground();
+                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
             }
         }
     }

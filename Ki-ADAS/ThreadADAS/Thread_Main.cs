@@ -3,19 +3,21 @@ using Ki_ADAS.VEPBench;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Ki_ADAS
 {
     public class Thread_Main
     {
         private Thread _testThread = null;
-        GlobalVal _GV;
-        private GlobalVal _vepManager;
+        private VEPBenchDataManager _vepManager = GlobalVal.Instance._VEP;
         private VEPBenchClient _client;
         private Thread_FRCam _frCam = null;
         private Thread_FrontRadar _frontRadar = null;
@@ -52,7 +54,6 @@ namespace Ki_ADAS
 
         public Thread_Main(Frm_Main main, VEPBenchClient client, SettingConfigDb db)
         {
-            _GV = GlobalVal.Instance;
             _result = new Result();
             _resultRepository = new ResultRepository(db);
             _client = client;
@@ -365,7 +366,7 @@ namespace Ki_ADAS
         {
             try
             {
-                _GV._VEP.StatusZone.StartCycle = 1;
+                _vepManager.StatusZone.StartCycle = 1;
                 _client.WriteStatusZone();
 
                 SetState(TS.STEP_MAIN_PEV_SEND_PJI);
@@ -377,34 +378,34 @@ namespace Ki_ADAS
         {
             try
             {
-                _GV._VEP.TransmissionZone.ExchStatus = 2; // VEP 서버
+                _vepManager.TransmissionZone.ExchStatus = 2; // VEP 서버
 
                 // PJI 정보 전송
                 if (Cur_Model != null &&
-                    _GV._VEP.TransmissionZone.ExchStatus == VEPBenchTransmissionZone.ExchStatus_Request &&
-                    _GV._VEP.TransmissionZone.AddTzSize == 0 &&
-                    _GV._VEP.TransmissionZone.FctCode == 6 &&
-                    _GV._VEP.TransmissionZone.PCNum == 1 &&
-                    _GV._VEP.TransmissionZone.ProcessCode == 1 &&
-                    _GV._VEP.TransmissionZone.SubFctCode == 0)
+                    _vepManager.TransmissionZone.ExchStatus == VEPBenchTransmissionZone.ExchStatus_Request &&
+                    _vepManager.TransmissionZone.AddTzSize == 0 &&
+                    _vepManager.TransmissionZone.FctCode == 6 &&
+                    _vepManager.TransmissionZone.PCNum == 1 &&
+                    _vepManager.TransmissionZone.ProcessCode == 1 &&
+                    _vepManager.TransmissionZone.SubFctCode == 0)
                 {
-                    _GV._VEP.TransmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
+                    _vepManager.TransmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
 
                     if (Cur_Info != null && !string.IsNullOrEmpty(Cur_Info.PJI))
                     {
                         byte[] bytes = Encoding.Unicode.GetBytes(Cur_Info.PJI);
                         ushort[] pjiData = new ushort[(bytes.Length + 1) / 2];
                         Buffer.BlockCopy(bytes, 0, pjiData, 0, bytes.Length);
-                        _GV._VEP.ReceptionZone.Data = pjiData;
+                        _vepManager.ReceptionZone.Data = pjiData;
                     }
                     else
                     {
-                        _GV._VEP.ReceptionZone.Data = new ushort[0];
+                        _vepManager.ReceptionZone.Data = new ushort[0];
                     }
 
-                    _GV._VEP.StatusZone.VepStatus = 2; // VEP 서버
-                    _GV._VEP.ReceptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Ready;
-                    _GV._VEP.StatusZone.StartCycle = 0;
+                    _vepManager.StatusZone.VepStatus = 2; // VEP 서버
+                    _vepManager.ReceptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Ready;
+                    _vepManager.StatusZone.StartCycle = 0;
 
                     _client.WriteTransmissionZone();
                     _client.WriteReceptionZone();
@@ -421,7 +422,7 @@ namespace Ki_ADAS
         {
             try
             {
-                if (_GV._VEP.StatusZone.VepStatus == 2)
+                if (_vepManager.StatusZone.VepStatus == 2)
                 {
                     SetState(TS.STEP_MAIN_START_EACH_THREAD);
                 }
@@ -501,7 +502,60 @@ namespace Ki_ADAS
             try
             {
                 Result result = CreateResultInfo();
-                _resultRepository.SaveResult(result);
+                bool isSavedToDb = _resultRepository.SaveResult(result);
+
+                if (isSavedToDb)
+                {
+                    MessageBox.Show("Test results saved to database.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to save test results to database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                string xmlFileName = $"test_result_{DateTime.Now.ToString("yyyyMMdd")}.xml";
+                string xmlFilePath = Path.Combine(Application.StartupPath, xmlFileName);
+
+                try
+                {
+                    XElement newResult = new XElement("TestResults",
+                        new XElement("AcceptNo", result.AcceptNo),
+                        new XElement("PJI", result.PJI),
+                        new XElement("Model", result.Model),
+                        new XElement("StartTime", result.StartTime),
+                        new XElement("EndTime", result.EndTime),
+                        new XElement("FC_IsOk", result.FC_IsOk),
+                        new XElement("FR_IsOk", result.FR_IsOk),
+                        new XElement("RR_IsOk", result.RR_IsOk),
+                        new XElement("Angle_Roll", _vepManager.SynchroZone.FrontCameraAngle1),
+                        new XElement("Angle_Azimuth", _vepManager.SynchroZone.FrontCameraAngle2),
+                        new XElement("Angle_Elevation", _vepManager.SynchroZone.FrontCameraAngle3),
+                        new XElement("Angle_RearRight", _vepManager.SynchroZone.RearRightRadarAngle),
+                        new XElement("Angle_RearLeft", _vepManager.SynchroZone.RearLeftRadarAngle),
+                        new XElement("Angle-FrontRight", _vepManager.SynchroZone.FrontRightRadarAngle),
+                        new XElement("Angle-FrontLeft", _vepManager.SynchroZone.FrontLeftRadarAngle)
+                    );
+
+                    XElement root;
+
+                    if (File.Exists(xmlFilePath))
+                    {
+                        root = XElement.Load(xmlFilePath);
+                        root.Add(newResult);
+                    }
+                    else
+                    {
+                        root = new XElement("TestResults", newResult);
+                    }
+
+                    root.Save(xmlFilePath);
+
+                    MessageBox.Show("Test results saved as XML.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error saving data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
 
                 SetState(TS.STEP_MAIN_TICKET_PRINT);
             }

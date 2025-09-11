@@ -32,11 +32,19 @@ namespace Ki_ADAS
         public static GlobalVal Instance => _instance.Value;
         private GlobalVal()
         {
-            _VEP = new VEPBenchDataManager();
             _PLC = new PLC();
         }
 
         public VEPBenchDataManager _VEP;
+        public VEPBenchClient _Client;
         public PLC _PLC;
+
+        public void InitializeVepSystem(string ip, int port)
+        {
+            _VEP = new VEPBenchDataManager();
+            _Client = new VEPBenchClient(ip, port, _VEP);
+
+            _Client.InitializeAndReadDescriptionZone();
+        }
     }
 }

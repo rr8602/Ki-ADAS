@@ -24,14 +24,19 @@ namespace Ki_ADAS
         private VEPBenchClient benchClient;
 
         private Dictionary<string, Action<int>> _propertySetters;
-        private Dictionary<string, Func<int>> _propertyGetters;
 
         public Frm_VEP(VEPBenchClient client)
         {
             InitializeComponent();
             benchClient = client;
 
+            lstSynchroZone.OwnerDraw = true;
+
+            this.lstSynchroZone.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.lstSynchroZone_DrawColumnHeader);
+            this.lstSynchroZone.DrawSubItem += new DrawListViewSubItemEventHandler(this.lstSynchroZone_DrawSubItem);
+
             InitializeMappings();
+            PopulateSynchroZoneList();
 
             benchClient.DescriptionZoneRead += BenchClient_OnDescriptionZoneRead;
             benchClient.StatusZoneChanged += BenchClient_StatusZoneChanged;
@@ -52,24 +57,13 @@ namespace Ki_ADAS
 
             _propertySetters = new Dictionary<string, Action<int>>
             {
-                { "S_00", value => synchroZone.FrontCameraAngle1 = value },
-                { "S_01", value => synchroZone.FrontCameraAngle2 = value },
-                { "S_02", value => synchroZone.FrontCameraAngle3 = value },
-                { "S_03", value => synchroZone.RearRightRadarAngle = value },
-                { "S_04", value => synchroZone.RearLeftRadarAngle = value },
-                { "S_05", value => synchroZone.FrontRightRadarAngle = value },
-                { "S_06", value => synchroZone.FrontLeftRadarAngle = value }
-            };
-
-            _propertyGetters = new Dictionary<string, Func<int>>
-            {
-                { "S_00", () => synchroZone.FrontCameraAngle1 },
-                { "S_01", () => synchroZone.FrontCameraAngle2 },
-                { "S_02", () => synchroZone.FrontCameraAngle3 },
-                { "S_03", () => synchroZone.RearRightRadarAngle },
-                { "S_04", () => synchroZone.RearLeftRadarAngle },
-                { "S_05", () => synchroZone.FrontRightRadarAngle },
-                { "S_06", () => synchroZone.FrontLeftRadarAngle }
+                { "110", value => synchroZone.FrontCameraAngle1 = value },
+                { "111", value => synchroZone.FrontCameraAngle2 = value },
+                { "112", value => synchroZone.FrontCameraAngle3 = value },
+                { "115", value => synchroZone.RearRightRadarAngle = value },
+                { "116", value => synchroZone.RearLeftRadarAngle = value },
+                { "117", value => synchroZone.FrontRightRadarAngle = value },
+                { "118", value => synchroZone.FrontLeftRadarAngle = value }
             };
         }
 
@@ -127,28 +121,16 @@ namespace Ki_ADAS
 
         private void BenchClient_SynchroZoneChanged(object sender, VEPBenchSynchroZone e)
         {
-            if (InvokeRequired)
-            {
-                BeginInvoke(new Action(() => UpdateSynchroValues(
-                    e.FrontCameraAngle1,
-                    e.FrontCameraAngle2,
-                    e.FrontCameraAngle3,
-                    e.RearRightRadarAngle,
-                    e.RearLeftRadarAngle,
-                    e.FrontRightRadarAngle,
-                    e.FrontLeftRadarAngle)));
-            }
-            else
-            {
-                UpdateSynchroValues(
-                    e.FrontCameraAngle1,
-                    e.FrontCameraAngle2,
-                    e.FrontCameraAngle3,
-                    e.RearRightRadarAngle,
-                    e.RearLeftRadarAngle,
-                    e.FrontRightRadarAngle,
-                    e.FrontLeftRadarAngle);
-            }
+            UpdateSynchroValues(
+                e.FrontCameraAngle1,
+                e.FrontCameraAngle2,
+                e.FrontCameraAngle3,
+                e.RearRightRadarAngle,
+                e.RearLeftRadarAngle,
+                e.FrontRightRadarAngle,
+                e.FrontLeftRadarAngle);
+
+            PopulateSynchroZoneList();
         }
 
         private void BenchClient_TransmissionZoneChanged(object sender, VEPBenchTransmissionZone e)
@@ -224,6 +206,57 @@ namespace Ki_ADAS
             txtReSubFctCode.Text = subFctCode.ToString();
         }
 
+        private void PopulateSynchroZoneList()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(PopulateSynchroZoneList));
+                return;
+            }
+
+            try
+            {
+                lstSynchroZone.Items.Clear();
+
+                var vepManager = GlobalVal.Instance._VEP;
+                if (vepManager == null || vepManager.SynchroZone == null || vepManager.DescriptionZone == null) return;
+
+                var synchroZone = vepManager.SynchroZone;
+                var descriptionZone = vepManager.DescriptionZone;
+
+                ushort baseAddress = descriptionZone.SynchroZoneAddr;
+                ushort[] rawValues = synchroZone.ToRegisters();
+
+                for (int i = 0; i < rawValues.Length; i++)
+                {
+                    ListViewItem item = new ListViewItem((baseAddress + i).ToString());
+
+                    item.SubItems.Add(i.ToString());
+
+                    int rawValue = rawValues[i];
+                    int displayValue = rawValue;
+
+                    if (i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX ||
+                        i == VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX ||
+                        i == VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_RIGHT_RADAR_ANGLE_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_LEFT_RADAR_ANGLE_INDEX)
+                    {
+                        displayValue = rawValue / 100;
+                    }
+
+                    item.SubItems.Add(displayValue.ToString());
+                    lstSynchroZone.Items.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to populate SynchroZone list: {ex.Message}");
+            }
+        }
+
         private void btnEditValue_Click(object sender, EventArgs e)
         {
             try
@@ -242,22 +275,12 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (_propertySetters.TryGetValue(selectedItem, out var propertySetter) &&
-                    _propertyGetters.TryGetValue(selectedItem, out var propertyGetter))
+                if (_propertySetters.TryGetValue(selectedItem, out var propertySetter))
                 {
-                    var originalValue = propertyGetter();
+                    propertySetter(valueToSet);
+                    benchClient.WriteSynchroZone();
 
-                    try
-                    {
-                        propertySetter(valueToSet);
-                        benchClient.WriteSynchroZone();
-                    }
-                    finally
-                    {
-                        propertySetter(originalValue);
-                    }
-
-                    MessageBox.Show("Value modified successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Write command sent successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
@@ -275,17 +298,8 @@ namespace Ki_ADAS
             try
             {
                 var statusZone = GlobalVal.Instance._VEP.StatusZone;
-                var originalValue = statusZone.StartCycle;
-
-                try
-                {
-                    statusZone.StartCycle = 1;
-                    benchClient.WriteStatusZone();
-                }
-                finally
-                {
-                    statusZone.StartCycle = originalValue;
-                }
+                statusZone.StartCycle = 1;
+                benchClient.WriteStatusZone();
 
                 MessageBox.Show("set the Start Cycle value to 1 successfully .", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -300,17 +314,8 @@ namespace Ki_ADAS
             try
             {
                 var transmissionZone = GlobalVal.Instance._VEP.TransmissionZone;
-                var originalValue = transmissionZone.ExchStatus;
-
-                try
-                {
-                    transmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
-                    benchClient.WriteTransmissionZone();
-                }
-                finally
-                {
-                    transmissionZone.ExchStatus = originalValue;
-                }
+                transmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
+                benchClient.WriteTransmissionZone();
 
                 MessageBox.Show("Transmission Zone set ExchStatus value to 1.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -325,17 +330,8 @@ namespace Ki_ADAS
             try
             {
                 var receptionZone = GlobalVal.Instance._VEP.ReceptionZone;
-                var originalValue = receptionZone.ExchStatus;
-
-                try
-                {
-                    receptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Response;
-                    benchClient.WriteReceptionZone();
-                }
-                finally
-                {
-                    receptionZone.ExchStatus = originalValue;
-                }
+                receptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Response;
+                benchClient.WriteReceptionZone();
 
                 MessageBox.Show("Reception Zone set ExchStatus value to 1.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -344,5 +340,42 @@ namespace Ki_ADAS
                 MessageBox.Show($"Error setting ReceiptZoneExchStatus value: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void lstSynchroZone_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            using (StringFormat sf = new StringFormat())
+            {
+                sf.Alignment = StringAlignment.Center;
+                sf.LineAlignment = StringAlignment.Center;
+
+                e.DrawBackground();
+                e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.lstSynchroZone.ForeColor), e.Bounds, sf);
+            }
+        }
+
+        private void lstSynchroZone_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+
+            if (e.Item.Selected)
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
+            }
+            else
+            {
+                Color backColor = (e.ItemIndex % 2 == 0)
+                    ? Color.White
+                    : Color.FromArgb(255, 240, 240, 240);
+
+                using (Brush b = new SolidBrush(backColor))
+                {
+                    e.Graphics.FillRectangle(b, e.Bounds);
+                }
+
+                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+            }
+        }
+
     }
 }

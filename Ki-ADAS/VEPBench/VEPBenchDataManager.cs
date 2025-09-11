@@ -9,31 +9,13 @@ namespace Ki_ADAS.VEPBench
 {
     public class VEPBenchDataManager
     {
-        private static VEPBenchDataManager _instance;
-        private static readonly object _lock = new object();
+        
 
         public VEPBenchDescriptionZone DescriptionZone { get; private set; }
         public VEPBenchReceptionZone ReceptionZone { get; private set; }
         public VEPBenchStatusZone StatusZone { get; private set; }
         public VEPBenchSynchroZone SynchroZone { get; internal set; }
         public VEPBenchTransmissionZone TransmissionZone { get; private set; }
-
-        public static VEPBenchDataManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_instance == null)
-                            _instance = new VEPBenchDataManager();
-                    }
-                }
-
-                return _instance;
-            }
-        }
 
         public VEPBenchDataManager()
         {
