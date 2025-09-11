@@ -260,7 +260,7 @@ namespace Ki_ADAS
         {
             try
             {
-                ushort[] angleData = _client.ReadSynchroZone(VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX, 3);
+                ushort[] angleData = _client.ReadSynchroZone(_vepManager.SynchroZone.FrontCameraAngle1, 3);
 
                 if (angleData == null || angleData.Length < 3)
                 {

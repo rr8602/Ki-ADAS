@@ -47,9 +47,29 @@ namespace Ki_ADAS.VEPBench
         private bool _isChanged;
         public bool IsChanged => _isChanged;
 
+        private int[] _values;
+
         public void ResetChangedState()
         {
             _isChanged = false;
+        }
+
+        public int this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= _values.Length)
+                    throw new IndexOutOfRangeException("Index out of range for VEPBenchSynchro values.");
+
+                return _values[index];
+            }
+            set
+            {
+                if (index < 0 || index >= _values.Length)
+                    throw new IndexOutOfRangeException("Index out of range for VEPBenchSynchro values.");
+
+                _values[index] = value;
+            }
         }
 
         public static VEPBenchTransmissionZone Instance
@@ -174,6 +194,16 @@ namespace Ki_ADAS.VEPBench
         public void SetResponseMode()
         {
             ExchStatus = ExchStatus_Response;
+        }
+
+        public void SetValue(int index, ushort value)
+        {
+            this[index] = value;
+        }
+
+        public int GetValue(int index)
+        {
+            return this[index];
         }
 
         public bool IsRequest => ExchStatus == ExchStatus_Request;

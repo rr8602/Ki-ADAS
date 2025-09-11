@@ -263,7 +263,7 @@ namespace Ki_ADAS
         {
             try
             {
-                ushort[] angleData = _client.ReadSynchroZone(VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX, 2);
+                ushort[] angleData = _client.ReadSynchroZone(_vepManager.SynchroZone.RearRightRadarAngle, 2);
 
                 if (angleData == null || angleData.Length < 2)
                 {

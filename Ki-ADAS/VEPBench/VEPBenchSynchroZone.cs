@@ -30,13 +30,13 @@ namespace Ki_ADAS.VEPBench
         public static int SYNC_COMMAND_FRONT_LEFT_RADAR_INDEX = 58;
 
         // 각도값 인덱스 상수
-        public static int FRONT_CAMERA_ANGLE1_INDEX = 110; // Roll
-        public static int FRONT_CAMERA_ANGLE2_INDEX = 111; // Azimuth
-        public static int FRONT_CAMERA_ANGLE3_INDEX = 112; // Elevation
-        public static int REAR_RIGHT_RADAR_ANGLE_INDEX = 115;
-        public static int REAR_LEFT_RADAR_ANGLE_INDEX = 116;
-        public static int FRONT_RIGHT_RADAR_ANGLE_INDEX = 117;
-        public static int FRONT_LEFT_RADAR_ANGLE_INDEX = 118;
+        private static int FRONT_CAMERA_ANGLE1_INDEX = 110; // Roll
+        private static int FRONT_CAMERA_ANGLE2_INDEX = 111; // Azimuth
+        private static int FRONT_CAMERA_ANGLE3_INDEX = 112; // Elevation
+        private static int REAR_RIGHT_RADAR_ANGLE_INDEX = 115;
+        private static int REAR_LEFT_RADAR_ANGLE_INDEX = 116;
+        private static int FRONT_RIGHT_RADAR_ANGLE_INDEX = 117;
+        private static int FRONT_LEFT_RADAR_ANGLE_INDEX = 118;
 
         // Front Camera Send Info 상수
         public static int FRONT_CAMERA_DISTANCE_INDEX = 15;

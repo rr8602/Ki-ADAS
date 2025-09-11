@@ -236,13 +236,13 @@ namespace Ki_ADAS
                     int rawValue = rawValues[i];
                     int displayValue = rawValue;
 
-                    if (i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX ||
-                        i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX ||
-                        i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX ||
-                        i == VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX ||
-                        i == VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX ||
-                        i == VEPBenchSynchroZone.FRONT_RIGHT_RADAR_ANGLE_INDEX ||
-                        i == VEPBenchSynchroZone.FRONT_LEFT_RADAR_ANGLE_INDEX)
+                    if (i == synchroZone.FrontCameraAngle1 ||
+                        i == synchroZone.FrontCameraAngle2 ||
+                        i == synchroZone.FrontCameraAngle3 ||
+                        i == synchroZone.RearRightRadarAngle ||
+                        i == synchroZone.RearLeftRadarAngle ||
+                        i == synchroZone.FrontRightRadarAngle ||
+                        i == synchroZone.FrontLeftRadarAngle)
                     {
                         displayValue = rawValue / 100;
                     }
