@@ -122,8 +122,9 @@ namespace Ki_ADAS
                 }
             }
             catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading registered vehicle list: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            {   
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorLoadingRegisteredVehicleList", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -133,7 +134,8 @@ namespace Ki_ADAS
             {
                 if (seqList.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show("No registered vehicles. Please register a vehicle first.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("NoRegisteredVehicles"),
+                                    LanguageManager.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -144,8 +146,8 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while starting the ADAS process: {ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorStartingADASProcess", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 AddLogMessage($"Error occurred: {ex.Message}");
 
@@ -162,7 +164,8 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(barcode))
                 {
-                    MessageBox.Show("Please enter the barcode.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("PleaseEnterBarcode"),
+                                    LanguageManager.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -172,7 +175,8 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(modelName))
                 {
-                    MessageBox.Show($"Could not find model code: {modelCode}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageManager.GetFormattedString("CouldNotFindModelCode", modelCode),
+                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -185,14 +189,16 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(newVehicle.AcceptNo))
                 {
-                    MessageBox.Show("Failed to generate AcceptNo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageManager.GetString("FailedToGenerateAcceptNo"),
+                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 bool isSaved = _infoRepository.SaveVehicleInfo(newVehicle);
                 if (!isSaved)
                 {
-                    MessageBox.Show("Failed to save vehicle information.", "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageManager.GetString("FailedToSaveVehicleInformation"),
+                                    LanguageManager.GetString("DBError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -206,7 +212,8 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during vehicle registration: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDuringVehicleRegistration", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 AddLogMessage($"Vehicle registration error: {ex.Message}");
             }
@@ -218,7 +225,8 @@ namespace Ki_ADAS
             {
                 if (_mainThread == null || !_vepBenchClient.IsConnected)
                 {
-                    MessageBox.Show("ADAS process is not running.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("ADASProcessNotRunning"),
+                                    LanguageManager.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -233,8 +241,8 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while stopping the ADAS process: {ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorStoppingADASProcess", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 AddLogMessage($"Error occurred: {ex.Message}");
             }

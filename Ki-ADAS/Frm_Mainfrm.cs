@@ -181,11 +181,6 @@ namespace Ki_ADAS
             }
         }
 
-        public void UpdateApplicationLanguage(Language language)
-        {
-            LanguageResource.CurrentLanguage = language;
-        }
-
         private void BtnMain_Click(object sender, EventArgs e)
         {
             ChangeButtonColor((Button)sender);

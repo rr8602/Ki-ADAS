@@ -103,7 +103,7 @@ namespace Ki_ADAS
             }
             else
             {
-                MessageBox.Show("Second monitor not detected.");
+                MessageBox.Show(LanguageManager.GetString("SecondMonitorNotDetected"));
             }
         }
 

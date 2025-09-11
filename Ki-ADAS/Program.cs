@@ -18,6 +18,8 @@ namespace Ki_ADAS
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            LanguageManager.Initialize();
+
             SettingConfigDb db = new SettingConfigDb();
             db.SetupDatabaseConnection();
 

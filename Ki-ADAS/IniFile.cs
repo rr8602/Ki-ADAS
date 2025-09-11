@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +18,9 @@ namespace Ki_ADAS
 
         [DllImport("kernel32")]
         private static extern int GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
+
+        [DllImport("kernel32")]
+        private static extern int GetPrivateProfileSection(string lpAppName, byte[] lpszReturnBuffer, int nSize, string lpFileName);
 
         public IniFile(string iniPath)
         {
@@ -80,6 +83,31 @@ namespace Ki_ADAS
         public void WriteString(string section, string key, string value)
         {
             WriteValue(section, key, value);
+        }
+
+        public List<string> GetKeys(string section)
+        {
+            byte[] buffer = new byte[2048];
+            GetPrivateProfileSection(section, buffer, 2048, _path);
+
+            // null 문자로 구분된 문자열들을 파싱
+            string resultString = Encoding.Default.GetString(buffer).TrimEnd('\0');
+            List<string> keys = new List<string>();
+
+            if (!string.IsNullOrEmpty(resultString))
+            {
+                string[] keyValuePairs = resultString.Split(new char[] { '\0' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string pair in keyValuePairs)
+                {
+                    if (pair.Contains("="))
+                    {
+                        keys.Add(pair.Substring(0, pair.IndexOf("=")));
+                    }
+                }
+            }
+
+            return keys;
         }
     }
 }

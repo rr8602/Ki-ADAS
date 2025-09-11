@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace Ki_ADAS
 {
-    public partial class Frm_Config : MultiLanguageForm
+    public partial class Frm_Config : Form
     {
         private Frm_Mainfrm m_frmParent = null;
         private IniFile _iniFile;
@@ -46,8 +46,6 @@ namespace Ki_ADAS
         {
             string iniPath = Path.Combine(Application.StartupPath, "config.ini");
             _iniFile = new IniFile(iniPath);
-
-            LanguageManager.RegisterForm(this);
         }
 
         private void Frm_Config_Load(object sender, EventArgs e)
@@ -71,10 +69,10 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
-                   LanguageResource.GetMessage("Error"),
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MessageBox.Show($"{LanguageManager.GetString("DatabaseError")}: {ex.Message}",
+                                LanguageManager.GetString("Error"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
         }
 
@@ -119,8 +117,8 @@ namespace Ki_ADAS
 
                 _iniFile.WriteValue(LANGUAGE_SECTION, LANGUAGE_KEY, cmb_language.SelectedIndex.ToString());
 
-                MessageBox.Show(LanguageResource.GetMessage("LanguageChangeSuccess"),
-                    LanguageResource.GetMessage("Information"),
+                MessageBox.Show(LanguageManager.GetString("LanguageChangeSuccess"),
+                    LanguageManager.GetString("Information"),
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
@@ -134,10 +132,10 @@ namespace Ki_ADAS
             Frm_Main.ipAddress = TxtVepIp.Text;
             Frm_Main.port = int.Parse(TxtVepPort.Text);
 
-            MessageBox.Show(LanguageResource.GetMessage("ConfigSaveSuccess"),
-                LanguageResource.GetMessage("Information"),
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+            MessageBox.Show(LanguageManager.GetString("ConfigSaveSuccess"),
+                    LanguageManager.GetString("Information"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private void BtnLanSave_Click(object sender, EventArgs e)
@@ -172,8 +170,8 @@ namespace Ki_ADAS
         {
             if (string.IsNullOrWhiteSpace(txtModel.Text))
             {
-                MessageBox.Show(LanguageResource.GetMessage("ModelNameRequired"),
-                                LanguageResource.GetMessage("Warning"),
+                MessageBox.Show(LanguageManager.GetString("ModelNameRequired"),
+                                LanguageManager.GetString("Warning"),
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Warning);
                 return;
@@ -181,8 +179,8 @@ namespace Ki_ADAS
 
             if (_modelRepository.AddModel(_modelRepository.GetModelDetails(txtModel.Text)))
             {
-                MessageBox.Show(LanguageResource.GetMessage("ModelAddSuccess"),
-                                LanguageResource.GetMessage("Information"),
+                MessageBox.Show(LanguageManager.GetString("ModelAddSuccess"),
+                                LanguageManager.GetString("Information"),
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
                 txtModel.Text = string.Empty;
@@ -195,8 +193,8 @@ namespace Ki_ADAS
         {
             if (modelList.SelectedItems.Count == 0)
             {
-                MessageBox.Show(LanguageResource.GetMessage("PleaseSelectModel"),
-                                LanguageResource.GetMessage("Warning"),
+                MessageBox.Show(LanguageManager.GetString("PleaseSelectModel"),
+                                LanguageManager.GetString("Warning"),
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Warning);
                 return;
@@ -204,8 +202,8 @@ namespace Ki_ADAS
 
             if (string.IsNullOrWhiteSpace(txtModel.Text))
             {
-                MessageBox.Show(LanguageResource.GetMessage("ModelNameRequired"),
-                                LanguageResource.GetMessage("Warning"),
+                MessageBox.Show(LanguageManager.GetString("ModelNameRequired"),
+                                LanguageManager.GetString("Warning"),
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Warning);
                 return;
@@ -215,8 +213,8 @@ namespace Ki_ADAS
 
             if (_modelRepository.UpdateModel(_modelRepository.GetModelDetails(txtModel.Text), oldModelName))
             {
-                MessageBox.Show(LanguageResource.GetMessage("ModelUpdateSuccess"),
-                                LanguageResource.GetMessage("Information"),
+                MessageBox.Show(LanguageManager.GetString("ModelUpdateSuccess"),
+                                LanguageManager.GetString("Information"),
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
                 LoadModelList();
@@ -229,10 +227,10 @@ namespace Ki_ADAS
             {
                 if (modelList.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(LanguageResource.GetMessage("PleaseSelectModel"),
-                        LanguageResource.GetMessage("Warning"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageManager.GetString("PleaseSelectModel"),
+                                LanguageManager.GetString("Warning"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
 
                     return;
                 }
@@ -240,10 +238,10 @@ namespace Ki_ADAS
                 string modelName = modelList.SelectedItems[0].Text;
 
                 DialogResult result = MessageBox.Show(
-                    string.Format(LanguageResource.GetMessage("ConfirmDeleteModel"), modelName),
-                    LanguageResource.GetMessage("Confirmation"),
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                    string.Format(LanguageManager.GetFormattedString("ConfirmDeleteModel", modelName),
+                                LanguageManager.GetString("Information"),
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question));
 
                 if (result != DialogResult.Yes)
                     return;
@@ -254,25 +252,25 @@ namespace Ki_ADAS
                     txtModel.Text = string.Empty;
                     ClearAllFields();
 
-                    MessageBox.Show(LanguageResource.GetMessage("ModelDeleteSuccess"),
-                        LanguageResource.GetMessage("Information"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("ModelDeleteSuccess"),
+                                LanguageManager.GetString("Information"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
 
                     LoadModelList();
                 }
                 else
                 {
-                    MessageBox.Show(LanguageResource.GetMessage("ModelDeleteFailed"),
-                        LanguageResource.GetMessage("Error"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageManager.GetString("ModelDeleteFailed"),
+                                LanguageManager.GetString("Error"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{LanguageResource.GetMessage("DatabaseError")}: {ex.Message}",
-                    LanguageResource.GetMessage("Error"),
+                MessageBox.Show($"{LanguageManager.GetString("DatabaseError")}: {ex.Message}",
+                    LanguageManager.GetString("Error"),
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }   
@@ -379,10 +377,10 @@ namespace Ki_ADAS
                 else
                 {
                     ClearAllFields();
-                    MessageBox.Show(LanguageResource.GetMessage("NoModelDetailsFound"),
-                                        LanguageResource.GetMessage("Information"),
-                                        MessageBoxButtons.OK,
-                                        MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("NoModelDetailsFound"),
+                                LanguageManager.GetString("Information"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
                 }
             }
         }

@@ -52,7 +52,8 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while loading the XML file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorLoadingXMLFile", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -66,12 +67,14 @@ namespace Ki_ADAS
                 }
                 else
                 {
-                    MessageBox.Show("Select a test result to view details.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("SelectTestResultToViewDetails"),
+                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while displaying test result details: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDisplayingTestResultDetails", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -112,7 +115,8 @@ namespace Ki_ADAS
 
                 if (resultsByDate == null || resultsByDate.Count == 0)
                 {
-                    MessageBox.Show($"No results found for {dateTimePicker1.Value:yyyy-MM-dd}.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetFormattedString("NoResultsFoundForDate", dateTimePicker1.Value.ToString("yyyy-MM-dd")),
+                                    LanguageManager.GetString("SearchResults"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -132,7 +136,8 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during date search: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDuringDateSearch", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -147,7 +152,8 @@ namespace Ki_ADAS
 
                 if (resultsByPji == null || resultsByPji.Count == 0)
                 {
-                    MessageBox.Show("No results found for the specified PJI.", "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("NoResultsFoundForPJI"),
+                                    LanguageManager.GetString("SearchResults"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -167,7 +173,8 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during PJI search: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDuringPJISearch", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

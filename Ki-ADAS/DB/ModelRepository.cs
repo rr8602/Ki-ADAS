@@ -78,7 +78,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error fetching models: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorFetchingModels", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return models;
@@ -126,7 +127,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error deleting model: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDeletingModel", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -190,7 +192,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error fetching model details: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorFetchingModelDetails", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return null;
@@ -206,7 +209,8 @@ namespace Ki_ADAS.DB
 
                     if (IsDuplicateName(model.Name))
                     {
-                        MessageBox.Show("Model name already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(LanguageManager.GetString("ModelNameAlreadyExists"),
+                                        LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return false;
                     }
 
@@ -263,7 +267,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error adding model: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorAddingModel", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -278,7 +283,8 @@ namespace Ki_ADAS.DB
 
                     if (oldModelName != model.Name && IsDuplicateName(model.Name, oldModelName))
                     {
-                        MessageBox.Show("Model name already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(LanguageManager.GetString("ModelNameAlreadyExists"),
+                                        LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return false;
                     }
 
@@ -338,7 +344,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error updating model: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorUpdatingModel", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -377,7 +384,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error checking for duplicate model name: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorCheckingDuplicateModelName", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return true;
             }
         }
@@ -407,7 +415,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error fetching model name by barcode: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorFetchingModelNameByBarcode", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return modelName;

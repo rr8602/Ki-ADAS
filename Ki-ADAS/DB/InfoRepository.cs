@@ -47,7 +47,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error generating AcceptNo: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorGeneratingAcceptNo", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
 
@@ -75,7 +76,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error inserting into Info table: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorInsertingInfoTable", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -113,7 +115,8 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error fetching registered vehicles: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorFetchingRegisteredVehicles", ex.Message),
+                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return vehicles;

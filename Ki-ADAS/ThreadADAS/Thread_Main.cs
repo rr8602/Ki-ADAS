@@ -506,11 +506,13 @@ namespace Ki_ADAS
 
                 if (isSavedToDb)
                 {
-                    MessageBox.Show("Test results saved to database.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("TestResultsSavedToDatabase"),
+                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Failed to save test results to database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageManager.GetString("FailedToSaveTestResultsToDatabase"),
+                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
                 string xmlFileName = $"test_result_{DateTime.Now.ToString("yyyyMMdd")}.xml";
@@ -550,11 +552,13 @@ namespace Ki_ADAS
 
                     root.Save(xmlFilePath);
 
-                    MessageBox.Show("Test results saved as XML.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("TestResultsSavedAsXML"),
+                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error saving data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageManager.GetFormattedString("ErrorSavingData", ex.Message),
+                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
                 SetState(TS.STEP_MAIN_TICKET_PRINT);

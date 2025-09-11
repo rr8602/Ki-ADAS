@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Ki_ADAS
 {
@@ -10,14 +11,20 @@ namespace Ki_ADAS
         
         private static readonly List<WeakReference<Form>> _registeredForms = new List<WeakReference<Form>>();
 
-        public static Language CurrentLanguage
+        private static Dictionary<string, string> _currentStrings = new Dictionary<string, string>();
+        private static Language _currentLanguage = Language.English;
+
+        private static IniFile _iniFile = null;
+
+        public static Language CurrentLanguageSetting
         {
-            get { return LanguageResource.CurrentLanguage; }
-            set 
-            { 
-                if (LanguageResource.CurrentLanguage != value)
+            get { return _currentLanguage; }
+            private set 
+            {
+                if (_currentLanguage != value)
                 {
-                    LanguageResource.CurrentLanguage = value;
+                    _currentLanguage = value;
+                    LoadLanguageStrings(value);
                     OnLanguageChanged(value);
                 }
             }
@@ -27,7 +34,6 @@ namespace Ki_ADAS
         {
             if (form == null) return;
 
-            // 중복 등록 방지
             CleanupInvalidReferences();
             
             foreach (var weakRef in _registeredForms)
@@ -38,10 +44,8 @@ namespace Ki_ADAS
                 }
             }
 
-            // 새 폼 등록
             _registeredForms.Add(new WeakReference<Form>(form));
             
-            // 폼이 닫힐 때 목록에서 제거
             form.FormClosed += (sender, e) => {
                 CleanupInvalidReferences();
             };
@@ -49,15 +53,39 @@ namespace Ki_ADAS
 
         public static void ChangeLanguage(Language language)
         {
-            CurrentLanguage = language;
+            CurrentLanguageSetting = language;
+        }
+
+        private static void LoadLanguageStrings(Language language)
+        {
+            string languageFileName = language.ToString().ToLower() + ".ini";
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Language", languageFileName);
+            string directoryPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            _iniFile = new IniFile(filePath);
+
+            _currentStrings.Clear();
+
+            try
+            {
+                foreach (string key in _iniFile.GetKeys("Messages"))
+                {
+                    _currentStrings[key] = _iniFile.ReadValue("Messages", key);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading language file {filePath}: {ex.Message}");
+            }
         }
 
         private static void OnLanguageChanged(Language newLanguage)
         {
-            // 이벤트 발생
             LanguageChanged?.Invoke(null, new LanguageChangedEventArgs(newLanguage));
-            
-            // 등록된 모든 폼 업데이트
             UpdateAllForms();
         }
 
@@ -71,7 +99,6 @@ namespace Ki_ADAS
                 {
                     if (form is MultiLanguageForm mlForm)
                     {
-                        // 폼이 표시 중인 경우에만 업데이트 (성능 최적화)
                         if (form.IsHandleCreated && !form.IsDisposed)
                         {
                             if (form.InvokeRequired)
@@ -92,11 +119,40 @@ namespace Ki_ADAS
         {
             _registeredForms.RemoveAll(weakRef => !weakRef.TryGetTarget(out _));
         }
+
+        public static string GetString(string key)
+        {
+            if (_currentStrings.ContainsKey(key))
+            {
+                return _currentStrings[key];
+            }
+
+            return key;
+        }
+
+        public static string GetFormattedString(string key, params object[] args)
+        {
+            string message = GetString(key);
+
+            try
+            {
+                return string.Format(message, args);
+            }
+            catch (FormatException)
+            {
+                return message; 
+            }
+        }
+
+        public static void Initialize()
+        {
+            LoadLanguageStrings(_currentLanguage);
+        }
     }
 
     public class LanguageChangedEventArgs : EventArgs
     {
-        public Language NewLanguage { get; }
+        public Language NewLanguage { get; } 
 
         public LanguageChangedEventArgs(Language newLanguage)
         {

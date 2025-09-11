@@ -18,27 +18,21 @@ namespace Ki_ADAS
             {
                 string resourceKey = null;
 
-                // 1. 명시적으로 등록된 키 확인
                 if (_languageResources.TryGetValue(control, out resourceKey))
                 {
-                    // 등록된 키로 번역 적용
                     ApplyTranslation(control, resourceKey);
                 }
-                // 2. Tag에 지정된 키 확인
                 else if (control.Tag is string tagKey && !string.IsNullOrEmpty(tagKey))
                 {
                     ApplyTranslation(control, tagKey);
                 }
-                // 3. 컨트롤 이름 기반 자동 키 생성
                 else if (!string.IsNullOrEmpty(control.Text) && control.Text != " ")
                 {
-                    // 라벨, 버튼 등 Text 속성을 가진 컨트롤만 처리
                     if (control is Label || control is Button || control is CheckBox ||
                         control is RadioButton || control is GroupBox)
                     {
-                        // lbl_wheelbase -> WheelbaseLabel 형태로 키 생성
                         string autoKey = GenerateResourceKeyFromControl(control);
-                        ApplyTranslation(control, autoKey, control.Text); // 기본값 유지
+                        ApplyTranslation(control, autoKey, control.Text);
                     }
                 }
 
@@ -49,7 +43,6 @@ namespace Ki_ADAS
             }
         }
 
-        // 컨트롤 이름에서 리소스 키 생성
         private string GenerateResourceKeyFromControl(Control control)
         {
             string name = control.Name;
@@ -78,14 +71,17 @@ namespace Ki_ADAS
             return name;
         }
 
-        // 번역 적용 (기본값 폴백 지원)
         private void ApplyTranslation(Control control, string key, string defaultText = null)
         {
-            string translatedText = LanguageResource.GetMessageOrDefault(key, defaultText);
+            string translatedText = LanguageManager.GetString(key);
 
             if (!string.IsNullOrEmpty(translatedText))
             {
                 control.Text = translatedText;
+            }
+            else if (!string.IsNullOrEmpty(defaultText))
+            {
+                control.Text = defaultText;
             }
         }
 
@@ -101,13 +97,11 @@ namespace Ki_ADAS
         {
             foreach (Control control in containerControl.Controls)
             {
-                // Tag 속성이 리소스 키인 경우 등록
                 if (control.Tag is string resourceKey && !string.IsNullOrEmpty(resourceKey))
                 {
                     RegisterLanguageResource(control, resourceKey);
                 }
 
-                // 그룹 컨트롤(Panel, GroupBox 등)인 경우 자식 컨트롤에 대해 재귀적으로 처리
                 if (control.HasChildren)
                 {
                     RegisterLanguageResourcesFromTags(control);
@@ -117,6 +111,7 @@ namespace Ki_ADAS
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            LanguageManager.RegisterForm(this);
             RegisterLanguageResourcesFromTags(this);
             UpdateLanguage();
         }

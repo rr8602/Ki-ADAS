@@ -265,13 +265,15 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(selectedItem))
                 {
-                    MessageBox.Show("Select the item you want to modify.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageManager.GetString("SelectItemToModify"),
+                                    LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 if (!int.TryParse(txtEditValue.Text, out int valueToSet))
                 {
-                    MessageBox.Show("Enter a valid integer.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageManager.GetString("EnterValidInteger"),
+                                    LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -280,16 +282,19 @@ namespace Ki_ADAS
                     propertySetter(valueToSet);
                     benchClient.WriteSynchroZone();
 
-                    MessageBox.Show("Write command sent successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageManager.GetString("WriteCommandSentSuccessfully"),
+                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Unknown item.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageManager.GetString("UnknownItem"),
+                                    LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error modifying value: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorModifyingValue", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -301,11 +306,13 @@ namespace Ki_ADAS
                 statusZone.StartCycle = 1;
                 benchClient.WriteStatusZone();
 
-                MessageBox.Show("set the Start Cycle value to 1 successfully .", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(LanguageManager.GetString("StartCycleValueTo1Successfully"),
+                                LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error setting Start Cycle value: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorSettingStartCycleValue", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -317,11 +324,13 @@ namespace Ki_ADAS
                 transmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
                 benchClient.WriteTransmissionZone();
 
-                MessageBox.Show("Transmission Zone set ExchStatus value to 1.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(LanguageManager.GetString("TransmissionZoneSetExchStatusTo1"),
+                                LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error setting Transmission ZoneExchStatus value: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorSettingTransmissionZoneExchStatus", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -333,11 +342,13 @@ namespace Ki_ADAS
                 receptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Response;
                 benchClient.WriteReceptionZone();
 
-                MessageBox.Show("Reception Zone set ExchStatus value to 1.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(LanguageManager.GetString("ReceptionZoneSetExchStatusTo1"),
+                                LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error setting ReceiptZoneExchStatus value: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageManager.GetFormattedString("ErrorSettingReceiptZoneExchStatus", ex.Message),
+                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
