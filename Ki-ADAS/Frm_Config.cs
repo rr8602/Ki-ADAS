@@ -50,8 +50,15 @@ namespace Ki_ADAS
 
         private void Frm_Config_Load(object sender, EventArgs e)
         {
-            LoadSettings();
-            LoadModelList();
+            try
+            {
+                LoadSettings();
+                LoadModelList();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorLoadingConfigForm", "Error", ex.Message);
+            }
         }
 
         private void LoadModelList()
@@ -69,28 +76,32 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{LanguageManager.GetString("DatabaseError")}: {ex.Message}",
-                                LanguageManager.GetString("Error"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorLoadingModelList", "Error", ex.Message);
             }
         }
 
         public void LoadSettings()
         {
-            TxtVepIp.Text = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
-            TxtVepPort.Text = _iniFile.ReadValue(CONFIG_SECTION, VEP_PORT_KEY);
-
-            string languageStr = _iniFile.ReadValue(LANGUAGE_SECTION, LANGUAGE_KEY, "0");
-            int languageIndex = 0;
-
-            if (int.TryParse(languageStr, out languageIndex) && languageIndex >= 0 && languageIndex < cmb_language.Items.Count)
+            try
             {
-                cmb_language.SelectedIndex = languageIndex;
+                TxtVepIp.Text = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
+                TxtVepPort.Text = _iniFile.ReadValue(CONFIG_SECTION, VEP_PORT_KEY);
+
+                string languageStr = _iniFile.ReadValue(LANGUAGE_SECTION, LANGUAGE_KEY, "0");
+                int languageIndex = 0;
+
+                if (int.TryParse(languageStr, out languageIndex) && languageIndex >= 0 && languageIndex < cmb_language.Items.Count)
+                {
+                    cmb_language.SelectedIndex = languageIndex;
+                }
+                else
+                {
+                    cmb_language.SelectedIndex = 0; // 기본값으로 영어 선택
+                }
             }
-            else
+            catch (Exception ex)
             {
-                cmb_language.SelectedIndex = 0; // 기본값으로 영어 선택
+                MsgBox.ErrorWithFormat("ErrorLoadingSettings", "Error", ex.Message);
             }
         }
 
@@ -113,111 +124,132 @@ namespace Ki_ADAS
                         break;
                 }
 
-                LanguageManager.ChangeLanguage(selectedLanguage);
+                try
+                {
+                    LanguageManager.ChangeLanguage(selectedLanguage);
 
-                _iniFile.WriteValue(LANGUAGE_SECTION, LANGUAGE_KEY, cmb_language.SelectedIndex.ToString());
+                    _iniFile.WriteValue(LANGUAGE_SECTION, LANGUAGE_KEY, cmb_language.SelectedIndex.ToString());
 
-                MessageBox.Show(LanguageManager.GetString("LanguageChangeSuccess"),
-                    LanguageManager.GetString("Information"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    MsgBox.Info("LanguageChangeSuccess");
+                }
+                catch (Exception ex)
+                {
+                    MsgBox.ErrorWithFormat("UnhandledExceptionInEvent", "Error", ex.Message);
+                }
             }
         }
 
         private void BtnConfigSave_Click(object sender, EventArgs e)
         {
-            _iniFile.WriteValue(CONFIG_SECTION, VEP_IP_KEY, TxtVepIp.Text);
-            _iniFile.WriteValue(CONFIG_SECTION, VEP_PORT_KEY, TxtVepPort.Text);
+            try
+            {
+                _iniFile.WriteValue(CONFIG_SECTION, VEP_IP_KEY, TxtVepIp.Text);
+                _iniFile.WriteValue(CONFIG_SECTION, VEP_PORT_KEY, TxtVepPort.Text);
 
-            Frm_Main.ipAddress = TxtVepIp.Text;
-            Frm_Main.port = int.Parse(TxtVepPort.Text);
+                Frm_Main.ipAddress = TxtVepIp.Text;
+                Frm_Main.port = int.Parse(TxtVepPort.Text);
 
-            MessageBox.Show(LanguageManager.GetString("ConfigSaveSuccess"),
-                    LanguageManager.GetString("Information"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MsgBox.Info("ConfigSaveSuccess");
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("UnhandledExceptionInEvent", "Error", ex.Message);
+            }
         }
 
         private void BtnLanSave_Click(object sender, EventArgs e)
         {
-            SaveLanguageSettings();
+            try
+            {
+                SaveLanguageSettings();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("UnhandledExceptionInEvent", "Error", ex.Message);
+            }
         }
 
         private void cmb_language_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmb_language.SelectedItem != null)
+            try
             {
-                Language selectedLanguage = Language.English;
-
-                switch (cmb_language.SelectedIndex)
+                if (cmb_language.SelectedItem != null)
                 {
-                    case 0:
-                        selectedLanguage = Language.English;
-                        break;
-                    case 1:
-                        selectedLanguage = Language.Portuguese;
-                        break;
-                    case 2:
-                        selectedLanguage = Language.Korean;
-                        break;
-                }
+                    Language selectedLanguage = Language.English;
 
-                LanguageManager.ChangeLanguage(selectedLanguage);
+                    switch (cmb_language.SelectedIndex)
+                    {
+                        case 0:
+                            selectedLanguage = Language.English;
+                            break;
+                        case 1:
+                            selectedLanguage = Language.Portuguese;
+                            break;
+                        case 2:
+                            selectedLanguage = Language.Korean;
+                            break;
+                    }
+
+                    LanguageManager.ChangeLanguage(selectedLanguage);
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("UnhandledExceptionInEvent", "Error", ex.Message);
             }
         }
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtModel.Text))
+            try
             {
-                MessageBox.Show(LanguageManager.GetString("ModelNameRequired"),
-                                LanguageManager.GetString("Warning"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
-                return;
-            }
+                if (string.IsNullOrWhiteSpace(txtModel.Text))
+                {
+                    MsgBox.Warn("ModelNameRequired");
+                    return;
+                }
 
-            if (_modelRepository.AddModel(_modelRepository.GetModelDetails(txtModel.Text)))
+                if (_modelRepository.AddModel(_modelRepository.GetModelDetails(txtModel.Text)))
+                {
+                    MsgBox.Info("ModelAddSuccess");
+                    txtModel.Text = string.Empty;
+                    LoadModelList();
+                    ClearAllFields();
+                }
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetString("ModelAddSuccess"),
-                                LanguageManager.GetString("Information"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                txtModel.Text = string.Empty;
-                LoadModelList();
-                ClearAllFields();
+                MsgBox.ErrorWithFormat("ErrorAddingModel", "Error", ex.Message);
             }
         }
 
         private void BtnModify_Click(object sender, EventArgs e)
         {
-            if (modelList.SelectedItems.Count == 0)
+            try
             {
-                MessageBox.Show(LanguageManager.GetString("PleaseSelectModel"),
-                                LanguageManager.GetString("Warning"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
-                return;
+                if (modelList.SelectedItems.Count == 0)
+                {
+                    MsgBox.Warn("PleaseSelectModel");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtModel.Text))
+                {
+                    MsgBox.Warn("ModelNameRequired");
+                    return;
+                }
+
+                string oldModelName = modelList.SelectedItems[0].Text;
+
+                if (_modelRepository.UpdateModel(_modelRepository.GetModelDetails(txtModel.Text), oldModelName))
+                {
+                    MsgBox.Info("ModelUpdateSuccess");
+                    LoadModelList();
+                }
             }
-
-            if (string.IsNullOrWhiteSpace(txtModel.Text))
+            catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetString("ModelNameRequired"),
-                                LanguageManager.GetString("Warning"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
-                return;
-            }
-
-            string oldModelName = modelList.SelectedItems[0].Text;
-
-            if (_modelRepository.UpdateModel(_modelRepository.GetModelDetails(txtModel.Text), oldModelName))
-            {
-                MessageBox.Show(LanguageManager.GetString("ModelUpdateSuccess"),
-                                LanguageManager.GetString("Information"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                LoadModelList();
+                MsgBox.ErrorWithFormat("ErrorUpdatingModel", "Error", ex.Message);
             }
         }
 
@@ -227,21 +259,14 @@ namespace Ki_ADAS
             {
                 if (modelList.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(LanguageManager.GetString("PleaseSelectModel"),
-                                LanguageManager.GetString("Warning"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
+                    MsgBox.Warn("PleaseSelectModel");
 
                     return;
                 }
 
                 string modelName = modelList.SelectedItems[0].Text;
 
-                DialogResult result = MessageBox.Show(
-                    string.Format(LanguageManager.GetFormattedString("ConfirmDeleteModel", modelName),
-                                LanguageManager.GetString("Information"),
-                                MessageBoxButtons.YesNo,
-                                MessageBoxIcon.Question));
+                DialogResult result = MsgBox.QuestionWithFormat("ConfirmDeleteModel", "Question", modelName);
 
                 if (result != DialogResult.Yes)
                     return;
@@ -252,136 +277,129 @@ namespace Ki_ADAS
                     txtModel.Text = string.Empty;
                     ClearAllFields();
 
-                    MessageBox.Show(LanguageManager.GetString("ModelDeleteSuccess"),
-                                LanguageManager.GetString("Information"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
+                    MsgBox.Info("ModelDeleteSuccess");
 
                     LoadModelList();
                 }
                 else
                 {
-                    MessageBox.Show(LanguageManager.GetString("ModelDeleteFailed"),
-                                LanguageManager.GetString("Error"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                    MsgBox.Error("ModelDeleteFailed");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{LanguageManager.GetString("DatabaseError")}: {ex.Message}",
-                    LanguageManager.GetString("Error"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorDeletingModel", "Error", ex.Message);
             }   
-        }
-
-        private double? ParseNullableDouble(string text)
-        {
-            if (double.TryParse(text, out double result))
-            {
-                return result;
-            }
-            return null;
         }
 
         private void ClearAllFields()
         {
-            // 상단 필드
-            txtBarcode.Text = string.Empty;
-            txtWheelbase.Text = string.Empty;
+            try
+            {
+                // 상단 필드
+                txtBarcode.Text = string.Empty;
+                txtWheelbase.Text = string.Empty;
 
-            // Front Camera 섹션
-            txtDistance.Text = string.Empty;
-            txtHeight.Text = string.Empty;
-            txtInterDistance.Text = string.Empty;
-            txtHtu.Text = string.Empty;
-            txtHtl.Text = string.Empty;
-            txtTs.Text = string.Empty;
-            txtOffset.Text = string.Empty;
-            txtVv.Text = string.Empty;
-            txtStCt.Text = string.Empty;
-            chkIsFrontCameraTest.Checked = false;
+                // Front Camera 섹션
+                txtDistance.Text = string.Empty;
+                txtHeight.Text = string.Empty;
+                txtInterDistance.Text = string.Empty;
+                txtHtu.Text = string.Empty;
+                txtHtl.Text = string.Empty;
+                txtTs.Text = string.Empty;
+                txtOffset.Text = string.Empty;
+                txtVv.Text = string.Empty;
+                txtStCt.Text = string.Empty;
+                chkIsFrontCameraTest.Checked = false;
 
-            // Rear Radar 섹션
-            txtRLX.Text = string.Empty;
-            txtRLY.Text = string.Empty;
-            txtRLZ.Text = string.Empty;
-            txtRLAngle.Text = string.Empty;
-            txtRRX.Text = string.Empty;
-            txtRRY.Text = string.Empty;
-            txtRRZ.Text = string.Empty;
-            txtRRAngle.Text = string.Empty;
-            chkIsRearRadar.Checked = false;
+                // Rear Radar 섹션
+                txtRLX.Text = string.Empty;
+                txtRLY.Text = string.Empty;
+                txtRLZ.Text = string.Empty;
+                txtRLAngle.Text = string.Empty;
+                txtRRX.Text = string.Empty;
+                txtRRY.Text = string.Empty;
+                txtRRZ.Text = string.Empty;
+                txtRRAngle.Text = string.Empty;
+                chkIsRearRadar.Checked = false;
 
-            // Front Radar 섹션
-            txtFLX.Text = string.Empty;
-            txtFLY.Text = string.Empty;
-            txtFLZ.Text = string.Empty;
-            txtFLAngle.Text = string.Empty;
-            txtFRX.Text = string.Empty;
-            txtFRY.Text = string.Empty;
-            txtFRZ.Text = string.Empty;
-            txtFRAngle.Text = string.Empty;
-            chkIsFrontRadar.Checked = false;
+                // Front Radar 섹션
+                txtFLX.Text = string.Empty;
+                txtFLY.Text = string.Empty;
+                txtFLZ.Text = string.Empty;
+                txtFLAngle.Text = string.Empty;
+                txtFRX.Text = string.Empty;
+                txtFRY.Text = string.Empty;
+                txtFRZ.Text = string.Empty;
+                txtFRAngle.Text = string.Empty;
+                chkIsFrontRadar.Checked = false;
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorClearingFields", "Error", ex.Message);
+            }
         }
 
         private void modelList_MouseClick(object sender, MouseEventArgs e)
         {
-            if (modelList.SelectedItems.Count > 0)
+            try
             {
-                string modelName = modelList.SelectedItems[0].Text;
-                txtModel.Text = modelName;
-
-                var selectedModel = _modelRepository.GetModelDetails(modelName);
-
-                if (selectedModel != null)
+                if (modelList.SelectedItems.Count > 0)
                 {
-                    txtBarcode.Text = selectedModel.Barcode;
-                    txtWheelbase.Text = selectedModel.Wheelbase?.ToString();
+                    string modelName = modelList.SelectedItems[0].Text;
+                    txtModel.Text = modelName;
 
-                    // Front Camera
-                    txtDistance.Text = selectedModel.FC_Distance?.ToString();
-                    txtHeight.Text = selectedModel.FC_Height?.ToString();
-                    txtInterDistance.Text = selectedModel.FC_InterDistance?.ToString();
-                    txtHtu.Text = selectedModel.FC_Htu?.ToString();
-                    txtHtl.Text = selectedModel.FC_Htl?.ToString();
-                    txtTs.Text = selectedModel.FC_Ts?.ToString();
-                    txtOffset.Text = selectedModel.FC_AlignmentAxeOffset?.ToString();
-                    txtVv.Text = selectedModel.FC_Vv?.ToString();
-                    txtStCt.Text = selectedModel.FC_StCt?.ToString();
-                    chkIsFrontCameraTest.Checked = selectedModel.FC_IsTest;
+                    var selectedModel = _modelRepository.GetModelDetails(modelName);
 
-                    // Front Radar
-                    txtFLX.Text = selectedModel.FR_X?.ToString();
-                    txtFLY.Text = selectedModel.FR_Y?.ToString();
-                    txtFLZ.Text = selectedModel.FR_Z?.ToString();
-                    txtFLAngle.Text = selectedModel.FR_Angle?.ToString();
-                    txtFRX.Text = selectedModel.FL_X?.ToString();
-                    txtFRY.Text = selectedModel.FL_Y?.ToString();
-                    txtFRZ.Text = selectedModel.FL_Z?.ToString();
-                    txtFRAngle.Text = selectedModel.FL_Angle?.ToString();
-                    chkIsFrontRadar.Checked = selectedModel.F_IsTest;
+                    if (selectedModel != null)
+                    {
+                        txtBarcode.Text = selectedModel.Barcode;
+                        txtWheelbase.Text = selectedModel.Wheelbase?.ToString();
 
-                    // Rear Radar
-                    txtRLX.Text = selectedModel.RR_X?.ToString();
-                    txtRLY.Text = selectedModel.RR_Y?.ToString();
-                    txtRLZ.Text = selectedModel.RR_Z?.ToString();
-                    txtRLAngle.Text = selectedModel.RR_Angle?.ToString();
-                    txtRRX.Text = selectedModel.RL_X?.ToString();
-                    txtRRY.Text = selectedModel.RL_Y?.ToString();
-                    txtRRZ.Text = selectedModel.RL_Z?.ToString();
-                    txtRRAngle.Text = selectedModel.RL_Angle?.ToString();
-                    chkIsRearRadar.Checked = selectedModel.R_IsTest;
+                        // Front Camera
+                        txtDistance.Text = selectedModel.FC_Distance?.ToString();
+                        txtHeight.Text = selectedModel.FC_Height?.ToString();
+                        txtInterDistance.Text = selectedModel.FC_InterDistance?.ToString();
+                        txtHtu.Text = selectedModel.FC_Htu?.ToString();
+                        txtHtl.Text = selectedModel.FC_Htl?.ToString();
+                        txtTs.Text = selectedModel.FC_Ts?.ToString();
+                        txtOffset.Text = selectedModel.FC_AlignmentAxeOffset?.ToString();
+                        txtVv.Text = selectedModel.FC_Vv?.ToString();
+                        txtStCt.Text = selectedModel.FC_StCt?.ToString();
+                        chkIsFrontCameraTest.Checked = selectedModel.FC_IsTest;
+
+                        // Front Radar
+                        txtFLX.Text = selectedModel.FR_X?.ToString();
+                        txtFLY.Text = selectedModel.FR_Y?.ToString();
+                        txtFLZ.Text = selectedModel.FR_Z?.ToString();
+                        txtFLAngle.Text = selectedModel.FR_Angle?.ToString();
+                        txtFRX.Text = selectedModel.FL_X?.ToString();
+                        txtFRY.Text = selectedModel.FL_Y?.ToString();
+                        txtFRZ.Text = selectedModel.FL_Z?.ToString();
+                        txtFRAngle.Text = selectedModel.FL_Angle?.ToString();
+                        chkIsFrontRadar.Checked = selectedModel.F_IsTest;
+
+                        // Rear Radar
+                        txtRLX.Text = selectedModel.RR_X?.ToString();
+                        txtRLY.Text = selectedModel.RR_Y?.ToString();
+                        txtRLZ.Text = selectedModel.RR_Z?.ToString();
+                        txtRLAngle.Text = selectedModel.RR_Angle?.ToString();
+                        txtRRX.Text = selectedModel.RL_X?.ToString();
+                        txtRRY.Text = selectedModel.RL_Y?.ToString();
+                        txtRRZ.Text = selectedModel.RL_Z?.ToString();
+                        txtRRAngle.Text = selectedModel.RL_Angle?.ToString();
+                        chkIsRearRadar.Checked = selectedModel.R_IsTest;
+                    }
+                    else
+                    {
+                        ClearAllFields();
+                        MsgBox.Info("NoModelDetailsFound");
+                    }
                 }
-                else
-                {
-                    ClearAllFields();
-                    MessageBox.Show(LanguageManager.GetString("NoModelDetailsFound"),
-                                LanguageManager.GetString("Information"),
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorLoadingModelDetails", "Error", ex.Message);
             }
         }
     }

@@ -47,8 +47,15 @@ namespace Ki_ADAS
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            SendMessage(txtEditValue.Handle, EM_SETCUEBANNER, 0, "Enter value");
+            try
+            {
+                base.OnLoad(e);
+                SendMessage(txtEditValue.Handle, EM_SETCUEBANNER, 0, "Enter value");
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorLoadingVEPForm", "Error", ex.Message);
+            }
         }
 
         private void InitializeMappings()
@@ -74,95 +81,130 @@ namespace Ki_ADAS
 
         private void BenchClient_OnDescriptionZoneRead(object sender, VEPBenchDescriptionZone e)
         {
-            if (InvokeRequired)
+            try
             {
-                BeginInvoke(new Action<object, VEPBenchDescriptionZone>(BenchClient_OnDescriptionZoneRead), sender, e);
-                return;
-            }
+                if (InvokeRequired)
+                {
+                    BeginInvoke(new Action<object, VEPBenchDescriptionZone>(BenchClient_OnDescriptionZoneRead), sender, e);
+                    return;
+                }
 
-            txtDesZone.Text = e.ValidityIndicator.ToString();
-            txtStatusZoneAddress.Text = e.StatusZoneAddr.ToString();
-            txtStatusZoneSize.Text = e.StatusZoneSize.ToString();
-            txtSynchroZoneAddress.Text = e.SynchroZoneAddr.ToString();
-            txtSynchroZoneSize.Text = e.SynchroZoneSize.ToString();
-            txtTzAddress.Text = e.TransmissionZoneAddr.ToString();
-            txtTzSize.Text = e.TransmissionZoneSize.ToString();
-            txtReAddress.Text = e.ReceptionZoneAddr.ToString();
-            txtReSize.Text = e.ReceptionZoneSize.ToString();
-            txtAddTzAddress.Text = e.AdditionalTZAddr.ToString();
-            txtAddTzSize.Text = e.AdditionalTZSize.ToString();
-            txtAddReAddress.Text = e.AdditionalRZAddr.ToString();
-            txtAddReSize.Text = e.AdditionalRZSize.ToString();
+                txtDesZone.Text = e.ValidityIndicator.ToString();
+                txtStatusZoneAddress.Text = e.StatusZoneAddr.ToString();
+                txtStatusZoneSize.Text = e.StatusZoneSize.ToString();
+                txtSynchroZoneAddress.Text = e.SynchroZoneAddr.ToString();
+                txtSynchroZoneSize.Text = e.SynchroZoneSize.ToString();
+                txtTzAddress.Text = e.TransmissionZoneAddr.ToString();
+                txtTzSize.Text = e.TransmissionZoneSize.ToString();
+                txtReAddress.Text = e.ReceptionZoneAddr.ToString();
+                txtReSize.Text = e.ReceptionZoneSize.ToString();
+                txtAddTzAddress.Text = e.AdditionalTZAddr.ToString();
+                txtAddTzSize.Text = e.AdditionalTZSize.ToString();
+                txtAddReAddress.Text = e.AdditionalRZAddr.ToString();
+                txtAddReSize.Text = e.AdditionalRZSize.ToString();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingDescriptionZone", "Error", ex.Message);
+            }
         }
 
         private void BenchClient_StatusZoneChanged(object sender, VEPBenchStatusZone e)
         {
-            if (InvokeRequired)
+            try
             {
-                BeginInvoke(new Action(() => UpdateStatusInfo(
-                    e.VepStatus,
-                    e.VepCycleEnd,
-                    e.BenchCycleEnd,
-                    e.StartCycle,
-                    e.VepCycleInterruption,
-                    e.BenchCycleInterruption)));
+                if (InvokeRequired)
+                {
+                    BeginInvoke(new Action(() => UpdateStatusInfo(
+                        e.VepStatus,
+                        e.VepCycleEnd,
+                        e.BenchCycleEnd,
+                        e.StartCycle,
+                        e.VepCycleInterruption,
+                        e.BenchCycleInterruption)));
+                }
+                else
+                {
+                    UpdateStatusInfo(
+                        e.VepStatus,
+                        e.VepCycleEnd,
+                        e.BenchCycleEnd,
+                        e.StartCycle,
+                        e.VepCycleInterruption,
+                        e.BenchCycleInterruption);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                UpdateStatusInfo(
-                    e.VepStatus,
-                    e.VepCycleEnd,
-                    e.BenchCycleEnd,
-                    e.StartCycle,
-                    e.VepCycleInterruption,
-                    e.BenchCycleInterruption);
+                MsgBox.ErrorWithFormat("ErrorUpdatingStatusZone", "Error", ex.Message);
             }
         }
 
         private void BenchClient_SynchroZoneChanged(object sender, VEPBenchSynchroZone e)
         {
-            UpdateSynchroValues(
-                e.FrontCameraAngle1,
-                e.FrontCameraAngle2,
-                e.FrontCameraAngle3,
-                e.RearRightRadarAngle,
-                e.RearLeftRadarAngle,
-                e.FrontRightRadarAngle,
-                e.FrontLeftRadarAngle);
+            try
+            {
+                UpdateSynchroValues(
+                    e.FrontCameraAngle1,
+                    e.FrontCameraAngle2,
+                    e.FrontCameraAngle3,
+                    e.RearRightRadarAngle,
+                    e.RearLeftRadarAngle,
+                    e.FrontRightRadarAngle,
+                    e.FrontLeftRadarAngle);
 
-            PopulateSynchroZoneList();
+                PopulateSynchroZoneList();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingSynchroZone", "Error", ex.Message);
+            }
         }
 
         private void BenchClient_TransmissionZoneChanged(object sender, VEPBenchTransmissionZone e)
         {
-            if (InvokeRequired)
+            try
             {
-                BeginInvoke(new Action(() => UpdateTransmissionInfo(e.AddTzSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode)));
-            }
-            else
-            {
-                UpdateTransmissionInfo(e.AddTzSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode);
-            }
+                if (InvokeRequired)
+                {
+                    BeginInvoke(new Action(() => UpdateTransmissionInfo(e.AddTzSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode)));
+                }
+                else
+                {
+                    UpdateTransmissionInfo(e.AddTzSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode);
+                }
 
-            if (e.IsRequest)
+                if (e.IsRequest)
+                {
+                    Console.WriteLine($"TransmissionZoneChanged 이벤트: 요청 감지 FctCode={e.FctCode}, PCNum={e.PCNum}");
+                }
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine($"TransmissionZoneChanged 이벤트: 요청 감지 FctCode={e.FctCode}, PCNum={e.PCNum}");
+                MsgBox.ErrorWithFormat("ErrorUpdatingTransmissionZone", "Error", ex.Message);
             }
         }
 
         private void BenchClient_ReceptionZoneChanged(object sender, VEPBenchReceptionZone e)
         {
-            if (InvokeRequired)
+            try
             {
-                BeginInvoke(new Action(() => UpdateReceptionInfo(e.AddReSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode)));
-            }
-            else
-            {
-                UpdateReceptionInfo(e.AddReSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode);
-            }
+                if (InvokeRequired)
+                {
+                    BeginInvoke(new Action(() => UpdateReceptionInfo(e.AddReSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode)));
+                }
+                else
+                {
+                    UpdateReceptionInfo(e.AddReSize, e.ExchStatus, e.FctCode, e.PCNum, e.ProcessCode, e.SubFctCode);
+                }
 
-            string status = e.IsResponseCompleted ? "응답 완료" : "응답 준비";
-            Console.WriteLine($"ReceptionZoneChanged 이벤트: {status}, FctCode={e.FctCode}");
+                string status = e.IsResponseCompleted ? "응답 완료" : "응답 준비";
+                Console.WriteLine($"ReceptionZoneChanged 이벤트: {status}, FctCode={e.FctCode}");
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingReceptionZone", "Error", ex.Message);
+            }
         }
 
         public void UpdateStatusInfo(ushort vepStatus, ushort vepCycleEnd, ushort benchCycleEnd, ushort startCycle, ushort vepCycleInt, ushort benchCycleInt)
@@ -236,13 +278,13 @@ namespace Ki_ADAS
                     int rawValue = rawValues[i];
                     int displayValue = rawValue;
 
-                    if (i == synchroZone.FrontCameraAngle1 ||
-                        i == synchroZone.FrontCameraAngle2 ||
-                        i == synchroZone.FrontCameraAngle3 ||
-                        i == synchroZone.RearRightRadarAngle ||
-                        i == synchroZone.RearLeftRadarAngle ||
-                        i == synchroZone.FrontRightRadarAngle ||
-                        i == synchroZone.FrontLeftRadarAngle)
+                    if (i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE1_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE2_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_CAMERA_ANGLE3_INDEX ||
+                        i == VEPBenchSynchroZone.REAR_RIGHT_RADAR_ANGLE_INDEX ||
+                        i == VEPBenchSynchroZone.REAR_LEFT_RADAR_ANGLE_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_RIGHT_RADAR_ANGLE_INDEX ||
+                        i == VEPBenchSynchroZone.FRONT_LEFT_RADAR_ANGLE_INDEX)
                     {
                         displayValue = rawValue / 100;
                     }
@@ -253,7 +295,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to populate SynchroZone list: {ex.Message}");
+                MsgBox.ErrorWithFormat("ErrorPopulatingSynchroZoneList", "Error", ex.Message);
             }
         }
 
@@ -265,15 +307,13 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(selectedItem))
                 {
-                    MessageBox.Show(LanguageManager.GetString("SelectItemToModify"),
-                                    LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MsgBox.Warn("SelectItemToModify");
                     return;
                 }
 
                 if (!int.TryParse(txtEditValue.Text, out int valueToSet))
                 {
-                    MessageBox.Show(LanguageManager.GetString("EnterValidInteger"),
-                                    LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MsgBox.Warn("EnterValidInteger");
                     return;
                 }
 
@@ -282,19 +322,16 @@ namespace Ki_ADAS
                     propertySetter(valueToSet);
                     benchClient.WriteSynchroZone();
 
-                    MessageBox.Show(LanguageManager.GetString("WriteCommandSentSuccessfully"),
-                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("WriteCommandSentSuccessfully");
                 }
                 else
                 {
-                    MessageBox.Show(LanguageManager.GetString("UnknownItem"),
-                                    LanguageManager.GetString("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MsgBox.Warn("UnknownItem");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorModifyingValue", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorModifyingValue", "Error", ex.Message);
             }
         }
 
@@ -306,13 +343,11 @@ namespace Ki_ADAS
                 statusZone.StartCycle = 1;
                 benchClient.WriteStatusZone();
 
-                MessageBox.Show(LanguageManager.GetString("StartCycleValueTo1Successfully"),
-                                LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MsgBox.Info("StartCycleValueTo1Successfully");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorSettingStartCycleValue", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorSettingStartCycleValue", "Error", ex.Message);
             }
         }
 
@@ -324,13 +359,11 @@ namespace Ki_ADAS
                 transmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
                 benchClient.WriteTransmissionZone();
 
-                MessageBox.Show(LanguageManager.GetString("TransmissionZoneSetExchStatusTo1"),
-                                LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MsgBox.Info("TransmissionZoneSetExchStatusTo1");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorSettingTransmissionZoneExchStatus", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorSettingTransmissionZoneExchStatus", "Error", ex.Message);
             }
         }
 
@@ -342,49 +375,61 @@ namespace Ki_ADAS
                 receptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Response;
                 benchClient.WriteReceptionZone();
 
-                MessageBox.Show(LanguageManager.GetString("ReceptionZoneSetExchStatusTo1"),
-                                LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MsgBox.Info("ReceptionZoneSetExchStatusTo1");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorSettingReceiptZoneExchStatus", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorSettingReceiptZoneExchStatus", "Error", ex.Message);
             }
         }
 
         private void lstSynchroZone_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
-            using (StringFormat sf = new StringFormat())
+            try
             {
-                sf.Alignment = StringAlignment.Center;
-                sf.LineAlignment = StringAlignment.Center;
+                using (StringFormat sf = new StringFormat())
+                {
+                    sf.Alignment = StringAlignment.Center;
+                    sf.LineAlignment = StringAlignment.Center;
 
-                e.DrawBackground();
-                e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.lstSynchroZone.ForeColor), e.Bounds, sf);
+                    e.DrawBackground();
+                    e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.lstSynchroZone.ForeColor), e.Bounds, sf);
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorDrawingSynchroColumnHeader", "Error", ex.Message);
             }
         }
 
         private void lstSynchroZone_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
-            TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
-
-            if (e.Item.Selected)
+            try
             {
-                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
-            }
-            else
-            {
-                Color backColor = (e.ItemIndex % 2 == 0)
-                    ? Color.White
-                    : Color.FromArgb(255, 240, 240, 240);
+                TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
 
-                using (Brush b = new SolidBrush(backColor))
+                if (e.Item.Selected)
                 {
-                    e.Graphics.FillRectangle(b, e.Bounds);
+                    e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                    TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
                 }
+                else
+                {
+                    Color backColor = (e.ItemIndex % 2 == 0)
+                        ? Color.White
+                        : Color.FromArgb(255, 240, 240, 240);
 
-                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+                    using (Brush b = new SolidBrush(backColor))
+                    {
+                        e.Graphics.FillRectangle(b, e.Bounds);
+                    }
+
+                    TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorDrawingSynchroSubItem", "Error", ex.Message);
             }
         }
 

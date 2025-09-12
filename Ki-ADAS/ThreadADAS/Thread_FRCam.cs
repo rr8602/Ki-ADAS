@@ -58,8 +58,9 @@ namespace Ki_ADAS
 
                 return 1;
             }
-            catch
+            catch (Exception ex)
             {
+                MsgBox.ErrorWithFormat("ErrorStartingFRCamThread", "Error", ex.Message);
                 return -1;
             }
         }
@@ -75,7 +76,10 @@ namespace Ki_ADAS
                     _frcamThread.Join(500);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorStoppingFRCamThread", "Error", ex.Message);
+            }
         }
 
         public void SetState(int state)
@@ -139,7 +143,10 @@ namespace Ki_ADAS
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorInFRCamThreadLoop", "Error", ex.Message);
+            }
         }
 
         private void _DoSendInfo()
@@ -179,9 +186,9 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_CAM_CHECK_OPTION);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                _main.AddLogMessage($"[FRCam] _DoSendInfo 예외 발생: {ex.Message}");
+                MsgBox.ErrorWithFormat("ErrorSendingFRCamInfo", "Error", ex.Message);
             }
         }
 
@@ -204,7 +211,10 @@ namespace Ki_ADAS
                     SetState(TS.STEP_CAM_TARGET_MOVE);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCheckingFRCamOption", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetMove()
@@ -221,7 +231,10 @@ namespace Ki_ADAS
                     Thread.Sleep(100);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMovingFRCamTarget", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetMoveComplete()
@@ -234,7 +247,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_CAM_WAIT_SYNC3);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCompletingFRCamTargetMove", "Error", ex.Message);
+            }
         }
 
         private void _DoWaitSync3()
@@ -253,7 +269,10 @@ namespace Ki_ADAS
                     SetState(TS.STEP_CAM_READ_ANGLE);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorWaitingForFRCamSync3", "Error", ex.Message);
+            }
         }
 
         private void _DoReadAngle()
@@ -274,7 +293,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_CAM_TARGET_HOME);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorReadingFRCamAngle", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetHome()
@@ -291,7 +313,10 @@ namespace Ki_ADAS
                     Thread.Sleep(100);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMovingFRCamTargetHome", "Error", ex.Message);
+            }
         }
 
         private void _DoFinish()
@@ -304,7 +329,10 @@ namespace Ki_ADAS
                     _result.FC_IsOk = true; // 성공
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorFinishingFRCamProcess", "Error", ex.Message);
+            }
         }
     }
 }

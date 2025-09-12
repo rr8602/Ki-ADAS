@@ -57,8 +57,9 @@ namespace Ki_ADAS
 
                 return 1;
             }
-            catch
+            catch (Exception ex)
             {
+                MsgBox.ErrorWithFormat("ErrorStartingFrontRadarThread", "Error", ex.Message);
                 return -1;
             }
         }
@@ -74,7 +75,10 @@ namespace Ki_ADAS
                     _frontRadarThread.Join(500);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorStoppingFrontRadarThread", "Error", ex.Message);
+            }
         }
 
         public void SetState(int state)
@@ -138,7 +142,10 @@ namespace Ki_ADAS
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorInFrontRadarThreadLoop", "Error", ex.Message);
+            }
         }
 
         private void _DoSendInfo()
@@ -180,7 +187,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                _main.AddLogMessage($"[FrontRadar] _DoSendInfo 예외 발생: {ex.Message}");
+                MsgBox.ErrorWithFormat("ErrorSendingFrontRadarInfo", "Error", ex.Message);
             }
         }
 
@@ -205,7 +212,10 @@ namespace Ki_ADAS
                     SetState(TS.STEP_FRADAR_TARGET_MOVE);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCheckingFrontRadarOption", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetMove()
@@ -223,7 +233,10 @@ namespace Ki_ADAS
                     Thread.Sleep(100);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMovingFrontRadarTarget", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetMoveComplete()
@@ -238,7 +251,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_FRADAR_WAIT_SYNC);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCompletingFrontRadarTargetMove", "Error", ex.Message);
+            }
         }
 
         private void _DoWaitSync()
@@ -258,7 +274,10 @@ namespace Ki_ADAS
                     SetState(TS.STEP_FRADAR_READ_ANGLE);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorWaitingForFrontRadarSync", "Error", ex.Message);
+            }
         }
 
         private void _DoReadAngle()
@@ -278,7 +297,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_FRADAR_TARGET_HOME);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorReadingFrontRadarAngle", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetHome()
@@ -296,7 +318,10 @@ namespace Ki_ADAS
                     Thread.Sleep(100);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMovingFrontRadarTargetHome", "Error", ex.Message);
+            }
         }
 
         private void _DoFinish()
@@ -309,7 +334,10 @@ namespace Ki_ADAS
                     _result.FR_IsOk = true; // 성공
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorFinishingFrontRadarProcess", "Error", ex.Message);
+            }
         }
     }
 }

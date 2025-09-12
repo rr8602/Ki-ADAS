@@ -123,8 +123,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {   
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorLoadingRegisteredVehicleList", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorLoadingRegisteredVehicleList", "Error", ex.Message);
             }
         }
 
@@ -134,8 +133,7 @@ namespace Ki_ADAS
             {
                 if (seqList.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(LanguageManager.GetString("NoRegisteredVehicles"),
-                                    LanguageManager.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("NoRegisteredVehicles", "Notification");
                     return;
                 }
 
@@ -146,8 +144,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorStartingADASProcess", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorStartingADASProcess", "Error", ex.Message);
 
                 AddLogMessage($"Error occurred: {ex.Message}");
 
@@ -164,8 +161,7 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(barcode))
                 {
-                    MessageBox.Show(LanguageManager.GetString("PleaseEnterBarcode"),
-                                    LanguageManager.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("PleaseEnterBarcode", "Notification");
                     return;
                 }
 
@@ -175,8 +171,7 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(modelName))
                 {
-                    MessageBox.Show(LanguageManager.GetFormattedString("CouldNotFindModelCode", modelCode),
-                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MsgBox.ErrorWithFormat("CouldNotFindModelCode", "Error", modelCode);
                     return;
                 }
 
@@ -189,16 +184,14 @@ namespace Ki_ADAS
 
                 if (string.IsNullOrEmpty(newVehicle.AcceptNo))
                 {
-                    MessageBox.Show(LanguageManager.GetString("FailedToGenerateAcceptNo"),
-                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MsgBox.Error("FailedToGenerateAcceptNo");
                     return;
                 }
 
                 bool isSaved = _infoRepository.SaveVehicleInfo(newVehicle);
                 if (!isSaved)
                 {
-                    MessageBox.Show(LanguageManager.GetString("FailedToSaveVehicleInformation"),
-                                    LanguageManager.GetString("DBError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MsgBox.Error("FailedToSaveVehicleInformation", "DBError");
                     return;
                 }
 
@@ -212,8 +205,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDuringVehicleRegistration", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorDuringVehicleRegistration", "Error", ex.Message);
 
                 AddLogMessage($"Vehicle registration error: {ex.Message}");
             }
@@ -225,8 +217,7 @@ namespace Ki_ADAS
             {
                 if (_mainThread == null || !_vepBenchClient.IsConnected)
                 {
-                    MessageBox.Show(LanguageManager.GetString("ADASProcessNotRunning"),
-                                    LanguageManager.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("ADASProcessNotRunning", "Notification");
                     return;
                 }
 
@@ -241,8 +232,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorStoppingADASProcess", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorStoppingADASProcess", "Error", ex.Message);
 
                 AddLogMessage($"Error occurred: {ex.Message}");
             }
@@ -262,64 +252,114 @@ namespace Ki_ADAS
 
         private void Frm_Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            base.OnClosing(e);
+            try
+            {
+                base.OnClosing(e);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorClosingMainForm", "Error", ex.Message);
+            }
         }
 
         private void Frm_Main_Load(object sender, EventArgs e)
         {
-            this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
-            this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
-            this.seqList.SelectedIndexChanged += new EventHandler(this.seqList_SelectedIndexChanged);
+            try
+            {
+                this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
+                this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
+                this.seqList.SelectedIndexChanged += new EventHandler(this.seqList_SelectedIndexChanged);
 
-            LoadRegisteredVehicles();
+                LoadRegisteredVehicles();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorLoadingMainForm", "Error", ex.Message);
+            }
         }
 
         private void seqList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_frmParent != null && m_frmParent.User_Monitor != null)
+            try
             {
-                if (seqList.SelectedItems.Count > 0)
+                if (m_frmParent != null && m_frmParent.User_Monitor != null)
                 {
-                    m_frmParent.User_Monitor.UpdateTestStatus(this.SelectedModelInfo);
+                    if (seqList.SelectedItems.Count > 0)
+                    {
+                        m_frmParent.User_Monitor.UpdateTestStatus(this.SelectedModelInfo);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingTestStatus", "Error", ex.Message);
             }
         }
 
         private void seqList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
-            using (StringFormat sf = new StringFormat())
+            try
             {
-                sf.Alignment = StringAlignment.Center;
-                sf.LineAlignment = StringAlignment.Center;
+                using (StringFormat sf = new StringFormat())
+                {
+                    sf.Alignment = StringAlignment.Center;
+                    sf.LineAlignment = StringAlignment.Center;
 
-                e.DrawBackground();
-                e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.seqList.ForeColor), e.Bounds, sf);
+                    e.DrawBackground();
+                    e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.seqList.ForeColor), e.Bounds, sf);
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorDrawingColumnHeader", "Error", ex.Message);
             }
         }
 
         private void seqList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
-            TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+            try
+            {
+                TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
 
-            if (e.Item.Selected)
-            {
-                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
+                if (e.Item.Selected)
+                {
+                    e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                    TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
+                }
+                else
+                {
+                    Color backColor = (e.ItemIndex % 2 == 0)
+                        ? Color.White
+                        : Color.FromArgb(255, 240, 240, 240);
+
+                    using (Brush b = new SolidBrush(backColor))
+                    {
+                        e.Graphics.FillRectangle(b, e.Bounds);
+                    }
+
+                    TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                e.DrawBackground();
-                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+                MsgBox.ErrorWithFormat("ErrorDrawingSubItem", "Error", ex.Message);
             }
         }
 
         private void seqList_MouseClick(object sender, MouseEventArgs e)
         {
-            var selectedVehicle = SelectedVehicleInfo;
+            try
+            {
+                var selectedVehicle = SelectedVehicleInfo;
 
-            lbl_model.Text = selectedVehicle?.Model ?? "-";
-            lbl_pji.Text = selectedVehicle?.PJI ?? "-";
-            lbl_wheelbase.Text = SelectedModelInfo?.Wheelbase.ToString() ?? "-";
+                lbl_model.Text = selectedVehicle?.Model ?? "-";
+                lbl_pji.Text = selectedVehicle?.PJI ?? "-";
+                lbl_wheelbase.Text = SelectedModelInfo?.Wheelbase.ToString() ?? "-";
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingVehicleInfo", "Error", ex.Message);
+            }
         }
     }
 }

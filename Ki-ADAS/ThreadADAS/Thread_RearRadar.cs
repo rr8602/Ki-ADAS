@@ -59,8 +59,9 @@ namespace Ki_ADAS
 
                 return 1;
             }
-            catch
+            catch (Exception ex)
             {
+                MsgBox.ErrorWithFormat("ErrorStartingRearRadarThread", "Error", ex.Message);
                 return -1;
             }
         }
@@ -76,7 +77,10 @@ namespace Ki_ADAS
                     _rearRadarThread.Join(500);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorStoppingRearRadarThread", "Error", ex.Message);
+            }
         }
 
         public void SetRRState(int state)
@@ -140,7 +144,10 @@ namespace Ki_ADAS
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorInRearRadarThreadLoop", "Error", ex.Message);
+            }
         }
 
         private void _DoSendInfo()
@@ -180,7 +187,10 @@ namespace Ki_ADAS
 
                 SetRRState(TS.STEP_FRADAR_CHECK_OPTION);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorSendingRearRadarInfo", "Error", ex.Message);
+            }
         }
 
         private void _DoCheckOption()
@@ -204,7 +214,10 @@ namespace Ki_ADAS
                     SetRRState(TS.STEP_RRADAR_TARGET_MOVE);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCheckingRearRadarOption", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetMove()
@@ -221,7 +234,10 @@ namespace Ki_ADAS
                     Thread.Sleep(100);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMovingRearRadarTarget", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetMoveComplete()
@@ -236,7 +252,10 @@ namespace Ki_ADAS
 
                 SetRRState(TS.STEP_RRADAR_WAIT_SYNC);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCompletingRearRadarTargetMove", "Error", ex.Message);
+            }
         }
 
         private void _DoWaitSync()
@@ -256,7 +275,10 @@ namespace Ki_ADAS
                     SetRRState(TS.STEP_RRADAR_READ_ANGLE);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorWaitingForRearRadarSync", "Error", ex.Message);
+            }
         }
 
         private void _DoReadAngle()
@@ -276,7 +298,10 @@ namespace Ki_ADAS
 
                 SetRRState(TS.STEP_RRADAR_TARGET_HOME);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorReadingRearRadarAngle", "Error", ex.Message);
+            }
         }
 
         private void _DoTargetHome()
@@ -293,7 +318,10 @@ namespace Ki_ADAS
                     Thread.Sleep(100);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMovingRearRadarTargetHome", "Error", ex.Message);
+            }
         }
 
         private void _DoFinish()
@@ -306,7 +334,10 @@ namespace Ki_ADAS
                     _result.RR_IsOk = true; // 성공
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorFinishingRearRadarProcess", "Error", ex.Message);
+            }
         }
     }
 }

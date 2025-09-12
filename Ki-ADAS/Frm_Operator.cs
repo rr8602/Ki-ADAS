@@ -24,32 +24,53 @@ namespace Ki_ADAS
 
         public void StartInspectionTimer()
         {
-            if (this.InvokeRequired)
+            try
             {
-                this.Invoke(new Action(StartInspectionTimer));
-                return;
-            }
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(StartInspectionTimer));
+                    return;
+                }
 
-            elapsedTimeInSeconds = 0;
-            rlbl_time.Text = "0";
-            inspectionTimer.Start();
+                elapsedTimeInSeconds = 0;
+                rlbl_time.Text = "0";
+                inspectionTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorStartingInspectionTimer", "Error", ex.Message);
+            }
         }
 
         public void StopInspectionTimer()
         {
-            if (this.InvokeRequired)
+            try
             {
-                this.Invoke(new Action(StopInspectionTimer));
-                return;
-            }
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(StopInspectionTimer));
+                    return;
+                }
 
-            inspectionTimer.Stop();
+                inspectionTimer.Stop();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorStoppingInspectionTimer", "Error", ex.Message);
+            }
         }
 
         private void InspectionTimer_Tick(object sender, EventArgs e)
         {
-            elapsedTimeInSeconds++;
-            rlbl_time.Text = elapsedTimeInSeconds.ToString();
+            try
+            {
+                elapsedTimeInSeconds++;
+                rlbl_time.Text = elapsedTimeInSeconds.ToString();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingInspectionTimer", "Error", ex.Message);
+            }
         }
 
         public static Frm_Operator Instance
@@ -78,168 +99,234 @@ namespace Ki_ADAS
             this.UpdateStyles();
             MoveFormToSecondMonitor();
         }
-        private void Frm_Operator_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void MoveFormToSecondMonitor()
         {
-            // 연결된 모든 모니터 가져오기
-            Screen[] screens = Screen.AllScreens;
-
-            if (screens.Length > 1)
+            try
             {
-                // 두 번째 모니터 가져오기
-                Screen secondScreen = screens[1];
+                // 연결된 모든 모니터 가져오기
+                Screen[] screens = Screen.AllScreens;
 
-                // 두 번째 모니터의 작업 영역 중앙에 폼 위치
-                Rectangle workingArea = secondScreen.WorkingArea;
-                this.StartPosition = FormStartPosition.Manual;
-                this.Location = new Point(
-                    workingArea.Left + (workingArea.Width - this.Width) / 2,
-                    workingArea.Top + (workingArea.Height - this.Height) / 2
-                );
+                if (screens.Length > 1)
+                {
+                    // 두 번째 모니터 가져오기
+                    Screen secondScreen = screens[1];
+
+                    // 두 번째 모니터의 작업 영역 중앙에 폼 위치
+                    Rectangle workingArea = secondScreen.WorkingArea;
+                    this.StartPosition = FormStartPosition.Manual;
+                    this.Location = new Point(
+                        workingArea.Left + (workingArea.Width - this.Width) / 2,
+                        workingArea.Top + (workingArea.Height - this.Height) / 2
+                    );
+                }
+                else
+                {
+                    MsgBox.Info("SecondMonitorNotDetected");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetString("SecondMonitorNotDetected"));
+                MsgBox.ErrorWithFormat("ErrorMovingFormToSecondMonitor", "Error", ex.Message);
             }
         }
 
         private void Frm_Operator_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            try
             {
-                e.Cancel = true;
-                this.Hide();
+                if (e.CloseReason == CloseReason.UserClosing)
+                {
+                    e.Cancel = true;
+                    this.Hide();
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorClosingOperatorForm", "Error", ex.Message);
             }
         }
 
         // 상태 업데이트
         public void UpdateStatus(string status, Color color)
         {
-            if (this.InvokeRequired)
+            try
             {
-                this.Invoke(new Action<string, Color>(UpdateStatus), status, color);
-                
-                return;
-            }
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action<string, Color>(UpdateStatus), status, color);
+                    
+                    return;
+                }
 
-          //  lblStatus.Text = status;
-            //lblStatus.ForeColor = color;
+              //  lblStatus.Text = status;
+                //lblStatus.ForeColor = color;
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingStatus", "Error", ex.Message);
+            }
         }
 
         public void UpdateTestStatus(Model selectedModel)
         {
-            if (selectedModel == null) return;
+            try
+            {
+                if (selectedModel == null) return;
 
-            Color activeColor = Color.Yellow;
-            Color defaultColor = Color.Gray;
+                Color activeColor = Color.Yellow;
+                Color defaultColor = Color.Gray;
 
-            lbl_Toe_FL.BackColor = selectedModel.FC_IsTest ? activeColor : defaultColor;
-            lbl_Toe_FR.BackColor = selectedModel.F_IsTest ? activeColor : defaultColor;
-            lbl_Toe_RR.BackColor = selectedModel.R_IsTest ? activeColor : defaultColor;
+                lbl_Toe_FL.BackColor = selectedModel.FC_IsTest ? activeColor : defaultColor;
+                lbl_Toe_FR.BackColor = selectedModel.F_IsTest ? activeColor : defaultColor;
+                lbl_Toe_RR.BackColor = selectedModel.R_IsTest ? activeColor : defaultColor;
 
-            rlbl_modelName.Text = selectedModel.Name;
+                rlbl_modelName.Text = selectedModel.Name;
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingTestStatusOperator", "Error", ex.Message);
+            }
         }
 
         // 진행률 업데이트
         public void UpdateProgress(int currentStep, int totalSteps)
         {
-            if (this.InvokeRequired)
+            try
             {
-                this.Invoke(new Action<int, int>(UpdateProgress), currentStep, totalSteps);
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action<int, int>(UpdateProgress), currentStep, totalSteps);
 
-                return;
+                    return;
+                }
+
+                int percentage = (int)((float)currentStep / totalSteps * 100);
+                //progressBar.Value = Math.Min(100, Math.Max(0, percentage));
             }
-
-            int percentage = (int)((float)currentStep / totalSteps * 100);
-            //progressBar.Value = Math.Min(100, Math.Max(0, percentage));
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingProgress", "Error", ex.Message);
+            }
         }
 
         // 로그 추가
         public void AddLog(DateTime timestamp, string type, string stepId, string description, string syncState, string result)
         {
-            if (this.InvokeRequired)
+            try
             {
-                this.Invoke(new Action<DateTime, string, string, string, string, string>(AddLog), timestamp, type, stepId, description, syncState, result);
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action<DateTime, string, string, string, string, string>(AddLog), timestamp, type, stepId, description, syncState, result);
 
-                return;
+                    return;
+                }
+
+                ListViewItem item = new ListViewItem(timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                switch (type.ToLower())
+                {
+                    case "성공":
+                        item.ForeColor = Color.Green;
+                        break;
+
+                    case "실패":
+                        item.ForeColor = Color.Red;
+                        break;
+
+                    case "경고":
+                        item.ForeColor = Color.Orange;
+                        break;
+
+                    case "진행 중":
+                        item.ForeColor = Color.Blue;
+                        break;
+
+                    default:
+                        item.ForeColor = Color.Black;
+                        break;
+                }
+
+                item.SubItems.Add(type);
+                item.SubItems.Add(stepId);
+                item.SubItems.Add(description);
+                item.SubItems.Add(syncState);
+                item.SubItems.Add(result);
+
+                //lvProcessLog.Items.Add(item);
+                //lvProcessLog.Items[lvProcessLog.Items.Count - 1].EnsureVisible();
             }
-
-            ListViewItem item = new ListViewItem(timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            switch (type.ToLower())
+            catch (Exception ex)
             {
-                case "성공":
-                    item.ForeColor = Color.Green;
-                    break;
-
-                case "실패":
-                    item.ForeColor = Color.Red;
-                    break;
-
-                case "경고":
-                    item.ForeColor = Color.Orange;
-                    break;
-
-                case "진행 중":
-                    item.ForeColor = Color.Blue;
-                    break;
-
-                default:
-                    item.ForeColor = Color.Black;
-                    break;
+                MsgBox.ErrorWithFormat("ErrorAddingLog", "Error", ex.Message);
             }
-
-            item.SubItems.Add(type);
-            item.SubItems.Add(stepId);
-            item.SubItems.Add(description);
-            item.SubItems.Add(syncState);
-            item.SubItems.Add(result);
-
-            //lvProcessLog.Items.Add(item);
-            //lvProcessLog.Items[lvProcessLog.Items.Count - 1].EnsureVisible();
         }
 
         // 로그 초기화
         public void ClearLog()
         {
-            if (this.InvokeRequired)
+            try
             {
-                this.Invoke(new Action(ClearLog));
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(ClearLog));
 
-                return;
+                    return;
+                }
+
+                //lvProcessLog.Items.Clear();
+               // progressBar.Value = 0;
             }
-
-            //lvProcessLog.Items.Clear();
-           // progressBar.Value = 0;
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorClearingLog", "Error", ex.Message);
+            }
         }
 
         private void NavTop_MouseMove(object sender, MouseEventArgs e)
         {
-            if ((e.Button & MouseButtons.Left) == MouseButtons.Left) //마우스 왼쪽 클릭 시에만 실행
+            try
             {
-                //폼의 위치를 드래그중인 마우스의 좌표로 이동 
-                Location = new Point(Left - (mousePoint.X - e.X), Top - (mousePoint.Y - e.Y));
+                if ((e.Button & MouseButtons.Left) == MouseButtons.Left) //마우스 왼쪽 클릭 시에만 실행
+                {
+                    //폼의 위치를 드래그중인 마우스의 좌표로 이동 
+                    Location = new Point(Left - (mousePoint.X - e.X), Top - (mousePoint.Y - e.Y));
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMovingForm", "Error", ex.Message);
             }
         }
 
         private void NavTop_MouseDown(object sender, MouseEventArgs e)
         {
-            mousePoint = new Point(e.X, e.Y); //현재 마우스 좌표 저장
+            try
+            {
+                mousePoint = new Point(e.X, e.Y); //현재 마우스 좌표 저장
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCapturingMouseDown", "Error", ex.Message);
+            }
         }
 
         public void UpdateStepDescription(string description)
         {
-            if (this.InvokeRequired)
+            try
             {
-                this.Invoke(new Action<string>(UpdateStepDescription), description);
-                return;
-            }
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action<string>(UpdateStepDescription), description);
+                    return;
+                }
 
-            lbl_message.Text = description;
+                lbl_message.Text = description;
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorUpdatingStepDescription", "Error", ex.Message);
+            }
         }
 
         /*public void UpdateADASResult(ADASProcess.ADASResult result)

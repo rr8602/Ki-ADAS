@@ -55,8 +55,7 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorRetrievingResultInfo", ex.Message),
-                                LanguageManager.GetString("DatabaseError"), System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorRetrievingResultInfo", "DatabaseError", ex.Message);
                 return null;
             }
 
@@ -99,8 +98,7 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorRetrievingResultInfoByDate", ex.Message),
-                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorRetrievingResultInfoByDate", "DatabaseError", ex.Message);
                 return null;
             }
 
@@ -143,8 +141,7 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorRetrievingResultInfoByPJI", ex.Message),
-                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorRetrievingResultInfoByPJI", "DatabaseError", ex.Message);
                 return null;
             }
 
@@ -215,8 +212,7 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorSavingModel", ex.Message),
-                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorSavingModel", "DatabaseError", ex.Message);
                 return false;
             }
         }
@@ -255,8 +251,7 @@ namespace Ki_ADAS.DB
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorCheckingDuplicateModelName", ex.Message),
-                                LanguageManager.GetString("DatabaseError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorCheckingDuplicateModelName", "DatabaseError", ex.Message);
                 return true;
             }
         }

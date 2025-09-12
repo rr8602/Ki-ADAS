@@ -94,6 +94,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
+                MsgBox.ErrorWithFormat("ErrorStartingMainThread", "Error", ex.Message);
                 return -1;
             }
         }
@@ -116,6 +117,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
+                MsgBox.ErrorWithFormat("ErrorStoppingMainThread", "Error", ex.Message);
             }
         }
 
@@ -127,6 +129,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
+                MsgBox.ErrorWithFormat("ErrorUpdatingUIMessage", "Error", ex.Message);
             }
         }
 
@@ -243,6 +246,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
+                MsgBox.ErrorWithFormat("ErrorInMainThreadLoop", "Error", ex.Message);
             }
 
         }
@@ -258,7 +262,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-
+                MsgBox.ErrorWithFormat("ErrorInitializingMainVariables", "Error", ex.Message);
             }
         }
         private void _DoMainBarcodeWait()
@@ -294,7 +298,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-
+                MsgBox.ErrorWithFormat("ErrorWaitingForBarcode", "Error", ex.Message);
             }
         }
         private void _DoMainCheck_Detect()
@@ -315,7 +319,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-
+                MsgBox.ErrorWithFormat("ErrorCheckingDetectionSensor", "Error", ex.Message);
             }
         }
         private void _DoMainPressCycle()
@@ -335,7 +339,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-
+                MsgBox.ErrorWithFormat("ErrorPressingStartButton", "Error", ex.Message);
             }
         }
 
@@ -358,7 +362,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-
+                MsgBox.ErrorWithFormat("ErrorDuringCenteringOn", "Error", ex.Message);
             }
         }
 
@@ -371,14 +375,17 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_MAIN_PEV_SEND_PJI);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorStartingPEVCycle", "Error", ex.Message);
+            }
         }
 
         private void _DoMainPEVSendPJI()
         {
             try
             {
-                _vepManager.TransmissionZone.SetValue(VEPBenchTransmissionZone.Offset_ExchStatus, 2); // VEP 서버
+                _vepManager.TransmissionZone.SetValue(_vepManager.TransmissionZone.ExchStatus, 2); // VEP 서버
                 _client.WriteTransmissionZone();
 
                 // PJI 정보 전송
@@ -390,7 +397,7 @@ namespace Ki_ADAS
                     _vepManager.TransmissionZone.ProcessCode == 1 &&
                     _vepManager.TransmissionZone.SubFctCode == 0)
                 {
-                    _vepManager.TransmissionZone.SetValue(VEPBenchTransmissionZone.Offset_ExchStatus, VEPBenchTransmissionZone.ExchStatus_Response);
+                    _vepManager.TransmissionZone.SetValue(_vepManager.TransmissionZone.ExchStatus, VEPBenchTransmissionZone.ExchStatus_Response);
 
                     if (Cur_Info != null && !string.IsNullOrEmpty(Cur_Info.PJI))
                     {
@@ -404,9 +411,9 @@ namespace Ki_ADAS
                         _vepManager.ReceptionZone.Data = new ushort[0];
                     }
 
-                    _vepManager.StatusZone.SetValue(VEPBenchStatusZone.Offset_VepStatus, 2); // VEP 서버
-                    _vepManager.ReceptionZone.SetValue(VEPBenchReceptionZone.Offset_ExchStatus, VEPBenchReceptionZone.ExchStatus_Ready);
-                    _vepManager.StatusZone.SetValue(VEPBenchStatusZone.Offset_StartCycle, 0);
+                    _vepManager.StatusZone.SetValue(_vepManager.StatusZone.VepStatus, 2); // VEP 서버
+                    _vepManager.ReceptionZone.SetValue(_vepManager.ReceptionZone.ExchStatus, VEPBenchReceptionZone.ExchStatus_Ready);
+                    _vepManager.StatusZone.SetValue(_vepManager.StatusZone.StartCycle, 0);
 
                     _client.WriteTransmissionZone();
                     _client.WriteReceptionZone();
@@ -415,7 +422,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_MAIN_PEV_READY);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorSendingPJI", "Error", ex.Message);
+            }
         }
 
         // Check VEP Status
@@ -428,7 +438,10 @@ namespace Ki_ADAS
                     SetState(TS.STEP_MAIN_START_EACH_THREAD);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCheckingPEVStatus", "Error", ex.Message);
+            }
         }
 
         private void _DoMainStartEachThread()
@@ -442,7 +455,10 @@ namespace Ki_ADAS
                     SetState(TS.STEP_MAIN_WAIT_TEST_COMPLETE);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorStartingSubThreads", "Error", ex.Message);
+            }
         }
 
         private void _DoMainWaitTestComplete()
@@ -461,7 +477,10 @@ namespace Ki_ADAS
                 _result.EndTime = DateTime.Now;
                 SetState(TS.STEP_MAIN_CENTERING_HOME);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorWaitingForTestCompletion", "Error", ex.Message);
+            }
         }
 
         private void _DoMainCenteringHome()
@@ -478,7 +497,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_MAIN_WAIT_TARGET_HOME);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorDuringCenteringHome", "Error", ex.Message);
+            }
         }
 
         private void _DoMainWaitTargetHome()
@@ -495,7 +517,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_MAIN_DATA_SAVE);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorWaitingForTargetHome", "Error", ex.Message);
+            }
         }
 
         private void _DoMainDataSave()
@@ -507,13 +532,11 @@ namespace Ki_ADAS
 
                 if (isSavedToDb)
                 {
-                    MessageBox.Show(LanguageManager.GetString("TestResultsSavedToDatabase"),
-                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("TestResultsSavedToDatabase");
                 }
                 else
                 {
-                    MessageBox.Show(LanguageManager.GetString("FailedToSaveTestResultsToDatabase"),
-                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MsgBox.Error("FailedToSaveTestResultsToDatabase");
                 }
 
                 string xmlFileName = $"test_result_{DateTime.Now.ToString("yyyyMMdd")}.xml";
@@ -553,18 +576,19 @@ namespace Ki_ADAS
 
                     root.Save(xmlFilePath);
 
-                    MessageBox.Show(LanguageManager.GetString("TestResultsSavedAsXML"),
-                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("TestResultsSavedAsXML");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(LanguageManager.GetFormattedString("ErrorSavingData", ex.Message),
-                                    LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MsgBox.ErrorWithFormat("ErrorSavingData", "Error", ex.Message);
                 }
 
                 SetState(TS.STEP_MAIN_TICKET_PRINT);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorSavingMainData", "Error", ex.Message);
+            }
         }
 
         private void _DoMainTicketPrint()
@@ -573,7 +597,10 @@ namespace Ki_ADAS
             {
                 SetState(TS.STEP_MAIN_GRET_COMM);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorPrintingTicket", "Error", ex.Message);
+            }
         }
 
         private void _DoMainGRETComm()
@@ -582,7 +609,10 @@ namespace Ki_ADAS
             {
                 SetState(TS.STEP_MAIN_WAIT_GO_OUT);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorDuringGRETCommunication", "Error", ex.Message);
+            }
         }
 
         private void _DoMainWaitGoOut()
@@ -598,7 +628,10 @@ namespace Ki_ADAS
 
                 SetState(TS.STEP_MAIN_CYCLE_FINISH);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorWaitingForGoOut", "Error", ex.Message);
+            }
         }
 
         private void _DoMainFinishCycle()
@@ -611,7 +644,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-
+                MsgBox.ErrorWithFormat("ErrorFinishingCycle", "Error", ex.Message);
             }
         }
 

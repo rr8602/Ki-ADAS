@@ -48,8 +48,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("FailedToSetupDatabaseConnection", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("FailedToSetupDatabaseConnection", "DatabaseError", ex.Message);
             }
         }
     }

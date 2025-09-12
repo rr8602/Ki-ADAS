@@ -136,6 +136,7 @@
       <DependentUpon>Frm_Result.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalVal.cs" />
+    <Compile Include="MsgBox.cs" />
     <Compile Include="ThickGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>

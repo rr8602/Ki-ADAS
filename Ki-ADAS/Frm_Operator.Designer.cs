@@ -437,7 +437,6 @@
             this.Name = "Frm_Operator";
             this.Text = "Frm_Operator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Operator_FormClosing);
-            this.Load += new System.EventHandler(this.Frm_Operator_Load);
             this.NavTop.ResumeLayout(false);
             this.ResumeLayout(false);
 

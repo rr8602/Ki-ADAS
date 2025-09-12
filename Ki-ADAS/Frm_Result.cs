@@ -52,8 +52,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorLoadingXMLFile", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorLoadingXMLFile", "Error", ex.Message);
             }
         }
 
@@ -67,14 +66,12 @@ namespace Ki_ADAS
                 }
                 else
                 {
-                    MessageBox.Show(LanguageManager.GetString("SelectTestResultToViewDetails"),
-                                    LanguageManager.GetString("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("SelectTestResultToViewDetails");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDisplayingTestResultDetails", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorDisplayingTestResultDetails", "Error", ex.Message);
             }
         }
 
@@ -96,12 +93,19 @@ namespace Ki_ADAS
 
         private void Frm_Result_Load(object sender, EventArgs e)
         {
-            this.seqList.OwnerDraw = true;
-            this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
-            this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
+            try
+            {
+                this.seqList.OwnerDraw = true;
+                this.seqList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(this.seqList_DrawColumnHeader);
+                this.seqList.DrawSubItem += new DrawListViewSubItemEventHandler(this.seqList_DrawSubItem);
 
-            LoadInfoList();
-            dateTimePicker1.Value = DateTime.Now;
+                LoadInfoList();
+                dateTimePicker1.Value = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorLoadingResultForm", "Error", ex.Message);
+            }
         }
 
         private void btnDateSearch_Click(object sender, EventArgs e)
@@ -115,8 +119,7 @@ namespace Ki_ADAS
 
                 if (resultsByDate == null || resultsByDate.Count == 0)
                 {
-                    MessageBox.Show(LanguageManager.GetFormattedString("NoResultsFoundForDate", dateTimePicker1.Value.ToString("yyyy-MM-dd")),
-                                    LanguageManager.GetString("SearchResults"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.InfoWithFormat("NoResultsFoundForDate", "SearchResults", dateTimePicker1.Value.ToString("yyyy-MM-dd"));
                     return;
                 }
 
@@ -136,8 +139,7 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDuringDateSearch", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorDuringDateSearch", "Error", ex.Message);
             }
         }
 
@@ -152,8 +154,7 @@ namespace Ki_ADAS
 
                 if (resultsByPji == null || resultsByPji.Count == 0)
                 {
-                    MessageBox.Show(LanguageManager.GetString("NoResultsFoundForPJI"),
-                                    LanguageManager.GetString("SearchResults"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MsgBox.Info("NoResultsFoundForPJI", "SearchResults");
                     return;
                 }
 
@@ -173,36 +174,49 @@ namespace Ki_ADAS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LanguageManager.GetFormattedString("ErrorDuringPJISearch", ex.Message),
-                                LanguageManager.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MsgBox.ErrorWithFormat("ErrorDuringPJISearch", "Error", ex.Message);
             }
         }
 
         private void seqList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
-            using (StringFormat sf = new StringFormat())
+            try
             {
-                sf.Alignment = StringAlignment.Center;
-                sf.LineAlignment = StringAlignment.Center;
+                using (StringFormat sf = new StringFormat())
+                {
+                    sf.Alignment = StringAlignment.Center;
+                    sf.LineAlignment = StringAlignment.Center;
 
-                e.DrawBackground();
-                e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.seqList.ForeColor), e.Bounds, sf);
+                    e.DrawBackground();
+                    e.Graphics.DrawString(e.Header.Text, e.Font, new SolidBrush(this.seqList.ForeColor), e.Bounds, sf);
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorDrawingResultColumnHeader", "Error", ex.Message);
             }
         }
 
         private void seqList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
-            TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+            try
+            {
+                TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
 
-            if (e.Item.Selected)
-            {
-                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
+                if (e.Item.Selected)
+                {
+                    e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                    TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, SystemColors.HighlightText, flags);
+                }
+                else
+                {
+                    e.DrawBackground();
+                    TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                e.DrawBackground();
-                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.SubItem.Font, e.Bounds, e.SubItem.ForeColor, flags);
+                MsgBox.ErrorWithFormat("ErrorDrawingResultSubItem", "Error", ex.Message);
             }
         }
     }

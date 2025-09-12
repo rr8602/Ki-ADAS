@@ -63,56 +63,76 @@ namespace Ki_ADAS
         }
         private void Frm_Mainfrm_Load(object sender, EventArgs e)
         {
-            m_frmMain.SetParent(this);
-            m_frmConfig.SetParent(this);
-            m_frmCalibration.SetParent(this);
-            m_frmManual.SetParent(this);
-            m_frmResult.SetParent(this);
-            m_frmVEP.SetParent(this);
-
-            InitializeSubForm(m_frmMain);
-            InitializeSubForm(m_frmConfig);
-            InitializeSubForm(m_frmCalibration);
-            InitializeSubForm(m_frmManual);
-            InitializeSubForm(m_frmResult);
-            InitializeSubForm(m_frmVEP);
-
-            m_NavButtons.Add(BtnCalibration);
-            m_NavButtons.Add(BtnConfig);
-            m_NavButtons.Add(BtnCalibration);
-            m_NavButtons.Add(BtnManual);
-            m_NavButtons.Add(BtnResult);
-            m_NavButtons.Add(BtnVEP);
-
-            ShowFrm(Def.FOM_IDX_MAIN);
-
-
-            if (!this.DesignMode)
+            try
             {
-                if (User_Monitor == null || User_Monitor.Text == "")
+                m_frmMain.SetParent(this);
+                m_frmConfig.SetParent(this);
+                m_frmCalibration.SetParent(this);
+                m_frmManual.SetParent(this);
+                m_frmResult.SetParent(this);
+                m_frmVEP.SetParent(this);
+
+                InitializeSubForm(m_frmMain);
+                InitializeSubForm(m_frmConfig);
+                InitializeSubForm(m_frmCalibration);
+                InitializeSubForm(m_frmManual);
+                InitializeSubForm(m_frmResult);
+                InitializeSubForm(m_frmVEP);
+
+                m_NavButtons.Add(BtnCalibration);
+                m_NavButtons.Add(BtnConfig);
+                m_NavButtons.Add(BtnCalibration);
+                m_NavButtons.Add(BtnManual);
+                m_NavButtons.Add(BtnResult);
+                m_NavButtons.Add(BtnVEP);
+
+                ShowFrm(Def.FOM_IDX_MAIN);
+
+
+                if (!this.DesignMode)
                 {
-                    User_Monitor = new Frm_Operator();
-                    User_Monitor.Show();
+                    if (User_Monitor == null || User_Monitor.Text == "")
+                    {
+                        User_Monitor = new Frm_Operator();
+                        User_Monitor.Show();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorLoadingMainFormFrame", "Error", ex.Message);
             }
         }
 
         private void InitializeSubForm(Form f)
         {
-            f.ControlBox = false;
-            f.FormBorderStyle = FormBorderStyle.None;
-            f.StartPosition = FormStartPosition.Manual;
-            f.MdiParent = this;
+            try
+            {
+                f.ControlBox = false;
+                f.FormBorderStyle = FormBorderStyle.None;
+                f.StartPosition = FormStartPosition.Manual;
+                f.MdiParent = this;
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorInitializingSubForm", "Error", ex.Message);
+            }
         }
 
 
         private void RepositionSubForm(Form fSubform)
         {
-            if (fSubform == null)
-                return;
-            fSubform.Location = new Point(0, 0);
-            fSubform.Size = new Size(ClientSize.Width - panelNavBar.Size.Width - 4, ClientSize.Height - 4);
-
+            try
+            {
+                if (fSubform == null)
+                    return;
+                fSubform.Location = new Point(0, 0);
+                fSubform.Size = new Size(ClientSize.Width - panelNavBar.Size.Width - 4, ClientSize.Height - 4);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorRepositioningSubForm", "Error", ex.Message);
+            }
         }
 
         public Form ActiveSubForm
@@ -134,87 +154,143 @@ namespace Ki_ADAS
 
         private void ShowFrm(int nIdx)
         {
-            m_nCurrentFrmIdx = nIdx;
-            Form f = new Form();
-
-            switch (nIdx)
+            try
             {
-                case Def.FOM_IDX_MAIN:
-                    f = m_frmMain;
-                    break;
-                case Def.FOM_IDX_CONFIG:
-                    f = m_frmConfig;
-                    break;
-                case Def.FOM_IDX_CALIBRATION:
-                    f = m_frmCalibration;
-                    break;
-                case Def.FOM_IDX_MANUAL:
-                    f = m_frmManual;
-                    break;
-                case Def.FOM_IDX_RESULT:
-                    f = m_frmResult;
-                    break;
-                case Def.FOM_IDX_VEP:
-                    f = m_frmVEP;
-                    break;
-            }
+                m_nCurrentFrmIdx = nIdx;
+                Form f = new Form();
 
-            f.Show();
-            f.BringToFront();
-            ActiveSubForm = f;
+                switch (nIdx)
+                {
+                    case Def.FOM_IDX_MAIN:
+                        f = m_frmMain;
+                        break;
+                    case Def.FOM_IDX_CONFIG:
+                        f = m_frmConfig;
+                        break;
+                    case Def.FOM_IDX_CALIBRATION:
+                        f = m_frmCalibration;
+                        break;
+                    case Def.FOM_IDX_MANUAL:
+                        f = m_frmManual;
+                        break;
+                    case Def.FOM_IDX_RESULT:
+                        f = m_frmResult;
+                        break;
+                    case Def.FOM_IDX_VEP:
+                        f = m_frmVEP;
+                        break;
+                }
+
+                f.Show();
+                f.BringToFront();
+                ActiveSubForm = f;
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorShowingForm", "Error", ex.Message);
+            }
         }
 
         private void ChangeButtonColor(Button pButton)
         {
-            foreach (Button btn in m_NavButtons)
+            try
             {
-                if (pButton.Text == btn.Text)
+                foreach (Button btn in m_NavButtons)
                 {
-                    btn.BackColor = Color.Gray;
-                    btn.ForeColor = SystemColors.ControlLightLight;
+                    if (pButton.Text == btn.Text)
+                    {
+                        btn.BackColor = Color.Gray;
+                        btn.ForeColor = SystemColors.ControlLightLight;
+                    }
+                    else
+                    {
+                        btn.BackColor = Color.Gainsboro;
+                        btn.ForeColor = Color.Black;
+                    }
                 }
-                else
-                {
-                    btn.BackColor = Color.Gainsboro;
-                    btn.ForeColor = Color.Black;
-                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorChangingButtonColor", "Error", ex.Message);
             }
         }
 
         private void BtnMain_Click(object sender, EventArgs e)
         {
-            ChangeButtonColor((Button)sender);
-            ShowFrm(Def.FOM_IDX_MAIN);
+            try
+            {
+                ChangeButtonColor((Button)sender);
+                ShowFrm(Def.FOM_IDX_MAIN);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorMainButtonClick", "Error", ex.Message);
+            }
         }
 
         private void BtnConfig_Click(object sender, EventArgs e)
         {
-            ChangeButtonColor((Button)sender);
-            ShowFrm(Def.FOM_IDX_CONFIG);
+            try
+            {
+                ChangeButtonColor((Button)sender);
+                ShowFrm(Def.FOM_IDX_CONFIG);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorConfigButtonClick", "Error", ex.Message);
+            }
         }
 
         private void btnCalibration_Click(object sender, EventArgs e)
         {
-            ChangeButtonColor((Button)sender);
-            ShowFrm(Def.FOM_IDX_CALIBRATION);
+            try
+            {
+                ChangeButtonColor((Button)sender);
+                ShowFrm(Def.FOM_IDX_CALIBRATION);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCalibrationButtonClick", "Error", ex.Message);
+            }
         }
 
         private void BtnManual_Click_1(object sender, EventArgs e)
         {
-            ChangeButtonColor((Button)sender);
-            ShowFrm(Def.FOM_IDX_MANUAL);
+            try
+            {
+                ChangeButtonColor((Button)sender);
+                ShowFrm(Def.FOM_IDX_MANUAL);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorManualButtonClick", "Error", ex.Message);
+            }
         }
 
         private void BtnResult_Click(object sender, EventArgs e)
         {
-            ChangeButtonColor((Button)sender);
-            ShowFrm(Def.FOM_IDX_RESULT);
+            try
+            {
+                ChangeButtonColor((Button)sender);
+                ShowFrm(Def.FOM_IDX_RESULT);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorResultButtonClick", "Error", ex.Message);
+            }
         }
 
         private void BtnVEP_Click(object sender, EventArgs e)
         {
-            ChangeButtonColor((Button)sender);
-            ShowFrm(Def.FOM_IDX_VEP);
+            try
+            {
+                ChangeButtonColor((Button)sender);
+                ShowFrm(Def.FOM_IDX_VEP);
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorVEPButtonClick", "Error", ex.Message);
+            }
         }
     }
 }

@@ -16,63 +16,63 @@ namespace Ki_ADAS.VEPBench
         public const int DEFAULT_SYNCHRO_SIZE = SYNCHRO_SIZE_PART1 + SYNCHRO_SIZE_PART2;
 
         // 디바이스 타입 인덱스
-        public static int DEVICE_TYPE_FRONT_CAMERA_INDEX = 3;
-        public static int DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX = 51;
-        public static int DEVICE_TYPE_REAR_LEFT_RADAR_INDEX = 53;
-        public static int DEVICE_TYPE_FRONT_RIGHT_RADAR_INDEX = 55;
-        public static int DEVICE_TYPE_FRONT_LEFT_RADAR_INDEX = 57;
+        public const int DEVICE_TYPE_FRONT_CAMERA_INDEX = 3;
+        public const int DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX = 51;
+        public const int DEVICE_TYPE_REAR_LEFT_RADAR_INDEX = 53;
+        public const int DEVICE_TYPE_FRONT_RIGHT_RADAR_INDEX = 55;
+        public const int DEVICE_TYPE_FRONT_LEFT_RADAR_INDEX = 57;
 
         // 동기화 명령 인덱스
-        public static int SYNC_COMMAND_FRONT_CAMERA_INDEX = 4;
-        public static int SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX = 52;
-        public static int SYNC_COMMAND_REAR_LEFT_RADAR_INDEX = 54;
-        public static int SYNC_COMMAND_FRONT_RIGHT_RADAR_INDEX = 56;
-        public static int SYNC_COMMAND_FRONT_LEFT_RADAR_INDEX = 58;
+        public const int SYNC_COMMAND_FRONT_CAMERA_INDEX = 4;
+        public const int SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX = 52;
+        public const int SYNC_COMMAND_REAR_LEFT_RADAR_INDEX = 54;
+        public const int SYNC_COMMAND_FRONT_RIGHT_RADAR_INDEX = 56;
+        public const int SYNC_COMMAND_FRONT_LEFT_RADAR_INDEX = 58;
 
         // 각도값 인덱스 상수
-        private static int FRONT_CAMERA_ANGLE1_INDEX = 110; // Roll
-        private static int FRONT_CAMERA_ANGLE2_INDEX = 111; // Azimuth
-        private static int FRONT_CAMERA_ANGLE3_INDEX = 112; // Elevation
-        private static int REAR_RIGHT_RADAR_ANGLE_INDEX = 115;
-        private static int REAR_LEFT_RADAR_ANGLE_INDEX = 116;
-        private static int FRONT_RIGHT_RADAR_ANGLE_INDEX = 117;
-        private static int FRONT_LEFT_RADAR_ANGLE_INDEX = 118;
+        public const int FRONT_CAMERA_ANGLE1_INDEX = 110; // Roll
+        public const int FRONT_CAMERA_ANGLE2_INDEX = 111; // Azimuth
+        public const int FRONT_CAMERA_ANGLE3_INDEX = 112; // Elevation
+        public const int REAR_RIGHT_RADAR_ANGLE_INDEX = 115;
+        public const int REAR_LEFT_RADAR_ANGLE_INDEX = 116;
+        public const int FRONT_RIGHT_RADAR_ANGLE_INDEX = 117;
+        public const int FRONT_LEFT_RADAR_ANGLE_INDEX = 118;
 
         // Front Camera Send Info 상수
-        public static int FRONT_CAMERA_DISTANCE_INDEX = 15;
-        public static int FRONT_CAMERA_HEIGHT_INDEX = 16;
-        public static int FRONT_CAMERA_INTERDISTANCE_INDEX = 17;
-        public static int FRONT_CAMERA_HTU_INDEX = 29;
-        public static int FRONT_CAMERA_HTL_INDEX = 30;
-        public static int FRONT_CAMERA_TS_INDEX = 31;
-        public static int FRONT_CAMERA_ALLIGNMENTAXEOFFSET_INDEX = 32;
-        public static int FRONT_CAMERA_VV_INDEX = 33;
-        public static int FRONT_CAMERA_STCT_INDEX = 34;
+        public const int FRONT_CAMERA_DISTANCE_INDEX = 15;
+        public const int FRONT_CAMERA_HEIGHT_INDEX = 16;
+        public const int FRONT_CAMERA_INTERDISTANCE_INDEX = 17;
+        public const int FRONT_CAMERA_HTU_INDEX = 29;
+        public const int FRONT_CAMERA_HTL_INDEX = 30;
+        public const int FRONT_CAMERA_TS_INDEX = 31;
+        public const int FRONT_CAMERA_ALLIGNMENTAXEOFFSET_INDEX = 32;
+        public const int FRONT_CAMERA_VV_INDEX = 33;
+        public const int FRONT_CAMERA_STCT_INDEX = 34;
 
         // Rear Radar Send Info 상수
-        public static int REAR_RADAR_LH_XPOSITION_INDEX = 67;
-        public static int REAR_RADAR_LH_YPOSITION_INDEX = 68;
-        public static int REAR_RADAR_LH_ZPOSITION_INDEX = 69;
-        public static int REAR_RADAR_LH_ANGLE_INDEX = 70;
-        public static int REAR_RADAR_RH_XPOSITION_INDEX = 71;
-        public static int REAR_RADAR_RH_YPOSITION_INDEX = 72;
-        public static int REAR_RADAR_RH_ZPOSITION_INDEX = 73;
-        public static int REAR_RADAR_RH_ANGLE_INDEX = 74;
+        public const int REAR_RADAR_LH_XPOSITION_INDEX = 67;
+        public const int REAR_RADAR_LH_YPOSITION_INDEX = 68;
+        public const int REAR_RADAR_LH_ZPOSITION_INDEX = 69;
+        public const int REAR_RADAR_LH_ANGLE_INDEX = 70;
+        public const int REAR_RADAR_RH_XPOSITION_INDEX = 71;
+        public const int REAR_RADAR_RH_YPOSITION_INDEX = 72;
+        public const int REAR_RADAR_RH_ZPOSITION_INDEX = 73;
+        public const int REAR_RADAR_RH_ANGLE_INDEX = 74;
 
         // Front Radar Send Info 상수
-        public static int FRONT_RADAR_LH_XPOSITION_INDEX = 95;
-        public static int FRONT_RADAR_LH_YPOSITION_INDEX = 96;
-        public static int FRONT_RADAR_LH_ZPOSITION_INDEX = 97;
-        public static int FRONT_RADAR_LH_ANGLE_INDEX = 98;
-        public static int FRONT_RADAR_RH_XPOSITION_INDEX = 99;
-        public static int FRONT_RADAR_RH_YPOSITION_INDEX = 100;
-        public static int FRONT_RADAR_RH_ZPOSITION_INDEX = 101;
-        public static int FRONT_RADAR_RH_ANGLE_INDEX = 102;
+        public const int FRONT_RADAR_LH_XPOSITION_INDEX = 95;
+        public const int FRONT_RADAR_LH_YPOSITION_INDEX = 96;
+        public const int FRONT_RADAR_LH_ZPOSITION_INDEX = 97;
+        public const int FRONT_RADAR_LH_ANGLE_INDEX = 98;
+        public const int FRONT_RADAR_RH_XPOSITION_INDEX = 99;
+        public const int FRONT_RADAR_RH_YPOSITION_INDEX = 100;
+        public const int FRONT_RADAR_RH_ZPOSITION_INDEX = 101;
+        public const int FRONT_RADAR_RH_ANGLE_INDEX = 102;
 
         // Try / Retry 여부 인덱스 상수
-        public int TRY_FRONT_CAMERA_INDEX = 89;
-        public int TRY_REAR_RIGHT_RADAR_INDEX = 83;
-        public int TRY_REAR_LEFT_RADAR_INDEX = 82;
+        public const int TRY_FRONT_CAMERA_INDEX = 89;
+        public const int TRY_REAR_RIGHT_RADAR_INDEX = 83;
+        public const int TRY_REAR_LEFT_RADAR_INDEX = 82;
 
         public static VEPBenchSynchroZone Instance
         {
