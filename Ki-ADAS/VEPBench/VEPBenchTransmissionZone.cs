@@ -222,7 +222,7 @@ namespace Ki_ADAS.VEPBench
 
             if (_values == null || !registers.SequenceEqual(_values))
             {
-                _values = (ushort[])registers.Clone();
+                _values = (ushort[])registers.Clone(); // only for value type (no reference type)
                 _isChanged = true;
             }
         }

@@ -45,7 +45,7 @@ namespace Ki_ADAS.VEPBench
         private bool _isChanged;
         public bool IsChanged => _isChanged;
 
-        public ushort Length => (ushort)_values.Length;
+        public ushort Length => 18;
 
         public void ResetChangedState()
         {
@@ -61,11 +61,6 @@ namespace Ki_ADAS.VEPBench
         {
             if (registers == null)
                 throw new ArgumentException("Invalid register array.");
-
-            if (registers.Length != _values.Length)
-            {
-                throw new ArgumentException($"Registers array length ({registers.Length}) does not match expected zone length ({_values.Length}).");
-            }
 
             if (_values == null || !_values.SequenceEqual(registers))
             {
