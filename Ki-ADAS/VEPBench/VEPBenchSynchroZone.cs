@@ -91,7 +91,6 @@ namespace Ki_ADAS.VEPBench
         }
 
         private int[] _values;
-        public int Size => _values.Length;
 
         public int this[int index]
         {
@@ -114,43 +113,43 @@ namespace Ki_ADAS.VEPBench
         public int FrontCameraAngle1
         {
             get => _values.Length > FRONT_CAMERA_ANGLE1_INDEX ? _values[FRONT_CAMERA_ANGLE1_INDEX] / 100 : 0;
-            set => _values[FRONT_CAMERA_ANGLE1_INDEX] = (int)(value * 100);
+            set => _values[FRONT_CAMERA_ANGLE1_INDEX] = value * 100;
         }
 
         public int FrontCameraAngle2
         {
             get => _values.Length > FRONT_CAMERA_ANGLE2_INDEX ? _values[FRONT_CAMERA_ANGLE2_INDEX] / 100 : 0;
-            set => _values[FRONT_CAMERA_ANGLE2_INDEX] = (int)(value * 100);
+            set => _values[FRONT_CAMERA_ANGLE2_INDEX] = value * 100;
         }
 
         public int FrontCameraAngle3
         {
             get => _values.Length > FRONT_CAMERA_ANGLE3_INDEX ? _values[FRONT_CAMERA_ANGLE3_INDEX] / 100 : 0;
-            set => _values[FRONT_CAMERA_ANGLE3_INDEX] = (int)(value * 100);
+            set => _values[FRONT_CAMERA_ANGLE3_INDEX] = value * 100;
         }
 
         public int RearRightRadarAngle
         {
             get => _values.Length > REAR_RIGHT_RADAR_ANGLE_INDEX ? _values[REAR_RIGHT_RADAR_ANGLE_INDEX] / 100 : 0;
-            set => _values[REAR_RIGHT_RADAR_ANGLE_INDEX] = (int)(value * 100);
+            set => _values[REAR_RIGHT_RADAR_ANGLE_INDEX] = value * 100;
         }
 
         public int RearLeftRadarAngle
         {
             get => _values.Length > REAR_LEFT_RADAR_ANGLE_INDEX ? _values[REAR_LEFT_RADAR_ANGLE_INDEX] / 100 : 0;
-            set => _values[REAR_LEFT_RADAR_ANGLE_INDEX] = (int)(value * 100);
+            set => _values[REAR_LEFT_RADAR_ANGLE_INDEX] = value * 100;
         }
 
         public int FrontRightRadarAngle
         {
             get => _values.Length > FRONT_RIGHT_RADAR_ANGLE_INDEX ? _values[FRONT_RIGHT_RADAR_ANGLE_INDEX] / 100 : 0;
-            set => _values[FRONT_RIGHT_RADAR_ANGLE_INDEX] = (int)(value * 100);
+            set => _values[FRONT_RIGHT_RADAR_ANGLE_INDEX] = value * 100;
         }
 
         public int FrontLeftRadarAngle
         {
             get => _values.Length > FRONT_LEFT_RADAR_ANGLE_INDEX ? _values[FRONT_LEFT_RADAR_ANGLE_INDEX] / 100 : 0;
-            set => _values[FRONT_LEFT_RADAR_ANGLE_INDEX] = (int)(value * 100);
+            set => _values[FRONT_LEFT_RADAR_ANGLE_INDEX] = value * 100;
         }
 
         private bool _isChanged;

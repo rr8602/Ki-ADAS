@@ -378,7 +378,8 @@ namespace Ki_ADAS
         {
             try
             {
-                _vepManager.TransmissionZone.ExchStatus = 2; // VEP 서버
+                _vepManager.TransmissionZone.SetValue(VEPBenchTransmissionZone.Offset_ExchStatus, 2); // VEP 서버
+                _client.WriteTransmissionZone();
 
                 // PJI 정보 전송
                 if (Cur_Model != null &&
@@ -389,7 +390,7 @@ namespace Ki_ADAS
                     _vepManager.TransmissionZone.ProcessCode == 1 &&
                     _vepManager.TransmissionZone.SubFctCode == 0)
                 {
-                    _vepManager.TransmissionZone.ExchStatus = VEPBenchTransmissionZone.ExchStatus_Response;
+                    _vepManager.TransmissionZone.SetValue(VEPBenchTransmissionZone.Offset_ExchStatus, VEPBenchTransmissionZone.ExchStatus_Response);
 
                     if (Cur_Info != null && !string.IsNullOrEmpty(Cur_Info.PJI))
                     {
@@ -403,9 +404,9 @@ namespace Ki_ADAS
                         _vepManager.ReceptionZone.Data = new ushort[0];
                     }
 
-                    _vepManager.StatusZone.VepStatus = 2; // VEP 서버
-                    _vepManager.ReceptionZone.ExchStatus = VEPBenchReceptionZone.ExchStatus_Ready;
-                    _vepManager.StatusZone.StartCycle = 0;
+                    _vepManager.StatusZone.SetValue(VEPBenchStatusZone.Offset_VepStatus, 2); // VEP 서버
+                    _vepManager.ReceptionZone.SetValue(VEPBenchReceptionZone.Offset_ExchStatus, VEPBenchReceptionZone.ExchStatus_Ready);
+                    _vepManager.StatusZone.SetValue(VEPBenchStatusZone.Offset_StartCycle, 0);
 
                     _client.WriteTransmissionZone();
                     _client.WriteReceptionZone();
