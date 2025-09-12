@@ -174,7 +174,7 @@ namespace Ki_ADAS.VEPBench
             if (registers == null || registers.Length < ZoneSize)
                 throw new ArgumentException("Invalid register array.");
 
-            if (!_values.SequenceEqual(registers))
+            if (_values == null || !_values.SequenceEqual(registers))
             {
                 _values = (ushort[])registers.Clone();
                 _isChanged = true;
@@ -183,7 +183,9 @@ namespace Ki_ADAS.VEPBench
 
         public ushort[] ToRegisters()
         {
-            return _values;
+            ushort[] result = new ushort[_values.Length];
+            Array.Copy(_values, result, _values.Length);
+            return result;
         }
 
         public string GetVepStatusString()
