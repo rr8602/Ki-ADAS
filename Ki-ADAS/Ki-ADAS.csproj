@@ -230,6 +230,17 @@
     <Content Include="ADAS.ico" />
     <Content Include="K-Logo.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Language\english.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Language\korean.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Language\portuguese.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

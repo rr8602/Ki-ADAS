@@ -17,7 +17,7 @@ namespace Ki_ADAS.VEPBench
         public const int Offset_BenchCycleInterruption = 3;
         public const int Offset_BenchCycleEnd = 4;
         public const int Offset_StartCycle = 5;
-        public const int ZoneSize = 6;
+        public static readonly int ZoneSize = Offset_StartCycle + 1;
 
         public const ushort VepStatus_Undefined = 0;
         public const ushort VepStatus_Waiting = 1;

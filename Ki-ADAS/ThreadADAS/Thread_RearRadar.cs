@@ -49,7 +49,7 @@ namespace Ki_ADAS
                 if (_rearRadarThread != null && _rearRadarThread.IsAlive)
                 {
                     StopThread();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10);
                 }
 
                 m_bRun = true;
@@ -83,6 +83,11 @@ namespace Ki_ADAS
             }
         }
 
+        public bool IsThreadDone()
+        {
+            return m_bRun;
+        }
+
         public void SetRRState(int state)
         {
             m_rearRadarState = state;
@@ -96,7 +101,7 @@ namespace Ki_ADAS
 
                 while (m_bRun) 
                 {
-                    Thread.Sleep(50);
+                    Thread.Sleep(10);
 
                     if (m_rearRadarState == TS.STEP_RRADAR_SEND_INFO)
                     {
@@ -209,9 +214,13 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (readRhData[0] == 1 && readLhData[0] == 1)
+                while (true)
                 {
-                    SetRRState(TS.STEP_RRADAR_TARGET_MOVE);
+                    if (readRhData[0] == 1 && readLhData[0] == 1)
+                    {
+                        SetRRState(TS.STEP_RRADAR_TARGET_MOVE);
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -231,7 +240,8 @@ namespace Ki_ADAS
                         SetRRState(TS.STEP_RRADAR_TARGET_MOVE_COMPLETE);
                         break;
                     }
-                    Thread.Sleep(100);
+
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception ex)
@@ -270,9 +280,13 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (readRhData[0] == 20 && readLhData[0] == 20) // OK
+                while (true)
                 {
-                    SetRRState(TS.STEP_RRADAR_READ_ANGLE);
+                    if (readRhData[0] == 20 && readLhData[0] == 20) // OK
+                    {
+                        SetRRState(TS.STEP_RRADAR_READ_ANGLE);
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -315,7 +329,8 @@ namespace Ki_ADAS
                         SetRRState(TS.STEP_RRADAR_FINISH);
                         break;
                     }
-                    Thread.Sleep(100);
+
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception ex)

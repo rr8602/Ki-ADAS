@@ -19,11 +19,9 @@ namespace Ki_ADAS
     public partial class Frm_Main : Form
     {
         public Frm_Mainfrm m_frmParent = null;
-        private Frm_VEP _vep;
         private SettingConfigDb _db;
         private ModelRepository _modelRepository;
         private InfoRepository _infoRepository;
-        private Frm_Config _frmConfig;
         private VEPBenchClient _vepBenchClient;
         private IniFile _iniFile;
         private Thread_Main _mainThread;
@@ -32,6 +30,12 @@ namespace Ki_ADAS
         private const string CONFIG_SECTION = "Network";
         private const string VEP_IP_KEY = "VepIp";
         private const string VEP_PORT = "VepPort";
+
+        public event EventHandler<VEPBenchSynchroZone> SynchroZoneChanged
+        {
+            add { _vepBenchClient.SynchroZoneChanged += value; }
+            remove { _vepBenchClient.SynchroZoneChanged -= value; }
+        }
 
         public Frm_Main(SettingConfigDb dbInstance, VEPBenchClient client)
         {
@@ -52,7 +56,6 @@ namespace Ki_ADAS
 
             _modelRepository = new ModelRepository(_db);
             _infoRepository = new InfoRepository(_db);
-            _frmConfig = new Frm_Config(_db);
 
             BtnStop.Enabled = false;
         }
@@ -189,6 +192,7 @@ namespace Ki_ADAS
                 }
 
                 bool isSaved = _infoRepository.SaveVehicleInfo(newVehicle);
+
                 if (!isSaved)
                 {
                     MsgBox.Error("FailedToSaveVehicleInformation", "DBError");

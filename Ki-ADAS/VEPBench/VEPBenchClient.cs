@@ -622,23 +622,5 @@ namespace Ki_ADAS
         {
             Console.WriteLine($"[Modbus Client] {DateTime.Now:HH:mm:ss.fff} - {message}");
         }
-
-        // Modbus 서버 테스트 - 단순히 연결 확인
-        public bool TestConnection()
-        {
-            try
-            {
-                CheckConnection();
-                // 단순히 레지스터 하나를 읽어서 연결이 잘 되는지 확인
-                _modbusMaster.ReadHoldingRegisters(1, 0, 1);
-                LogMessage("Modbus 서버 연결 테스트 성공");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                LogMessage($"Modbus 서버 연결 테스트 실패: {ex.Message}");
-                return false;
-            }
-        }
     }
 }

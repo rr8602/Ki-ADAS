@@ -1,4 +1,5 @@
 ﻿using Ki_ADAS.DB;
+using Ki_ADAS.VEPBench;
 
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Ki_ADAS
         private ModelRepository modelRepository;
         private Frm_Main main;
         private static Frm_Operator _instance;
+        private VEPBenchDataManager _vepManager = GlobalVal.Instance._VEP;
         private Point mousePoint; // 현재 마우스 포인터의 좌표저장 변수 선언
 
         private Timer inspectionTimer;
@@ -73,19 +75,6 @@ namespace Ki_ADAS
             }
         }
 
-        public static Frm_Operator Instance
-        {
-            get
-            {
-                if (_instance == null || _instance.IsDisposed)
-                {
-                    _instance = new Frm_Operator();
-                }
-
-                return _instance;
-            }
-        }
-
         public Frm_Operator()
         {
             InitializeComponent();
@@ -98,6 +87,17 @@ namespace Ki_ADAS
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             this.UpdateStyles();
             MoveFormToSecondMonitor();
+        }
+
+        public Frm_Operator(Frm_Main mainForm) : this()
+        {
+            this.main = mainForm;
+
+            if (this.main != null)
+            {
+                this.main.SynchroZoneChanged += angle_SynchroZoneChanged;
+                ClearLog();
+            }
         }
 
         private void MoveFormToSecondMonitor()
@@ -135,6 +135,11 @@ namespace Ki_ADAS
         {
             try
             {
+                if (main != null)
+                {
+                    main.SynchroZoneChanged -= angle_SynchroZoneChanged;
+                }
+
                 if (e.CloseReason == CloseReason.UserClosing)
                 {
                     e.Cancel = true;
@@ -148,31 +153,18 @@ namespace Ki_ADAS
         }
 
         // 상태 업데이트
-        public void UpdateStatus(string status, Color color)
-        {
-            try
-            {
-                if (this.InvokeRequired)
-                {
-                    this.Invoke(new Action<string, Color>(UpdateStatus), status, color);
-                    
-                    return;
-                }
-
-              //  lblStatus.Text = status;
-                //lblStatus.ForeColor = color;
-            }
-            catch (Exception ex)
-            {
-                MsgBox.ErrorWithFormat("ErrorUpdatingStatus", "Error", ex.Message);
-            }
-        }
-
         public void UpdateTestStatus(Model selectedModel)
         {
             try
             {
                 if (selectedModel == null) return;
+
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action<Model>(UpdateTestStatus));
+
+                    return;
+                }
 
                 Color activeColor = Color.Yellow;
                 Color defaultColor = Color.Gray;
@@ -274,8 +266,8 @@ namespace Ki_ADAS
                     return;
                 }
 
-                //lvProcessLog.Items.Clear();
-               // progressBar.Value = 0;
+                lbl_message.Text = string.Empty;
+                //progressBar.Value = 0;
             }
             catch (Exception ex)
             {
@@ -311,17 +303,17 @@ namespace Ki_ADAS
             }
         }
 
-        public void UpdateStepDescription(string description)
+        public void UpdateStepDescription(string languageKey)
         {
             try
             {
                 if (this.InvokeRequired)
                 {
-                    this.Invoke(new Action<string>(UpdateStepDescription), description);
+                    this.Invoke(new Action<string>(UpdateStepDescription), languageKey);
                     return;
                 }
 
-                lbl_message.Text = description;
+                lbl_message.Text = LanguageManager.GetString(languageKey);
             }
             catch (Exception ex)
             {
@@ -329,21 +321,26 @@ namespace Ki_ADAS
             }
         }
 
-        /*public void UpdateADASResult(ADASProcess.ADASResult result)
+        private void angle_SynchroZoneChanged(object sender, VEPBenchSynchroZone e)
+        {
+            UpdateAngleResult();
+        }
+
+        public void UpdateAngleResult()
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(new Action<ADASProcess.ADASResult>(UpdateADASResult), result);
+                this.Invoke(new Action(UpdateAngleResult));
                 return;
             }
 
-            lbl_roll.Text = result.Roll.ToString("F2");
-            lbl_azimuth.Text = result.Azimuth.ToString("F2");
-            lbl_elevation.Text = result.Elevation.ToString("F2");
-            lbl_FLeft.Text = ""; // 아직 Front 정의 안함
-            lbl_FRight.Text = "";
-            lbl_RLeft.Text = result.LeftRearRadar.ToString("F2");
-            lbl_RRight.Text = result.RightRearRadar.ToString("F2");
-        }*/
+            lbl_roll.Text = _vepManager.SynchroZone.FrontCameraAngle1.ToString("F2");
+            lbl_azimuth.Text = _vepManager.SynchroZone.FrontCameraAngle2.ToString("F2");
+            lbl_elevation.Text = _vepManager.SynchroZone.FrontCameraAngle3.ToString("F2");
+            lbl_FLeft.Text = _vepManager.SynchroZone.FrontLeftRadarAngle.ToString("F2");
+            lbl_FRight.Text = _vepManager.SynchroZone.FrontRightRadarAngle.ToString("F2");
+            lbl_RLeft.Text = _vepManager.SynchroZone.RearLeftRadarAngle.ToString("F2");
+            lbl_RRight.Text = _vepManager.SynchroZone.RearRightRadarAngle.ToString("F2");
+        }
     }
 }

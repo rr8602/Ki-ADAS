@@ -47,7 +47,7 @@ namespace Ki_ADAS
                 if (_frontRadarThread != null && _frontRadarThread.IsAlive)
                 {
                     StopThread();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10);
                 }
 
                 m_bRun = true;
@@ -79,6 +79,11 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorStoppingFrontRadarThread", "Error", ex.Message);
             }
+        }
+
+        public bool IsThreadDone()
+        {
+            return m_bRun;
         }
 
         public void SetState(int state)
@@ -207,9 +212,13 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (readRhData[0] == 1 && readLhData[0] == 1)
+                while (true)
                 {
-                    SetState(TS.STEP_FRADAR_TARGET_MOVE);
+                    if (readRhData[0] == 1 && readLhData[0] == 1)
+                    {
+                        SetState(TS.STEP_FRADAR_TARGET_MOVE);
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -230,7 +239,7 @@ namespace Ki_ADAS
                         break;
                     }
 
-                    Thread.Sleep(100);
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception ex)
@@ -269,9 +278,13 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (readRhData[0] == 20 && readLhData[0] == 20) // OK
+                while (true)
                 {
-                    SetState(TS.STEP_FRADAR_READ_ANGLE);
+                    if (readRhData[0] == 20 && readLhData[0] == 20) // OK
+                    {
+                        SetState(TS.STEP_FRADAR_READ_ANGLE);
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -315,7 +328,7 @@ namespace Ki_ADAS
                         break;
                     }
 
-                    Thread.Sleep(100);
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception ex)

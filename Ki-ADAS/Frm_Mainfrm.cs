@@ -93,7 +93,7 @@ namespace Ki_ADAS
                 {
                     if (User_Monitor == null || User_Monitor.Text == "")
                     {
-                        User_Monitor = new Frm_Operator();
+                        User_Monitor = new Frm_Operator(m_frmMain);
                         User_Monitor.Show();
                     }
                 }

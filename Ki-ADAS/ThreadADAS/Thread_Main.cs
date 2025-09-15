@@ -79,7 +79,7 @@ namespace Ki_ADAS
                 if (_testThread != null)
                 {
                     StopThread();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                 }
 
 
@@ -200,12 +200,12 @@ namespace Ki_ADAS
                     else if (m_nState == TS.STEP_MAIN_START_EACH_THREAD)
                     {
                         _DoMainStartEachThread();
-                        _main.AddLogMessage("[Main] Main Start Each Thread");
+                        _main.AddLogMessage("[Main] Starting Test Threads...");
                     }
                     else if (m_nState == TS.STEP_MAIN_WAIT_TEST_COMPLETE)
                     {
                         _DoMainWaitTestComplete();
-                        _main.AddLogMessage("[Main] Main Wait Test Complete");
+                        _main.AddLogMessage("[Main] All Test Threads Complete");
                     }
                     else if (m_nState == TS.STEP_MAIN_CENTERING_HOME)
                     {
@@ -269,6 +269,8 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescScanBarcode");
+
                 while (true)
                 {
                     if (CheckLoopExit())
@@ -278,6 +280,7 @@ namespace Ki_ADAS
                     {
                         break;
                     }
+
                     Thread.Sleep(100);
                 }
 
@@ -305,14 +308,17 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescMoveVehicle");
+
                 while (true)
                 {
                     if (CheckLoopExit())
                         break;
 
+                    Thread.Sleep(100);
+
                     //차량 진입 시
                     //if (PLC.DI.FDetect &&  PLC.DI.RDetect) break;
-                    Thread.Sleep(100);
                 }
 
                 SetState(TS.STEP_MAIN_PRESS_START_BUTTON);
@@ -326,15 +332,22 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescPressStart");
+
                 while (true)
                 {
                     if (CheckLoopExit())
+                    {
+                        _main.m_frmParent.User_Monitor.StartInspectionTimer();
+                        _result.StartTime = DateTime.Now;
                         break;
+                    }
 
+                    Thread.Sleep(100);
                     // 시작버튼 클릭시
                     // if (PLC.DI.PressStart) break;
-                    Thread.Sleep(100);
                 }
+
                 SetState(TS.STEP_MAIN_CENTERING_ON);
             }
             catch (Exception ex)
@@ -347,6 +360,8 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescCentering");
+
                 // 루프 들어가기전에 센터링 신호 전송
                 // PLC.DO.CenterOn = true ;
                 while (true)
@@ -354,10 +369,12 @@ namespace Ki_ADAS
                     if (CheckLoopExit())
                         break;
 
+                    Thread.Sleep(100);
+
                     // 시작버튼 클릭시
                     //if (PLC.DI.CenteringOn) break;
-                    Thread.Sleep(100);
                 }
+
                 SetState(TS.STEP_MAIN_PEV_START_CYCLE);
             }
             catch (Exception ex)
@@ -370,6 +387,7 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescCommVep");
                 _vepManager.StatusZone.StartCycle = 1;
                 _client.WriteStatusZone();
 
@@ -385,7 +403,8 @@ namespace Ki_ADAS
         {
             try
             {
-                _vepManager.TransmissionZone.SetValue(_vepManager.TransmissionZone.ExchStatus, 2); // VEP 서버
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescSendPji");
+                _vepManager.TransmissionZone.SetValue(VEPBenchTransmissionZone.Offset_ExchStatus, 2); // VEP 서버
                 _client.WriteTransmissionZone();
 
                 // PJI 정보 전송
@@ -397,13 +416,20 @@ namespace Ki_ADAS
                     _vepManager.TransmissionZone.ProcessCode == 1 &&
                     _vepManager.TransmissionZone.SubFctCode == 0)
                 {
-                    _vepManager.TransmissionZone.SetValue(_vepManager.TransmissionZone.ExchStatus, VEPBenchTransmissionZone.ExchStatus_Response);
+                    _vepManager.TransmissionZone.SetValue(VEPBenchTransmissionZone.Offset_ExchStatus, VEPBenchTransmissionZone.ExchStatus_Response);
 
                     if (Cur_Info != null && !string.IsNullOrEmpty(Cur_Info.PJI))
                     {
-                        byte[] bytes = Encoding.Unicode.GetBytes(Cur_Info.PJI);
+                        _vepManager.ReceptionZone.SetValue(VEPBenchReceptionZone.Offset_FctAndPCNum, 0x0106); // FCT 6, PC 1
+                        _vepManager.ReceptionZone.SetValue(VEPBenchReceptionZone.Offset_ProcessAndSubFct, 0x0001); // Process 1, SubFct 0
+                        _vepManager.ReceptionZone.SetValue(VEPBenchReceptionZone.Offset_DataStart, 0x0701);
+
+                        byte[] bytes = Encoding.ASCII.GetBytes(Cur_Info.PJI);
                         ushort[] pjiData = new ushort[(bytes.Length + 1) / 2];
-                        Buffer.BlockCopy(bytes, 0, pjiData, 0, bytes.Length);
+
+                        for (int i = 0; i < bytes.Length; i += 2)
+                            pjiData[i / 2] = (ushort)(bytes[i] | ((i + 1 < bytes.Length ? bytes[i + 1] : 0) << 8));
+
                         _vepManager.ReceptionZone.Data = pjiData;
                     }
                     else
@@ -411,9 +437,9 @@ namespace Ki_ADAS
                         _vepManager.ReceptionZone.Data = new ushort[0];
                     }
 
-                    _vepManager.StatusZone.SetValue(_vepManager.StatusZone.VepStatus, 2); // VEP 서버
-                    _vepManager.ReceptionZone.SetValue(_vepManager.ReceptionZone.ExchStatus, VEPBenchReceptionZone.ExchStatus_Ready);
-                    _vepManager.StatusZone.SetValue(_vepManager.StatusZone.StartCycle, 0);
+                    _vepManager.StatusZone.SetValue(VEPBenchStatusZone.Offset_VepStatus, 2); // VEP 서버
+                    _vepManager.ReceptionZone.SetValue(VEPBenchReceptionZone.Offset_ExchStatus, VEPBenchReceptionZone.ExchStatus_Ready);
+                    _vepManager.StatusZone.SetValue(VEPBenchStatusZone.Offset_StartCycle, 0);
 
                     _client.WriteTransmissionZone();
                     _client.WriteReceptionZone();
@@ -433,9 +459,17 @@ namespace Ki_ADAS
         {
             try
             {
-                if (_vepManager.StatusZone.VepStatus == 2)
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescVepReady");
+
+                while (true)
                 {
-                    SetState(TS.STEP_MAIN_START_EACH_THREAD);
+                    if (_vepManager.StatusZone.VepStatus == 2)
+                    {
+                        SetState(TS.STEP_MAIN_START_EACH_THREAD);
+                        break;
+                    }
+
+                    Thread.Sleep(100);
                 }
             }
             catch (Exception ex)
@@ -448,11 +482,27 @@ namespace Ki_ADAS
         {
             try
             {
-                if (_frCam.StartThread() == 1 && _frontRadar.StartThread() == 1 && _rearRadar.StartThread() == 1)
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescStartSensorTest");
+
+                while (true)
                 {
-                    _main.m_frmParent.User_Monitor.StartInspectionTimer();
-                    _result.StartTime = DateTime.Now;
+                    if (Cur_Model.FC_IsTest == true)
+                    {
+                        _frCam.StartThread();
+                    }
+
+                    if (Cur_Model.F_IsTest == true)
+                    {
+                        _frontRadar.StartThread();
+                    }
+
+                    if (Cur_Model.R_IsTest == true)
+                    {
+                        _rearRadar.StartThread();
+                    }
+
                     SetState(TS.STEP_MAIN_WAIT_TEST_COMPLETE);
+                    break;
                 }
             }
             catch (Exception ex)
@@ -465,17 +515,27 @@ namespace Ki_ADAS
         {
             try
             {
+                Thread.Sleep(5000); // 각 검사 쓰레드 종료될 때까지 대기
+
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescWaitTestComplete");
+
+                bool fcDone = !Cur_Model.FC_IsTest || (Cur_Model.FC_IsTest && _frCam.IsThreadDone());
+                bool frDone = !Cur_Model.F_IsTest || (Cur_Model.F_IsTest && _frontRadar.IsThreadDone());
+                bool rrDone = !Cur_Model.R_IsTest || (Cur_Model.R_IsTest && _rearRadar.IsThreadDone());
+
                 while (true)
                 {
-                    if (CheckLoopExit())
+                    if (fcDone || frDone || rrDone)
+                    {
+                        _main.m_frmParent.User_Monitor.StopInspectionTimer();
+                        _result.EndTime = DateTime.Now;
+                        SetState(TS.STEP_MAIN_CENTERING_HOME);
+
                         break;
+                    }
 
                     Thread.Sleep(100);
                 }
-
-                _main.m_frmParent.User_Monitor.StopInspectionTimer();
-                _result.EndTime = DateTime.Now;
-                SetState(TS.STEP_MAIN_CENTERING_HOME);
             }
             catch (Exception ex)
             {
@@ -487,6 +547,8 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescCenteringHome");
+
                 while (true)
                 {
                     if (CheckLoopExit())
@@ -507,6 +569,8 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescWaitTargetHome");
+
                 while (true)
                 {
                     if (CheckLoopExit())
@@ -527,6 +591,8 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescSaveResult");
+
                 Result result = CreateResultInfo();
                 bool isSavedToDb = _resultRepository.SaveResult(result);
 
@@ -544,7 +610,15 @@ namespace Ki_ADAS
 
                 try
                 {
-                    XElement newResult = new XElement("TestResults",
+                    if (_vepManager.SynchroZone.FrontCameraAngle1 != 0 &&
+                        _vepManager.SynchroZone.FrontCameraAngle2 != 0 &&
+                        _vepManager.SynchroZone.FrontCameraAngle3 != 0 &&
+                        _vepManager.SynchroZone.RearRightRadarAngle != 0 &&
+                        _vepManager.SynchroZone.RearLeftRadarAngle != 0 &&
+                        _vepManager.SynchroZone.FrontRightRadarAngle != 0 &&
+                        _vepManager.SynchroZone.FrontLeftRadarAngle != 0)
+                    {
+                        XElement newResult = new XElement("TestResults",
                         new XElement("AcceptNo", result.AcceptNo),
                         new XElement("PJI", result.PJI),
                         new XElement("Model", result.Model),
@@ -562,21 +636,26 @@ namespace Ki_ADAS
                         new XElement("Angle-FrontLeft", _vepManager.SynchroZone.FrontLeftRadarAngle)
                     );
 
-                    XElement root;
+                        XElement root;
 
-                    if (File.Exists(xmlFilePath))
-                    {
-                        root = XElement.Load(xmlFilePath);
-                        root.Add(newResult);
+                        if (File.Exists(xmlFilePath))
+                        {
+                            root = XElement.Load(xmlFilePath);
+                            root.Add(newResult);
+                        }
+                        else
+                        {
+                            root = new XElement("TestResults", newResult);
+                        }
+
+                        root.Save(xmlFilePath);
+
+                        MsgBox.Info("TestResultsSavedAsXML");
                     }
                     else
                     {
-                        root = new XElement("TestResults", newResult);
+                        MsgBox.Warn("AngleValueZeroWarning");
                     }
-
-                    root.Save(xmlFilePath);
-
-                    MsgBox.Info("TestResultsSavedAsXML");
                 }
                 catch (Exception ex)
                 {
@@ -595,6 +674,7 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescPrintTicket");
                 SetState(TS.STEP_MAIN_GRET_COMM);
             }
             catch (Exception ex)
@@ -619,10 +699,12 @@ namespace Ki_ADAS
         {
             try
             {
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescMoveOut");
                 while (true)
                 {
                     if (CheckLoopExit())
                         break;
+
                     Thread.Sleep(100);
                 }
 
@@ -638,8 +720,8 @@ namespace Ki_ADAS
         {
             try
             {
-                // 사이클 종료시 처리 하는 함수
-                Thread.Sleep(10);
+                _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFinishCycle");
+                Thread.Sleep(100);
                 SetState(TS.STEP_MAIN_WAIT);
             }
             catch (Exception ex)

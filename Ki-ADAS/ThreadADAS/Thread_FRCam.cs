@@ -48,7 +48,7 @@ namespace Ki_ADAS
                 if (_frcamThread != null && _frcamThread.IsAlive)
                 {
                     StopThread();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10);
                 }
 
                 m_bRun = true;
@@ -82,6 +82,11 @@ namespace Ki_ADAS
             }
         }
 
+        public bool IsThreadDone()
+        {
+            return m_bRun;
+        }
+
         public void SetState(int state)
         {
             m_frcState = state;
@@ -95,7 +100,7 @@ namespace Ki_ADAS
 
                 while (m_bRun) 
                 {
-                    Thread.Sleep(50);
+                    Thread.Sleep(10);
 
                     if (m_frcState == TS.STEP_CAM_SEND_INFO)
                     {
@@ -106,39 +111,39 @@ namespace Ki_ADAS
                     else if (m_frcState == TS.STEP_CAM_CHECK_OPTION)
                     {
                         _DoCheckOption();
-                        _main.AddLogMessage("[FrontCamera] Check Option");
+                        _main.AddLogMessage("[FRCam] Check Option");
                     }
                     else if (m_frcState == TS.STEP_CAM_TARGET_MOVE)
                     {
                         _DoTargetMove();
-                        _main.AddLogMessage("[FrontCamera] Target Move");
+                        _main.AddLogMessage("[FRCam] Target Move");
                     }
                     else if (m_frcState == TS.STEP_CAM_TARGET_MOVE_COMPLETE)
                     {
                         _DoTargetMoveComplete();
-                        _main.AddLogMessage("[FrontCamera] Target Move Completed");
+                        _main.AddLogMessage("[FRCam] Target Move Completed");
                         SetState(TS.STEP_CAM_WAIT_SYNC3);
                     }
                     else if (m_frcState == TS.STEP_CAM_WAIT_SYNC3)
                     {
                         _DoWaitSync3();
-                        _main.AddLogMessage("[FrontCamera] WaitSync3");
+                        _main.AddLogMessage("[FRCam] WaitSync3");
                     }
                     else if (m_frcState == TS.STEP_CAM_READ_ANGLE)
                     {
                         _DoReadAngle();
-                        _main.AddLogMessage("[FrontCamera] ReadAngle");
+                        _main.AddLogMessage("[FRCam] ReadAngle");
                         SetState(TS.STEP_CAM_TARGET_HOME);
                     }
                     else if (m_frcState == TS.STEP_CAM_TARGET_HOME)
                     {
                         _DoTargetHome();
-                        _main.AddLogMessage("[FrontCamera] TargetHome");
+                        _main.AddLogMessage("[FRCam] TargetHome");
                     }
                     else if (m_frcState == TS.STEP_CAM_FINISH)
                     {
                         _DoFinish();
-                        _main.AddLogMessage("[FrontCamera] Finish");
+                        _main.AddLogMessage("[FRCam] Finish");
                         m_bRun = false;
                     }
                 }
@@ -206,9 +211,13 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (readData[0] == 1)
+                while (true)
                 {
-                    SetState(TS.STEP_CAM_TARGET_MOVE);
+                    if (readData[0] == 1)
+                    {
+                        SetState(TS.STEP_CAM_TARGET_MOVE);
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -228,7 +237,8 @@ namespace Ki_ADAS
                         SetState(TS.STEP_CAM_TARGET_MOVE_COMPLETE);
                         break;
                     }
-                    Thread.Sleep(100);
+
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception ex)
@@ -264,9 +274,13 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (readData[0] == 20) // OK
+                while (true)
                 {
-                    SetState(TS.STEP_CAM_READ_ANGLE);
+                    if (readData[0] == 20) // OK
+                    {
+                        SetState(TS.STEP_CAM_READ_ANGLE);
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -310,7 +324,8 @@ namespace Ki_ADAS
                         SetState(TS.STEP_CAM_FINISH);
                         break;
                     }
-                    Thread.Sleep(100);
+
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception ex)
