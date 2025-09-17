@@ -157,6 +157,7 @@ namespace Ki_ADAS
 
         private void _DoSendInfo()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarSendInfo");
             try
             {
                 Model modelInfo = null;
@@ -200,6 +201,7 @@ namespace Ki_ADAS
 
         private void _DoCheckOption()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarCheckOption");
             _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 1); // VEP 서버
             _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_REAR_LEFT_RADAR_INDEX, 1);  // VEP 서버
             _client.WriteSynchroZone();
@@ -231,6 +233,8 @@ namespace Ki_ADAS
 
         private void _DoTargetMove()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarTargetMove");
+
             try
             {
                 while (true)
@@ -252,6 +256,8 @@ namespace Ki_ADAS
 
         private void _DoTargetMoveComplete()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarTargetMoveComplete");
+
             try
             {
                 _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_REAR_RIGHT_RADAR_INDEX, 1);
@@ -270,6 +276,8 @@ namespace Ki_ADAS
 
         private void _DoWaitSync()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarWaitSync");
+
             try
             {
                 ushort[] readRhData = _client.ReadSynchroZone(VEPBenchSynchroZone.DEVICE_TYPE_REAR_RIGHT_RADAR_INDEX, 1);
@@ -297,6 +305,8 @@ namespace Ki_ADAS
 
         private void _DoReadAngle()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarReadAngle");
+
             try
             {
                 ushort[] angleData = _client.ReadSynchroZone(_vepManager.SynchroZone.RearRightRadarAngle, 2);
@@ -320,6 +330,8 @@ namespace Ki_ADAS
 
         private void _DoTargetHome()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarTargetHome");
+
             try
             {
                 while (true)
@@ -341,6 +353,8 @@ namespace Ki_ADAS
 
         private void _DoFinish()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarFinish");
+
             try
             {
                 // 완료 처리

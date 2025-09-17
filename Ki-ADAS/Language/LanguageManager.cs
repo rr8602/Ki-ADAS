@@ -61,6 +61,7 @@ namespace Ki_ADAS
             string languageFileName = language.ToString().ToLower() + ".ini";
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Language", languageFileName);
             string directoryPath = Path.GetDirectoryName(filePath);
+
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);

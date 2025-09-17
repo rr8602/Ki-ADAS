@@ -1,8 +1,9 @@
-﻿using Ki_ADAS.DB;
+using Ki_ADAS.DB;
 using Ki_ADAS.VEPBench;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -250,6 +251,7 @@ namespace Ki_ADAS
             }
 
         }
+
         private void _DoMainInitial()
         {
             try
@@ -265,6 +267,7 @@ namespace Ki_ADAS
                 MsgBox.ErrorWithFormat("ErrorInitializingMainVariables", "Error", ex.Message);
             }
         }
+
         private void _DoMainBarcodeWait()
         {
             try
@@ -304,6 +307,7 @@ namespace Ki_ADAS
                 MsgBox.ErrorWithFormat("ErrorWaitingForBarcode", "Error", ex.Message);
             }
         }
+
         private void _DoMainCheck_Detect()
         {
             try
@@ -589,84 +593,326 @@ namespace Ki_ADAS
 
         private void _DoMainDataSave()
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             try
             {
                 _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescSaveResult");
 
+                // DB에 결과 저장
                 Result result = CreateResultInfo();
                 bool isSavedToDb = _resultRepository.SaveResult(result);
 
                 if (isSavedToDb)
                 {
-                    MsgBox.Info("TestResultsSavedToDatabase");
+                    _main.AddLogMessage("[Main] Test results saved to database.");
                 }
                 else
                 {
-                    MsgBox.Error("FailedToSaveTestResultsToDatabase");
+                    _main.AddLogMessage("[Main] Failed to save test results to database.");
                 }
 
-                string xmlFileName = $"test_result_{DateTime.Now.ToString("yyyyMMdd")}.xml";
-                string xmlFilePath = Path.Combine(Application.StartupPath, xmlFileName);
-
-                try
+                // XML 파일 생성
+                if (string.IsNullOrEmpty(result.AcceptNo) || Cur_Model == null)
                 {
-                    if (_vepManager.SynchroZone.FrontCameraAngle1 != 0 &&
-                        _vepManager.SynchroZone.FrontCameraAngle2 != 0 &&
-                        _vepManager.SynchroZone.FrontCameraAngle3 != 0 &&
-                        _vepManager.SynchroZone.RearRightRadarAngle != 0 &&
-                        _vepManager.SynchroZone.RearLeftRadarAngle != 0 &&
-                        _vepManager.SynchroZone.FrontRightRadarAngle != 0 &&
-                        _vepManager.SynchroZone.FrontLeftRadarAngle != 0)
+                    _main.AddLogMessage("[Main] VIN or Model is empty, skipping XML save.");
+                    SetState(TS.STEP_MAIN_TICKET_PRINT);
+                    return;
+                }
+
+                string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string xmlFileName = $"{timestamp}-{result.PJI}-1.xml";
+                string sPath = Path.Combine(Application.StartupPath, xmlFileName);
+
+                using (System.Xml.XmlTextWriter textWriter = new System.Xml.XmlTextWriter(sPath, Encoding.UTF8))
+                {
+                    textWriter.Formatting = System.Xml.Formatting.Indented;
+                    textWriter.WriteStartDocument();
+
+                    textWriter.WriteStartElement("STATION_SETTING");
+
+                    textWriter.WriteStartElement("DataModel");
+                    textWriter.WriteAttributeString("version", "1.2.B");
+                    textWriter.WriteEndElement();
+
+                    textWriter.WriteStartElement("FileFormat");
+                    textWriter.WriteAttributeString("version", "1.2.B");
+                    textWriter.WriteEndElement();
+
+                    textWriter.WriteElementString("MainPart_ID", result.AcceptNo);
+                    textWriter.WriteElementString("Site", "UGB");
+                    textWriter.WriteElementString("TopStartCyclePart", "true");
+                    textWriter.WriteElementString("TopPart", "true");
+
+                    textWriter.WriteStartElement("ADASCalibrationProcessType");
+
+                    bool allSensorsOk = Cur_Model.FC_IsTest ? result.FC_IsOk : true && Cur_Model.F_IsTest ? result.FR_IsOk : true && Cur_Model.R_IsTest ? result.RR_IsOk : true;
+                    textWriter.WriteElementString("VerdictOK", allSensorsOk.ToString().ToLower());
+                    textWriter.WriteElementString("BenchNumber", "2");
+                    string cycleTime = (_result.EndTime - _result.StartTime).TotalSeconds.ToString("F6");
+                    textWriter.WriteElementString("CycleTime", cycleTime);
+
+                    textWriter.WriteStartElement("ADASSensorToolTypesList");
+
+                    // FRC - FRONT CAMERA
+                    textWriter.WriteStartElement("ADASSensorToolType");
+                    textWriter.WriteAttributeString("ADASSensorType", "CAM");
+                    textWriter.WriteAttributeString("Name", "FRC");
+                    textWriter.WriteAttributeString("Description", "FRONT CAMERA");
+                    textWriter.WriteAttributeString("LateralPositionType", "CENTRAL");
+                    textWriter.WriteAttributeString("LongitudinalPositionType", "FRONT");
+                    textWriter.WriteElementString("VerdictOK", Cur_Model.FC_IsTest ? result.FC_IsOk.ToString().ToLower() : "false");
+                    textWriter.WriteElementString("IsPresent", Cur_Model.FC_IsTest.ToString().ToLower());
+                    textWriter.WriteElementString("FrictionResult", null);
+                    textWriter.WriteElementString("FinalFrictionTorque", null);
+
+                    if (Cur_Model.FC_IsTest)
                     {
-                        XElement newResult = new XElement("TestResults",
-                        new XElement("AcceptNo", result.AcceptNo),
-                        new XElement("PJI", result.PJI),
-                        new XElement("Model", result.Model),
-                        new XElement("StartTime", result.StartTime),
-                        new XElement("EndTime", result.EndTime),
-                        new XElement("FC_IsOk", result.FC_IsOk),
-                        new XElement("FR_IsOk", result.FR_IsOk),
-                        new XElement("RR_IsOk", result.RR_IsOk),
-                        new XElement("Angle_Roll", _vepManager.SynchroZone.FrontCameraAngle1),
-                        new XElement("Angle_Azimuth", _vepManager.SynchroZone.FrontCameraAngle2),
-                        new XElement("Angle_Elevation", _vepManager.SynchroZone.FrontCameraAngle3),
-                        new XElement("Angle_RearRight", _vepManager.SynchroZone.RearRightRadarAngle),
-                        new XElement("Angle_RearLeft", _vepManager.SynchroZone.RearLeftRadarAngle),
-                        new XElement("Angle-FrontRight", _vepManager.SynchroZone.FrontRightRadarAngle),
-                        new XElement("Angle-FrontLeft", _vepManager.SynchroZone.FrontLeftRadarAngle)
-                    );
-
-                        XElement root;
-
-                        if (File.Exists(xmlFilePath))
-                        {
-                            root = XElement.Load(xmlFilePath);
-                            root.Add(newResult);
-                        }
-                        else
-                        {
-                            root = new XElement("TestResults", newResult);
-                        }
-
-                        root.Save(xmlFilePath);
-
-                        MsgBox.Info("TestResultsSavedAsXML");
+                        textWriter.WriteElementString("MeasureCount", "1");
+                        textWriter.WriteElementString("FinalAngleX", _frCam.FinalAngleX.ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleY", _frCam.FinalAngleY.ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleZ", _frCam.FinalAngleZ.ToString("F6"));
+                        textWriter.WriteElementString("ShapeType", "2");
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", (Cur_Model.FC_Distance ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", (Cur_Model.FC_AlignmentAxeOffset ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("CmdPositionTargetHeight", (Cur_Model.FC_Height ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", (Cur_Model.FC_Htu ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("CmdTargetEntrax", (Cur_Model.FC_InterDistance ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalCycleTime", cycleTime);
                     }
                     else
                     {
-                        MsgBox.Warn("AngleValueZeroWarning");
+                        textWriter.WriteElementString("MeasureCount", null);
+                        textWriter.WriteElementString("FinalAngleX", null);
+                        textWriter.WriteElementString("FinalAngleY", null);
+                        textWriter.WriteElementString("FinalAngleZ", null);
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", null);
                     }
-                }
-                catch (Exception ex)
-                {
-                    MsgBox.ErrorWithFormat("ErrorSavingData", "Error", ex.Message);
-                }
 
-                SetState(TS.STEP_MAIN_TICKET_PRINT);
+                    textWriter.WriteEndElement();
+
+                    // FRR - FRONT RADAR RIGHT
+                    textWriter.WriteStartElement("ADASSensorToolType");
+                    textWriter.WriteAttributeString("ADASSensorType", "RAD");
+                    textWriter.WriteAttributeString("Name", "FRR");
+                    textWriter.WriteAttributeString("Description", "FRONT RADAR RIGHT");
+                    textWriter.WriteAttributeString("LateralPositionType", "RIGHT");
+                    textWriter.WriteAttributeString("LongitudinalPositionType", "FRONT");
+                    textWriter.WriteElementString("VerdictOK", Cur_Model.F_IsTest ? result.FR_IsOk.ToString().ToLower() : "false");
+                    textWriter.WriteElementString("IsPresent", Cur_Model.F_IsTest.ToString().ToLower());
+                    textWriter.WriteElementString("FrictionResult", null);
+                    textWriter.WriteElementString("FinalFrictionTorque", null);
+
+                    if (Cur_Model.F_IsTest)
+                    {
+                        textWriter.WriteElementString("MeasureCount", "1");
+                        textWriter.WriteElementString("FinalAngleX", (Cur_Model.FR_X ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleY", (Cur_Model.FR_Y ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleZ", (Cur_Model.FR_Z ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", cycleTime);
+                    }
+                    else
+                    {
+                        textWriter.WriteElementString("MeasureCount", null);
+                        textWriter.WriteElementString("FinalAngleX", null);
+                        textWriter.WriteElementString("FinalAngleY", null);
+                        textWriter.WriteElementString("FinalAngleZ", null);
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", null);
+                    }
+
+                    textWriter.WriteEndElement();
+
+                    // FRR - FRONT RADAR LEFT
+                    textWriter.WriteStartElement("ADASSensorToolType");
+                    textWriter.WriteAttributeString("ADASSensorType", "RAD");
+                    textWriter.WriteAttributeString("Name", "FRR");
+                    textWriter.WriteAttributeString("Description", "FRONT RADAR LEFT");
+                    textWriter.WriteAttributeString("LateralPositionType", "LEFT");
+                    textWriter.WriteAttributeString("LongitudinalPositionType", "FRONT");
+                    textWriter.WriteElementString("VerdictOK", Cur_Model.F_IsTest ? result.FR_IsOk.ToString().ToLower() : "false");
+                    textWriter.WriteElementString("IsPresent", Cur_Model.F_IsTest.ToString().ToLower());
+                    textWriter.WriteElementString("FrictionResult", null);
+                    textWriter.WriteElementString("FinalFrictionTorque", null);
+
+                    if (Cur_Model.F_IsTest)
+                    {
+                        textWriter.WriteElementString("MeasureCount", "1");
+                        textWriter.WriteElementString("FinalAngleX", (Cur_Model.FL_X ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleY", (Cur_Model.FL_Y ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleZ", (Cur_Model.FL_Z ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", cycleTime);
+                    }
+                    else
+                    {
+                        textWriter.WriteElementString("MeasureCount", null);
+                        textWriter.WriteElementString("FinalAngleX", null);
+                        textWriter.WriteElementString("FinalAngleY", null);
+                        textWriter.WriteElementString("FinalAngleZ", null);
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", null);
+                    }
+
+                    textWriter.WriteEndElement();
+
+                    // RSR - REAR RADAR RIGHT
+                    textWriter.WriteStartElement("ADASSensorToolType");
+                    textWriter.WriteAttributeString("ADASSensorType", "RAD");
+                    textWriter.WriteAttributeString("Name", "RSR");
+                    textWriter.WriteAttributeString("Description", "REAR RADAR RIGHT");
+                    textWriter.WriteAttributeString("LateralPositionType", "RIGHT");
+                    textWriter.WriteAttributeString("LongitudinalPositionType", "REAR");
+                    textWriter.WriteElementString("VerdictOK", Cur_Model.R_IsTest ? result.RR_IsOk.ToString().ToLower() : "false");
+                    textWriter.WriteElementString("IsPresent", Cur_Model.R_IsTest.ToString().ToLower());
+                    textWriter.WriteElementString("FrictionResult", null);
+                    textWriter.WriteElementString("FinalFrictionTorque", null);
+
+                    if (Cur_Model.R_IsTest)
+                    {
+                        textWriter.WriteElementString("MeasureCount", "1");
+                        textWriter.WriteElementString("FinalAngleX", (Cur_Model.RR_X ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleY", (Cur_Model.RR_Y ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleZ", (Cur_Model.RR_Z ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", cycleTime);
+                    }
+                    else
+                    {
+                        textWriter.WriteElementString("MeasureCount", null);
+                        textWriter.WriteElementString("FinalAngleX", null);
+                        textWriter.WriteElementString("FinalAngleY", null);
+                        textWriter.WriteElementString("FinalAngleZ", null);
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", null);
+                    }
+
+                    textWriter.WriteEndElement();
+
+                    // RSL - REAR RADAR LEFT
+                    textWriter.WriteStartElement("ADASSensorToolType");
+                    textWriter.WriteAttributeString("ADASSensorType", "RAD");
+                    textWriter.WriteAttributeString("Name", "RSL");
+                    textWriter.WriteAttributeString("Description", "REAR RADAR LEFT");
+                    textWriter.WriteAttributeString("LateralPositionType", "LEFT");
+                    textWriter.WriteAttributeString("LongitudinalPositionType", "REAR");
+                    textWriter.WriteElementString("VerdictOK", Cur_Model.R_IsTest ? result.RR_IsOk.ToString().ToLower() : "false");
+                    textWriter.WriteElementString("IsPresent", Cur_Model.R_IsTest.ToString().ToLower());
+                    textWriter.WriteElementString("FrictionResult", null);
+                    textWriter.WriteElementString("FinalFrictionTorque", null);
+
+                    if (Cur_Model.R_IsTest)
+                    {
+                        textWriter.WriteElementString("MeasureCount", "1");
+                        textWriter.WriteElementString("FinalAngleX", (Cur_Model.RL_X ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleY", (Cur_Model.RL_Y ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("FinalAngleZ", (Cur_Model.RL_Z ?? 0).ToString("F6"));
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", cycleTime);
+                    }
+                    else
+                    {
+                        textWriter.WriteElementString("MeasureCount", null);
+                        textWriter.WriteElementString("FinalAngleX", null);
+                        textWriter.WriteElementString("FinalAngleY", null);
+                        textWriter.WriteElementString("FinalAngleZ", null);
+                        textWriter.WriteElementString("ShapeType", null);
+                        textWriter.WriteElementString("CmdPositionTargetWheelAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetSensor", null);
+                        textWriter.WriteElementString("CmdPositionTargetCarAxis", null);
+                        textWriter.WriteElementString("CmdPositionTargetHeight", null);
+                        textWriter.WriteElementString("CmdPositionTargetAngle", null);
+                        textWriter.WriteElementString("CmdTargetShapeHeight", null);
+                        textWriter.WriteElementString("CmdTargetEntrax", null);
+                        textWriter.WriteElementString("FinalCycleTime", null);
+                    }
+
+                    textWriter.WriteEndElement();
+
+                    textWriter.WriteEndElement();
+
+                    textWriter.WriteEndElement();
+
+                    textWriter.WriteStartElement("PEVProcessType");
+                    textWriter.WriteElementString("VerdictOK", "true");
+                    textWriter.WriteEndElement();
+
+                    textWriter.WriteEndElement();
+
+                    textWriter.WriteEndDocument();
+                }
+                _main.AddLogMessage($"[Main] XML data saved to {sPath}");
             }
             catch (Exception ex)
             {
-                MsgBox.ErrorWithFormat("ErrorSavingMainData", "Error", ex.Message);
+                _main.AddLogMessage($"[Main] XML Save Error: {ex.Message}");
+            }
+            finally
+            {
+                sw.Stop();
+                _main.AddLogMessage($"[Main] Data Save Time : {sw.ElapsedMilliseconds}ms");
+                SetState(TS.STEP_MAIN_TICKET_PRINT);
             }
         }
 
@@ -675,6 +921,29 @@ namespace Ki_ADAS
             try
             {
                 _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescPrintTicket");
+
+                Result resultData = CreateResultInfo();
+                bool isOk = resultData.FC_IsOk && resultData.FR_IsOk && resultData.RR_IsOk;
+
+                var adasData = new Zebra420T.ADASString
+                {
+                    Identification = resultData.PJI,
+                    Description = resultData.Model,
+                    Results = isOk ? "OK" : "NG",
+                    BankNumber = "ADAS NR",
+                    Data = resultData.StartTime.ToString("yyyy/MM/dd"),
+                    Time = resultData.StartTime.ToString("HH:mm:ss"),
+                    Duration = (resultData.EndTime - resultData.StartTime).TotalSeconds.ToString() + "    segun"
+                };
+
+                _main.Invoke(new Action(() =>
+                {
+                    using (var printForm = new Zebra420T.ZebraForm(adasData))
+                    {
+                        printForm.ShowDialog();
+                    }
+                }));
+
                 SetState(TS.STEP_MAIN_GRET_COMM);
             }
             catch (Exception ex)

@@ -23,6 +23,10 @@ namespace Ki_ADAS
         private bool m_bRun = false;
 
         public Result Result => _result;
+        public float FinalAngleX { get; private set; }
+        public float FinalAngleY { get; private set; }
+        public float FinalAngleZ { get; private set; }
+
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
@@ -156,6 +160,7 @@ namespace Ki_ADAS
 
         private void _DoSendInfo()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamSendInfo");
             try
             {
                 Model modelInfo = null;
@@ -199,6 +204,7 @@ namespace Ki_ADAS
 
         private void _DoCheckOption()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamCheckOption");
             _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 1); // VEP 서버
             _client.WriteSynchroZone();
 
@@ -228,6 +234,8 @@ namespace Ki_ADAS
 
         private void _DoTargetMove()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamTargetMove");
+
             try
             {
                 while (true)
@@ -249,6 +257,8 @@ namespace Ki_ADAS
 
         private void _DoTargetMoveComplete()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamTargetMoveComplete");
+
             try
             {
                 _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_CAMERA_INDEX, 1);
@@ -265,6 +275,8 @@ namespace Ki_ADAS
 
         private void _DoWaitSync3()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamWaitSync3");
+
             try
             {
                 ushort[] readData = _client.ReadSynchroZone(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_CAMERA_INDEX, 1);
@@ -291,6 +303,8 @@ namespace Ki_ADAS
 
         private void _DoReadAngle()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamReadAngle");
+
             try
             {
                 ushort[] angleData = _client.ReadSynchroZone(_vepManager.SynchroZone.FrontCameraAngle1, 3);
@@ -305,6 +319,10 @@ namespace Ki_ADAS
                 ushort azimuth = angleData[1];
                 ushort elevation = angleData[2];
 
+                FinalAngleX = roll / 100.0f;
+                FinalAngleY = azimuth / 100.0f;
+                FinalAngleZ = elevation / 100.0f;
+
                 SetState(TS.STEP_CAM_TARGET_HOME);
             }
             catch (Exception ex)
@@ -315,6 +333,8 @@ namespace Ki_ADAS
 
         private void _DoTargetHome()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamTargetHome");
+
             try
             {
                 while (true)
@@ -336,6 +356,8 @@ namespace Ki_ADAS
 
         private void _DoFinish()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamFinish");
+
             try
             {
                 // 완료 처리
@@ -345,7 +367,7 @@ namespace Ki_ADAS
                 }
             }
             catch (Exception ex)
-            {
+            { 
                 MsgBox.ErrorWithFormat("ErrorFinishingFRCamProcess", "Error", ex.Message);
             }
         }

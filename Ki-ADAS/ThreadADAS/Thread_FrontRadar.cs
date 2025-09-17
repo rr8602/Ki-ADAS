@@ -155,6 +155,7 @@ namespace Ki_ADAS
 
         private void _DoSendInfo()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarSendInfo");
             try
             {
                 Model modelInfo = null;
@@ -198,6 +199,7 @@ namespace Ki_ADAS
 
         private void _DoCheckOption()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarCheckOption");
             _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_RIGHT_RADAR_INDEX, 1); // VEP 서버
             _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_LEFT_RADAR_INDEX, 1);  // VEP 서버
             _client.WriteSynchroZone();
@@ -229,6 +231,8 @@ namespace Ki_ADAS
 
         private void _DoTargetMove()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarTargetMove");
+
             try
             {
                 while (true)
@@ -250,6 +254,8 @@ namespace Ki_ADAS
 
         private void _DoTargetMoveComplete()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarTargetMoveComplete");
+
             try
             {
                 _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.SYNC_COMMAND_FRONT_RIGHT_RADAR_INDEX, 1);
@@ -268,6 +274,8 @@ namespace Ki_ADAS
 
         private void _DoWaitSync()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarWaitSync");
+
             try
             {
                 ushort[] readRhData = _client.ReadSynchroZone(VEPBenchSynchroZone.DEVICE_TYPE_FRONT_RIGHT_RADAR_INDEX, 1);
@@ -295,6 +303,8 @@ namespace Ki_ADAS
 
         private void _DoReadAngle()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarReadAngle");
+
             try
             {
                 ushort[] angleData = _client.ReadSynchroZone(_vepManager.SynchroZone.FrontRightRadarAngle, 2);
@@ -318,6 +328,8 @@ namespace Ki_ADAS
 
         private void _DoTargetHome()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarTargetHome");
+
             try
             {
                 while (true)
@@ -339,6 +351,8 @@ namespace Ki_ADAS
 
         private void _DoFinish()
         {
+            _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarFinish");
+
             try
             {
                 // 완료 처리

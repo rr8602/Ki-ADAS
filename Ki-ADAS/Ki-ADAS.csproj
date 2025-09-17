@@ -242,5 +242,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Zebra420T\Zebra420T\Zebra420T.csproj">
+      <Project>{982a0ca0-9dc2-4d76-b608-2eb27f052532}</Project>
+      <Name>Zebra420T</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
