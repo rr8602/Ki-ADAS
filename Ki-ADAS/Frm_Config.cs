@@ -23,6 +23,7 @@ namespace Ki_ADAS
         private const string CONFIG_SECTION = "Network";
         private const string VEP_IP_KEY = "VepIp";
         private const string VEP_PORT_KEY = "VepPort";
+        private const string BARCODE_IP_KEY = "BarcodeIp";
         private const string LANGUAGE_KEY = "System";
         private const string LANGUAGE_SECTION = "Language";
 
@@ -86,6 +87,7 @@ namespace Ki_ADAS
             {
                 TxtVepIp.Text = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
                 TxtVepPort.Text = _iniFile.ReadValue(CONFIG_SECTION, VEP_PORT_KEY);
+                TxtBarcodeIp.Text = _iniFile.ReadValue(CONFIG_SECTION, BARCODE_IP_KEY);
 
                 string languageStr = _iniFile.ReadValue(LANGUAGE_SECTION, LANGUAGE_KEY, "0");
                 int languageIndex = 0;
@@ -145,9 +147,11 @@ namespace Ki_ADAS
             {
                 _iniFile.WriteValue(CONFIG_SECTION, VEP_IP_KEY, TxtVepIp.Text);
                 _iniFile.WriteValue(CONFIG_SECTION, VEP_PORT_KEY, TxtVepPort.Text);
+                _iniFile.WriteValue(CONFIG_SECTION, BARCODE_IP_KEY, TxtBarcodeIp.Text);
 
                 Frm_Main.ipAddress = TxtVepIp.Text;
                 Frm_Main.port = int.Parse(TxtVepPort.Text);
+                Frm_Main.barcodeIp = TxtBarcodeIp.Text;
 
                 MsgBox.Info("ConfigSaveSuccess");
             }

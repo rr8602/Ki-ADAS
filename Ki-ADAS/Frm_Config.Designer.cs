@@ -33,25 +33,43 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtRRAngle = new System.Windows.Forms.TextBox();
             this.chkIsRearRadar = new System.Windows.Forms.CheckBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.txtRRY = new System.Windows.Forms.TextBox();
             this.txtRLAngle = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
+            this.txtRRX = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
             this.txtRLX = new System.Windows.Forms.TextBox();
+            this.txtRRZ = new System.Windows.Forms.TextBox();
             this.txtRLZ = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.txtRLY = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.txtRRAngle = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.txtRRY = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.txtRRX = new System.Windows.Forms.TextBox();
-            this.label22 = new System.Windows.Forms.Label();
-            this.txtRRZ = new System.Windows.Forms.TextBox();
+            this.txtFRAngle = new System.Windows.Forms.TextBox();
+            this.chkIsFrontRadar = new System.Windows.Forms.CheckBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.txtFRY = new System.Windows.Forms.TextBox();
+            this.txtFLAngle = new System.Windows.Forms.TextBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.txtFRX = new System.Windows.Forms.TextBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.txtFLX = new System.Windows.Forms.TextBox();
+            this.txtFRZ = new System.Windows.Forms.TextBox();
+            this.txtFLZ = new System.Windows.Forms.TextBox();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label33 = new System.Windows.Forms.Label();
+            this.txtFLY = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkIsFrontCameraTest = new System.Windows.Forms.CheckBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
@@ -91,7 +109,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel3 = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.TxtBarcodeIp = new System.Windows.Forms.TextBox();
             this.TxtVepPort = new System.Windows.Forms.TextBox();
             this.TxtVepIp = new System.Windows.Forms.TextBox();
             this.lbl_vepPort = new System.Windows.Forms.Label();
@@ -99,7 +117,7 @@
             this.TxtPlcPort = new System.Windows.Forms.TextBox();
             this.TxtPlcIp = new System.Windows.Forms.TextBox();
             this.BtnConfigSave = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lbl_barcodeIp = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.lbl_plcPort = new System.Windows.Forms.Label();
             this.lbl_plcIp = new System.Windows.Forms.Label();
@@ -111,24 +129,6 @@
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.BtnLanSave = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
-            this.txtFRAngle = new System.Windows.Forms.TextBox();
-            this.chkIsFrontRadar = new System.Windows.Forms.CheckBox();
-            this.label25 = new System.Windows.Forms.Label();
-            this.txtFRY = new System.Windows.Forms.TextBox();
-            this.txtFLAngle = new System.Windows.Forms.TextBox();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label27 = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.txtFRX = new System.Windows.Forms.TextBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.txtFLX = new System.Windows.Forms.TextBox();
-            this.txtFRZ = new System.Windows.Forms.TextBox();
-            this.txtFLZ = new System.Windows.Forms.TextBox();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label33 = new System.Windows.Forms.Label();
-            this.txtFLY = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -151,7 +151,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(2085, 1225);
+            this.panel1.Size = new System.Drawing.Size(1668, 980);
             this.panel1.TabIndex = 159;
             // 
             // tabControl1
@@ -165,7 +165,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(2085, 1225);
+            this.tabControl1.Size = new System.Drawing.Size(1668, 980);
             this.tabControl1.TabIndex = 213;
             // 
             // tabPage1
@@ -177,7 +177,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPage1.Size = new System.Drawing.Size(2077, 1177);
+            this.tabPage1.Size = new System.Drawing.Size(1660, 932);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Model";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -227,6 +227,14 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Rear Radar";
             // 
+            // txtRRAngle
+            // 
+            this.txtRRAngle.Location = new System.Drawing.Point(846, 232);
+            this.txtRRAngle.Multiline = true;
+            this.txtRRAngle.Name = "txtRRAngle";
+            this.txtRRAngle.Size = new System.Drawing.Size(227, 51);
+            this.txtRRAngle.TabIndex = 262;
+            // 
             // chkIsRearRadar
             // 
             this.chkIsRearRadar.Location = new System.Drawing.Point(1482, 60);
@@ -235,6 +243,27 @@
             this.chkIsRearRadar.TabIndex = 255;
             this.chkIsRearRadar.UseVisualStyleBackColor = true;
             // 
+            // label20
+            // 
+            this.label20.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label20.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.ForeColor = System.Drawing.Color.Aqua;
+            this.label20.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label20.Location = new System.Drawing.Point(546, 49);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(287, 51);
+            this.label20.TabIndex = 255;
+            this.label20.Text = "Right X Position";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtRRY
+            // 
+            this.txtRRY.Location = new System.Drawing.Point(846, 111);
+            this.txtRRY.Multiline = true;
+            this.txtRRY.Name = "txtRRY";
+            this.txtRRY.Size = new System.Drawing.Size(227, 51);
+            this.txtRRY.TabIndex = 258;
+            // 
             // txtRLAngle
             // 
             this.txtRLAngle.Location = new System.Drawing.Point(306, 232);
@@ -242,6 +271,19 @@
             this.txtRLAngle.Name = "txtRLAngle";
             this.txtRLAngle.Size = new System.Drawing.Size(234, 51);
             this.txtRLAngle.TabIndex = 254;
+            // 
+            // label21
+            // 
+            this.label21.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label21.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label21.ForeColor = System.Drawing.Color.Aqua;
+            this.label21.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label21.Location = new System.Drawing.Point(546, 232);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(287, 51);
+            this.label21.TabIndex = 261;
+            this.label21.Text = "Right Angle";
+            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label24
             // 
@@ -256,6 +298,19 @@
             this.label24.Text = "IsTest";
             this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label23
+            // 
+            this.label23.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label23.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label23.ForeColor = System.Drawing.Color.Aqua;
+            this.label23.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label23.Location = new System.Drawing.Point(546, 172);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(287, 51);
+            this.label23.TabIndex = 259;
+            this.label23.Text = "Right Z Position";
+            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // label19
             // 
             this.label19.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -268,6 +323,14 @@
             this.label19.TabIndex = 247;
             this.label19.Text = "Left X Position";
             this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtRRX
+            // 
+            this.txtRRX.Location = new System.Drawing.Point(846, 49);
+            this.txtRRX.Multiline = true;
+            this.txtRRX.Name = "txtRRX";
+            this.txtRRX.Size = new System.Drawing.Size(227, 51);
+            this.txtRRX.TabIndex = 256;
             // 
             // label16
             // 
@@ -282,6 +345,19 @@
             this.label16.Text = "Left Angle";
             this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label22
+            // 
+            this.label22.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label22.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label22.ForeColor = System.Drawing.Color.Aqua;
+            this.label22.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label22.Location = new System.Drawing.Point(546, 111);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(287, 51);
+            this.label22.TabIndex = 257;
+            this.label22.Text = "Right Y Position";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // txtRLX
             // 
             this.txtRLX.Location = new System.Drawing.Point(306, 49);
@@ -289,6 +365,14 @@
             this.txtRLX.Name = "txtRLX";
             this.txtRLX.Size = new System.Drawing.Size(234, 51);
             this.txtRLX.TabIndex = 248;
+            // 
+            // txtRRZ
+            // 
+            this.txtRRZ.Location = new System.Drawing.Point(846, 172);
+            this.txtRRZ.Multiline = true;
+            this.txtRRZ.Name = "txtRRZ";
+            this.txtRRZ.Size = new System.Drawing.Size(227, 51);
+            this.txtRRZ.TabIndex = 260;
             // 
             // txtRLZ
             // 
@@ -361,89 +445,194 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Front Radar";
             // 
-            // txtRRAngle
+            // txtFRAngle
             // 
-            this.txtRRAngle.Location = new System.Drawing.Point(846, 232);
-            this.txtRRAngle.Multiline = true;
-            this.txtRRAngle.Name = "txtRRAngle";
-            this.txtRRAngle.Size = new System.Drawing.Size(227, 51);
-            this.txtRRAngle.TabIndex = 262;
+            this.txtFRAngle.Location = new System.Drawing.Point(846, 232);
+            this.txtFRAngle.Multiline = true;
+            this.txtFRAngle.Name = "txtFRAngle";
+            this.txtFRAngle.Size = new System.Drawing.Size(227, 51);
+            this.txtFRAngle.TabIndex = 280;
             // 
-            // label20
+            // chkIsFrontRadar
             // 
-            this.label20.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label20.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.ForeColor = System.Drawing.Color.Aqua;
-            this.label20.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label20.Location = new System.Drawing.Point(546, 49);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(287, 51);
-            this.label20.TabIndex = 255;
-            this.label20.Text = "Right X Position";
-            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkIsFrontRadar.Location = new System.Drawing.Point(1482, 60);
+            this.chkIsFrontRadar.Name = "chkIsFrontRadar";
+            this.chkIsFrontRadar.Size = new System.Drawing.Size(20, 33);
+            this.chkIsFrontRadar.TabIndex = 273;
+            this.chkIsFrontRadar.UseVisualStyleBackColor = true;
             // 
-            // txtRRY
+            // label25
             // 
-            this.txtRRY.Location = new System.Drawing.Point(846, 111);
-            this.txtRRY.Multiline = true;
-            this.txtRRY.Name = "txtRRY";
-            this.txtRRY.Size = new System.Drawing.Size(227, 51);
-            this.txtRRY.TabIndex = 258;
+            this.label25.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label25.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.ForeColor = System.Drawing.Color.Aqua;
+            this.label25.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label25.Location = new System.Drawing.Point(546, 49);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(287, 51);
+            this.label25.TabIndex = 272;
+            this.label25.Text = "Right X Position";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label21
+            // txtFRY
             // 
-            this.label21.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label21.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.ForeColor = System.Drawing.Color.Aqua;
-            this.label21.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label21.Location = new System.Drawing.Point(546, 232);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(287, 51);
-            this.label21.TabIndex = 261;
-            this.label21.Text = "Right Angle";
-            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.txtFRY.Location = new System.Drawing.Point(846, 111);
+            this.txtFRY.Multiline = true;
+            this.txtFRY.Name = "txtFRY";
+            this.txtFRY.Size = new System.Drawing.Size(227, 51);
+            this.txtFRY.TabIndex = 276;
             // 
-            // label23
+            // txtFLAngle
             // 
-            this.label23.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label23.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label23.ForeColor = System.Drawing.Color.Aqua;
-            this.label23.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label23.Location = new System.Drawing.Point(546, 172);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(287, 51);
-            this.label23.TabIndex = 259;
-            this.label23.Text = "Right Z Position";
-            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.txtFLAngle.Location = new System.Drawing.Point(306, 232);
+            this.txtFLAngle.Multiline = true;
+            this.txtFLAngle.Name = "txtFLAngle";
+            this.txtFLAngle.Size = new System.Drawing.Size(234, 51);
+            this.txtFLAngle.TabIndex = 271;
             // 
-            // txtRRX
+            // label26
             // 
-            this.txtRRX.Location = new System.Drawing.Point(846, 49);
-            this.txtRRX.Multiline = true;
-            this.txtRRX.Name = "txtRRX";
-            this.txtRRX.Size = new System.Drawing.Size(227, 51);
-            this.txtRRX.TabIndex = 256;
+            this.label26.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label26.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label26.ForeColor = System.Drawing.Color.Aqua;
+            this.label26.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label26.Location = new System.Drawing.Point(546, 232);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(287, 51);
+            this.label26.TabIndex = 279;
+            this.label26.Text = "Right Angle";
+            this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label22
+            // label27
             // 
-            this.label22.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label22.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.ForeColor = System.Drawing.Color.Aqua;
-            this.label22.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label22.Location = new System.Drawing.Point(546, 111);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(287, 51);
-            this.label22.TabIndex = 257;
-            this.label22.Text = "Right Y Position";
-            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label27.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label27.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label27.ForeColor = System.Drawing.Color.Aqua;
+            this.label27.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label27.Location = new System.Drawing.Point(1079, 49);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(287, 51);
+            this.label27.TabIndex = 264;
+            this.label27.Text = "IsTest";
+            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // txtRRZ
+            // label28
             // 
-            this.txtRRZ.Location = new System.Drawing.Point(846, 172);
-            this.txtRRZ.Multiline = true;
-            this.txtRRZ.Name = "txtRRZ";
-            this.txtRRZ.Size = new System.Drawing.Size(227, 51);
-            this.txtRRZ.TabIndex = 260;
+            this.label28.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label28.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.ForeColor = System.Drawing.Color.Aqua;
+            this.label28.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label28.Location = new System.Drawing.Point(546, 172);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(287, 51);
+            this.label28.TabIndex = 277;
+            this.label28.Text = "Right Z Position";
+            this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label29
+            // 
+            this.label29.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label29.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label29.ForeColor = System.Drawing.Color.Aqua;
+            this.label29.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label29.Location = new System.Drawing.Point(6, 49);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(287, 51);
+            this.label29.TabIndex = 263;
+            this.label29.Text = "Left X Position";
+            this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtFRX
+            // 
+            this.txtFRX.Location = new System.Drawing.Point(846, 49);
+            this.txtFRX.Multiline = true;
+            this.txtFRX.Name = "txtFRX";
+            this.txtFRX.Size = new System.Drawing.Size(227, 51);
+            this.txtFRX.TabIndex = 274;
+            // 
+            // label30
+            // 
+            this.label30.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label30.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label30.ForeColor = System.Drawing.Color.Aqua;
+            this.label30.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label30.Location = new System.Drawing.Point(6, 232);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(287, 51);
+            this.label30.TabIndex = 270;
+            this.label30.Text = "Left Angle";
+            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label31
+            // 
+            this.label31.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label31.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label31.ForeColor = System.Drawing.Color.Aqua;
+            this.label31.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label31.Location = new System.Drawing.Point(546, 111);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(287, 51);
+            this.label31.TabIndex = 275;
+            this.label31.Text = "Right Y Position";
+            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtFLX
+            // 
+            this.txtFLX.Location = new System.Drawing.Point(306, 49);
+            this.txtFLX.Multiline = true;
+            this.txtFLX.Name = "txtFLX";
+            this.txtFLX.Size = new System.Drawing.Size(234, 51);
+            this.txtFLX.TabIndex = 265;
+            // 
+            // txtFRZ
+            // 
+            this.txtFRZ.Location = new System.Drawing.Point(846, 172);
+            this.txtFRZ.Multiline = true;
+            this.txtFRZ.Name = "txtFRZ";
+            this.txtFRZ.Size = new System.Drawing.Size(227, 51);
+            this.txtFRZ.TabIndex = 278;
+            // 
+            // txtFLZ
+            // 
+            this.txtFLZ.Location = new System.Drawing.Point(306, 172);
+            this.txtFLZ.Multiline = true;
+            this.txtFLZ.Name = "txtFLZ";
+            this.txtFLZ.Size = new System.Drawing.Size(234, 51);
+            this.txtFLZ.TabIndex = 269;
+            // 
+            // label32
+            // 
+            this.label32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label32.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label32.ForeColor = System.Drawing.Color.Aqua;
+            this.label32.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label32.Location = new System.Drawing.Point(6, 111);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(287, 51);
+            this.label32.TabIndex = 266;
+            this.label32.Text = "Left Y Position";
+            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label33
+            // 
+            this.label33.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label33.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label33.ForeColor = System.Drawing.Color.Aqua;
+            this.label33.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label33.Location = new System.Drawing.Point(6, 172);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(287, 51);
+            this.label33.TabIndex = 268;
+            this.label33.Text = "Left Z Position";
+            this.label33.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtFLY
+            // 
+            this.txtFLY.Location = new System.Drawing.Point(306, 111);
+            this.txtFLY.Multiline = true;
+            this.txtFLY.Name = "txtFLY";
+            this.txtFLY.Size = new System.Drawing.Size(234, 51);
+            this.txtFLY.TabIndex = 267;
             // 
             // groupBox1
             // 
@@ -874,7 +1063,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 44);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(2078, 1178);
+            this.tabPage2.Size = new System.Drawing.Size(1660, 932);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Config";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -883,7 +1072,7 @@
             // 
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.textBox4);
+            this.panel3.Controls.Add(this.TxtBarcodeIp);
             this.panel3.Controls.Add(this.TxtVepPort);
             this.panel3.Controls.Add(this.TxtVepIp);
             this.panel3.Controls.Add(this.lbl_vepPort);
@@ -891,7 +1080,7 @@
             this.panel3.Controls.Add(this.TxtPlcPort);
             this.panel3.Controls.Add(this.TxtPlcIp);
             this.panel3.Controls.Add(this.BtnConfigSave);
-            this.panel3.Controls.Add(this.label5);
+            this.panel3.Controls.Add(this.lbl_barcodeIp);
             this.panel3.Controls.Add(this.label9);
             this.panel3.Controls.Add(this.lbl_plcPort);
             this.panel3.Controls.Add(this.lbl_plcIp);
@@ -909,13 +1098,13 @@
             this.textBox1.Size = new System.Drawing.Size(550, 51);
             this.textBox1.TabIndex = 223;
             // 
-            // textBox4
+            // TxtBarcodeIp
             // 
-            this.textBox4.Location = new System.Drawing.Point(326, 301);
-            this.textBox4.Multiline = true;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(550, 51);
-            this.textBox4.TabIndex = 222;
+            this.TxtBarcodeIp.Location = new System.Drawing.Point(326, 301);
+            this.TxtBarcodeIp.Multiline = true;
+            this.TxtBarcodeIp.Name = "TxtBarcodeIp";
+            this.TxtBarcodeIp.Size = new System.Drawing.Size(550, 51);
+            this.TxtBarcodeIp.TabIndex = 222;
             // 
             // TxtVepPort
             // 
@@ -987,18 +1176,18 @@
             this.BtnConfigSave.UseVisualStyleBackColor = true;
             this.BtnConfigSave.Click += new System.EventHandler(this.BtnConfigSave_Click);
             // 
-            // label5
+            // lbl_barcodeIp
             // 
-            this.label5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label5.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ForeColor = System.Drawing.Color.Aqua;
-            this.label5.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label5.Location = new System.Drawing.Point(22, 301);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(272, 51);
-            this.label5.TabIndex = 212;
-            this.label5.Text = "Spare";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_barcodeIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_barcodeIp.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_barcodeIp.ForeColor = System.Drawing.Color.Aqua;
+            this.lbl_barcodeIp.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.lbl_barcodeIp.Location = new System.Drawing.Point(22, 301);
+            this.lbl_barcodeIp.Name = "lbl_barcodeIp";
+            this.lbl_barcodeIp.Size = new System.Drawing.Size(272, 51);
+            this.lbl_barcodeIp.TabIndex = 212;
+            this.lbl_barcodeIp.Text = "BARCODE IP";
+            this.lbl_barcodeIp.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label9
             // 
@@ -1045,7 +1234,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 44);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(2078, 1178);
+            this.tabPage3.Size = new System.Drawing.Size(2077, 1177);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Language";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1132,195 +1321,6 @@
             this.label14.Text = "PLC IP";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // txtFRAngle
-            // 
-            this.txtFRAngle.Location = new System.Drawing.Point(846, 232);
-            this.txtFRAngle.Multiline = true;
-            this.txtFRAngle.Name = "txtFRAngle";
-            this.txtFRAngle.Size = new System.Drawing.Size(227, 51);
-            this.txtFRAngle.TabIndex = 280;
-            // 
-            // chkIsFrontRadar
-            // 
-            this.chkIsFrontRadar.Location = new System.Drawing.Point(1482, 60);
-            this.chkIsFrontRadar.Name = "chkIsFrontRadar";
-            this.chkIsFrontRadar.Size = new System.Drawing.Size(20, 33);
-            this.chkIsFrontRadar.TabIndex = 273;
-            this.chkIsFrontRadar.UseVisualStyleBackColor = true;
-            // 
-            // label25
-            // 
-            this.label25.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label25.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.ForeColor = System.Drawing.Color.Aqua;
-            this.label25.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label25.Location = new System.Drawing.Point(546, 49);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(287, 51);
-            this.label25.TabIndex = 272;
-            this.label25.Text = "Right X Position";
-            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // txtFRY
-            // 
-            this.txtFRY.Location = new System.Drawing.Point(846, 111);
-            this.txtFRY.Multiline = true;
-            this.txtFRY.Name = "txtFRY";
-            this.txtFRY.Size = new System.Drawing.Size(227, 51);
-            this.txtFRY.TabIndex = 276;
-            // 
-            // txtFLAngle
-            // 
-            this.txtFLAngle.Location = new System.Drawing.Point(306, 232);
-            this.txtFLAngle.Multiline = true;
-            this.txtFLAngle.Name = "txtFLAngle";
-            this.txtFLAngle.Size = new System.Drawing.Size(234, 51);
-            this.txtFLAngle.TabIndex = 271;
-            // 
-            // label26
-            // 
-            this.label26.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label26.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.ForeColor = System.Drawing.Color.Aqua;
-            this.label26.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label26.Location = new System.Drawing.Point(546, 232);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(287, 51);
-            this.label26.TabIndex = 279;
-            this.label26.Text = "Right Angle";
-            this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label27
-            // 
-            this.label27.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label27.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label27.ForeColor = System.Drawing.Color.Aqua;
-            this.label27.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label27.Location = new System.Drawing.Point(1079, 49);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(287, 51);
-            this.label27.TabIndex = 264;
-            this.label27.Text = "IsTest";
-            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label28
-            // 
-            this.label28.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label28.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label28.ForeColor = System.Drawing.Color.Aqua;
-            this.label28.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label28.Location = new System.Drawing.Point(546, 172);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(287, 51);
-            this.label28.TabIndex = 277;
-            this.label28.Text = "Right Z Position";
-            this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label29
-            // 
-            this.label29.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label29.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label29.ForeColor = System.Drawing.Color.Aqua;
-            this.label29.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label29.Location = new System.Drawing.Point(6, 49);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(287, 51);
-            this.label29.TabIndex = 263;
-            this.label29.Text = "Left X Position";
-            this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // txtFRX
-            // 
-            this.txtFRX.Location = new System.Drawing.Point(846, 49);
-            this.txtFRX.Multiline = true;
-            this.txtFRX.Name = "txtFRX";
-            this.txtFRX.Size = new System.Drawing.Size(227, 51);
-            this.txtFRX.TabIndex = 274;
-            // 
-            // label30
-            // 
-            this.label30.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label30.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label30.ForeColor = System.Drawing.Color.Aqua;
-            this.label30.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label30.Location = new System.Drawing.Point(6, 232);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(287, 51);
-            this.label30.TabIndex = 270;
-            this.label30.Text = "Left Angle";
-            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label31
-            // 
-            this.label31.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label31.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label31.ForeColor = System.Drawing.Color.Aqua;
-            this.label31.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label31.Location = new System.Drawing.Point(546, 111);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(287, 51);
-            this.label31.TabIndex = 275;
-            this.label31.Text = "Right Y Position";
-            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // txtFLX
-            // 
-            this.txtFLX.Location = new System.Drawing.Point(306, 49);
-            this.txtFLX.Multiline = true;
-            this.txtFLX.Name = "txtFLX";
-            this.txtFLX.Size = new System.Drawing.Size(234, 51);
-            this.txtFLX.TabIndex = 265;
-            // 
-            // txtFRZ
-            // 
-            this.txtFRZ.Location = new System.Drawing.Point(846, 172);
-            this.txtFRZ.Multiline = true;
-            this.txtFRZ.Name = "txtFRZ";
-            this.txtFRZ.Size = new System.Drawing.Size(227, 51);
-            this.txtFRZ.TabIndex = 278;
-            // 
-            // txtFLZ
-            // 
-            this.txtFLZ.Location = new System.Drawing.Point(306, 172);
-            this.txtFLZ.Multiline = true;
-            this.txtFLZ.Name = "txtFLZ";
-            this.txtFLZ.Size = new System.Drawing.Size(234, 51);
-            this.txtFLZ.TabIndex = 269;
-            // 
-            // label32
-            // 
-            this.label32.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label32.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label32.ForeColor = System.Drawing.Color.Aqua;
-            this.label32.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label32.Location = new System.Drawing.Point(6, 111);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(287, 51);
-            this.label32.TabIndex = 266;
-            this.label32.Text = "Left Y Position";
-            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label33
-            // 
-            this.label33.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label33.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label33.ForeColor = System.Drawing.Color.Aqua;
-            this.label33.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label33.Location = new System.Drawing.Point(6, 172);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(287, 51);
-            this.label33.TabIndex = 268;
-            this.label33.Text = "Left Z Position";
-            this.label33.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // txtFLY
-            // 
-            this.txtFLY.Location = new System.Drawing.Point(306, 111);
-            this.txtFLY.Multiline = true;
-            this.txtFLY.Name = "txtFLY";
-            this.txtFLY.Size = new System.Drawing.Size(234, 51);
-            this.txtFLY.TabIndex = 267;
-            // 
             // Frm_Config
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -1374,7 +1374,7 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox TxtBarcodeIp;
         private System.Windows.Forms.TextBox TxtVepPort;
         private System.Windows.Forms.TextBox TxtVepIp;
         private System.Windows.Forms.Label lbl_vepPort;
@@ -1382,7 +1382,7 @@
         private System.Windows.Forms.TextBox TxtPlcPort;
         private System.Windows.Forms.TextBox TxtPlcIp;
         private System.Windows.Forms.Button BtnConfigSave;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lbl_barcodeIp;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label lbl_plcPort;
         private System.Windows.Forms.Label lbl_plcIp;

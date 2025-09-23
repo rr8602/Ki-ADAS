@@ -242,6 +242,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Frm_Mainfrm";
             this.Text = "ADAS";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Mainfrm_FormClosing);
             this.Load += new System.EventHandler(this.Frm_Mainfrm_Load);
             this.panelNavBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

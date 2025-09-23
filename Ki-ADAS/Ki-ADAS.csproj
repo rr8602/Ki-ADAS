@@ -45,6 +45,15 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Communication">
+      <HintPath>C:\Users\win11\Desktop\SR_SDK_8_3\SampleApplication\FirstStepApp\FirstStepApp_VCSharp\FirstStepApp\bin\x86\Debug\Communication.dll</HintPath>
+    </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.1.66\lib\net461\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Keyence.AutoID.SDK">
+      <HintPath>C:\Users\win11\Desktop\SR_SDK_8_3\SampleApplication\FirstStepApp\FirstStepApp_VCSharp\FirstStepApp\bin\x86\Debug\Keyence.AutoID.SDK.dll</HintPath>
+    </Reference>
     <Reference Include="Lib_DBJob">
       <HintPath>..\..\..\..\..\KI-WAT\WAT\Ki-WAT\Lib_DBJob\obj\Debug\Lib_DBJob.dll</HintPath>
     </Reference>
@@ -57,6 +66,9 @@
     <Reference Include="Lib_tcp_server">
       <HintPath>..\..\..\..\..\KI-WAT\WAT\Ki-WAT\Lib_tcp_server\obj\Debug\Lib_tcp_server.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.1\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="NModbus, Version=3.0.81.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NModbus.3.0.81\lib\net46\NModbus.dll</HintPath>
     </Reference>
@@ -66,6 +78,12 @@
       <HintPath>..\packages\System.Configuration.ConfigurationManager.9.0.7\lib\net462\System.Configuration.ConfigurationManager.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -75,6 +93,12 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="VncClientControlCommon">
+      <HintPath>C:\Users\win11\Desktop\SR_SDK_8_3\SampleApplication\FirstStepApp\FirstStepApp_VCSharp\FirstStepApp\bin\x86\Debug\VncClientControlCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="VncClientControlCommonLib">
+      <HintPath>C:\Users\win11\Desktop\SR_SDK_8_3\SampleApplication\FirstStepApp\FirstStepApp_VCSharp\FirstStepApp\bin\x86\Debug\VncClientControlCommonLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrowButton.cs">
@@ -163,6 +187,7 @@
     <Compile Include="Server.cs" />
     <Compile Include="SettingConfigDb.cs" />
     <Compile Include="snap7.net.cs" />
+    <Compile Include="BarcodeReader.cs" />
     <Compile Include="ThreadADAS\Thread_FRCam.cs" />
     <Compile Include="ThreadADAS\Thread_FrontRadar.cs" />
     <Compile Include="ThreadADAS\Thread_Main.cs" />

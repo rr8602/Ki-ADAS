@@ -1,6 +1,8 @@
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Ki_ADAS.DB
@@ -21,27 +23,17 @@ namespace Ki_ADAS.DB
 
             try
             {
-                using (OleDbConnection con = new OleDbConnection(db.connectionString))
+                using (var con = new OleDbConnection(db.connectionString))
                 {
-                    con.Open();
-                    string query = "SELECT MAX(AcceptNo) FROM Info WHERE AcceptNo LIKE ?";
+                    const string query = "SELECT MAX(AcceptNo) FROM Info WHERE AcceptNo LIKE ?";
 
-                    using (OleDbCommand cmd = new OleDbCommand(query, con))
+                    var lastAcceptNo = con.QueryFirstOrDefault<string>(query, new { p1 = todayStr + "%" });
+
+                    if (!string.IsNullOrEmpty(lastAcceptNo) && lastAcceptNo.Length == 12)
                     {
-                        cmd.Parameters.AddWithValue("AcceptNo", todayStr + "%");
-                        object result = cmd.ExecuteScalar();
-
-                        if (result != null && result != DBNull.Value)
-                        {
-                            string lastAcceptNo = result.ToString();
-
-                            if (lastAcceptNo.Length == 12)
-                            {
-                                int lastSeq = int.Parse(lastAcceptNo.Substring(8));
-                                int nextSeq = lastSeq + 1;
-                                nextAcceptNo = $"{todayStr}{nextSeq:D4}";
-                            }
-                        }
+                        int lastSeq = int.Parse(lastAcceptNo.Substring(8));
+                        int nextSeq = lastSeq + 1;
+                        nextAcceptNo = $"{todayStr}{nextSeq:D4}";
                     }
                 }
             }
@@ -63,14 +55,8 @@ namespace Ki_ADAS.DB
                     con.Open();
                     const string query = "INSERT INTO Info (AcceptNo, PJI, Model) VALUES (?, ?, ?)";
 
-                    using (var cmd = new OleDbCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("AcceptNo", newVehicle.AcceptNo);
-                        cmd.Parameters.AddWithValue("PJI", newVehicle.PJI);
-                        cmd.Parameters.AddWithValue("Model", newVehicle.Model);
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        return rowsAffected > 0;
-                    }
+                    int rowsAffected = con.Execute(query, new { newVehicle.AcceptNo, newVehicle.PJI, newVehicle.Model });
+                    return rowsAffected > 0;
                 }
             }
             catch (Exception ex)
@@ -82,41 +68,39 @@ namespace Ki_ADAS.DB
 
         public List<Info> GetRegisteredVehicles()
         {
-            var vehicles = new List<Info>();
             string todayStr = DateTime.Now.ToString("yyyyMMdd");
+            const string query = "SELECT AcceptNo, PJI, Model FROM Info WHERE Mid(AcceptNo, 1, 8) = ? ORDER BY AcceptNo DESC";
 
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
-                    con.Open();
-                    const string query = "SELECT AcceptNo, PJI, Model FROM Info WHERE Mid(AcceptNo, 1, 8) = ? ORDER BY AcceptNo DESC";
-
-                    using (var cmd = new OleDbCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("Today", todayStr);
-
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                vehicles.Add(new Info
-                                {
-                                    AcceptNo = reader["AcceptNo"].ToString(),
-                                    PJI = reader["PJI"].ToString(),
-                                    Model = reader["Model"].ToString()
-                                });
-                            }
-                        }
-                    }
+                    return con.Query<Info>(query, new { Today = todayStr }).ToList();
                 }
             }
             catch (Exception ex)
             {
                 MsgBox.ErrorWithFormat("ErrorFetchingRegisteredVehicles", "DatabaseError", ex.Message);
+                return new List<Info>();
             }
+        }
 
-            return vehicles;
+        public bool PjiExists(string pji)
+        {
+            const string query = "SELECT COUNT(*) FROM Info WHERE PJI = ?";
+            try
+            {
+                using (var con = new OleDbConnection(db.connectionString))
+                {
+                    int count = con.ExecuteScalar<int>(query, new { pji });
+                    return count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorCheckingPjiExists", "Error", ex.Message);
+                return false;
+            }
         }
     }
 }

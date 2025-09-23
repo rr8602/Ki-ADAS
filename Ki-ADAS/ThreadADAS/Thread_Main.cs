@@ -1,8 +1,12 @@
+using Keyence.AutoID.SDK;
+
 using Ki_ADAS.DB;
+using Ki_ADAS.ThreadADAS;
 using Ki_ADAS.VEPBench;
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,6 +47,7 @@ namespace Ki_ADAS
         private Model Cur_Model = null;
 
         public static event Action<string> OnStatusUpdate;
+        private delegate void delegateUserControl(string str);
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
@@ -83,7 +88,6 @@ namespace Ki_ADAS
                     Thread.Sleep(100);
                 }
 
-
                 m_bRun = true;
                 m_bExitStep = false;
 
@@ -108,6 +112,7 @@ namespace Ki_ADAS
                 {
                     m_bRun = false;
                 }
+
                 if (_testThread != null && _testThread.IsAlive)
                 {
                     if (!_testThread.Join(3000))
@@ -163,11 +168,11 @@ namespace Ki_ADAS
                         _DoMainInitial();
                         _main.AddLogMessage("[Main] Main Wait");
                     }
-                    else if (m_nState == TS.STEP_MAIN_BARCODE_WAIT)
+                    /*else if (m_nState == TS.STEP_MAIN_BARCODE_WAIT)
                     {
                         _DoMainBarcodeWait();
                         _main.AddLogMessage("[Main] Main Barcode Wait");
-                    }
+                    }*/
                     else if (m_nState == TS.STEP_MAIN_CHECK_DETECTION_SENSOR)
                     {
                         _DoMainCheck_Detect();
@@ -260,7 +265,7 @@ namespace Ki_ADAS
                 m_bBarcode = false;
                 m_bPassNext = false;
 
-                SetState(TS.STEP_MAIN_BARCODE_WAIT);
+                SetState(TS.STEP_MAIN_CHECK_DETECTION_SENSOR);
             }
             catch (Exception ex)
             {
@@ -268,29 +273,16 @@ namespace Ki_ADAS
             }
         }
 
-        private void _DoMainBarcodeWait()
+        /*private void _DoMainBarcodeWait()
         {
             try
             {
                 _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescScanBarcode");
 
-                while (true)
-                {
-                    if (CheckLoopExit())
-                        break;
-
-                    if (m_bBarcode)
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep(100);
-                }
-
                 if (_main.IsHandleCreated)
                 {
-                    var info = (Info)null;
-                    var model = (Model)null;
+                    Info info = null;
+                    Model model = null;
 
                     _main.Invoke(new Action(() => {
                         info = _main.SelectedVehicleInfo;
@@ -306,7 +298,7 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorWaitingForBarcode", "Error", ex.Message);
             }
-        }
+        }*/
 
         private void _DoMainCheck_Detect()
         {

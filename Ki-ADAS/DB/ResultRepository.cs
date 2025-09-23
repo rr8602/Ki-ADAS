@@ -1,11 +1,8 @@
-﻿using System;
+using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Ki_ADAS.DB
 {
@@ -20,132 +17,54 @@ namespace Ki_ADAS.DB
 
         public List<Result> GetResultInfo()
         {
-            List<Result> results = new List<Result>();
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
-                    con.Open();
                     string todayDate = DateTime.Now.ToString("yyyyMMdd");
                     const string query = "SELECT * FROM Result WHERE LEFT(AcceptNo, 8) = ? ORDER BY AcceptNo";
-
-                    using (var cmd = new OleDbCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("todayDate", todayDate);
-
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                results.Add(new Result
-                                {
-                                    AcceptNo = reader["AcceptNo"].ToString(),
-                                    PJI = reader["PJI"].ToString(),
-                                    Model = reader["Model"].ToString(),
-                                    StartTime = Convert.ToDateTime(reader["StartTime"]), 
-                                    EndTime = Convert.ToDateTime(reader["EndTime"]), 
-                                    FC_IsOk = Convert.ToBoolean(reader["FC_IsOk"]), 
-                                    FR_IsOk = Convert.ToBoolean(reader["FR_IsOk"]), 
-                                    RR_IsOk = Convert.ToBoolean(reader["RR_IsOk"])
-                                });
-                            }
-                        }
-                    }
+                    return con.Query<Result>(query, new { todayDate }).ToList();
                 }
             }
             catch (Exception ex)
             {
                 MsgBox.ErrorWithFormat("ErrorRetrievingResultInfo", "DatabaseError", ex.Message);
-                return null;
+                return new List<Result>();
             }
-
-            return results;
         }
 
-        public List<Result> GetResultInfoByDate(string date) 
+        public List<Result> GetResultInfoByDate(string date)
         {
-            List<Result> results = new List<Result>();
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
-                    con.Open();
                     const string query = "SELECT * FROM Result WHERE LEFT(AcceptNo, 8) = ? ORDER BY AcceptNo";
-
-                    using (var cmd = new OleDbCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("date", date);
-
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                results.Add(new Result
-                                {
-                                    AcceptNo = reader["AcceptNo"].ToString(),
-                                    PJI = reader["PJI"].ToString(),
-                                    Model = reader["Model"].ToString(),
-                                    StartTime = Convert.ToDateTime(reader["StartTime"]), 
-                                    EndTime = Convert.ToDateTime(reader["EndTime"]), 
-                                    FC_IsOk = Convert.ToBoolean(reader["FC_IsOk"]), 
-                                    FR_IsOk = Convert.ToBoolean(reader["FR_IsOk"]), 
-                                    RR_IsOk = Convert.ToBoolean(reader["RR_IsOk"])
-                                });
-                            }
-                        }
-                    }
+                    return con.Query<Result>(query, new { date }).ToList();
                 }
             }
             catch (Exception ex)
             {
                 MsgBox.ErrorWithFormat("ErrorRetrievingResultInfoByDate", "DatabaseError", ex.Message);
-                return null;
+                return new List<Result>();
             }
-
-            return results;
         }
 
         public List<Result> GetResultInfoByPji(string pji)
         {
-            List<Result> results = new List<Result>();
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
-                    con.Open();
                     const string query = "SELECT * FROM Result WHERE PJI = ? ORDER BY AcceptNo";
-
-                    using (var cmd = new OleDbCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("pji", pji);
-
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                results.Add(new Result
-                                {
-                                    AcceptNo = reader["AcceptNo"].ToString(),
-                                    PJI = reader["PJI"].ToString(),
-                                    Model = reader["Model"].ToString(),
-                                    StartTime = Convert.ToDateTime(reader["StartTime"]), 
-                                    EndTime = Convert.ToDateTime(reader["EndTime"]), 
-                                    FC_IsOk = Convert.ToBoolean(reader["FC_IsOk"]), 
-                                    FR_IsOk = Convert.ToBoolean(reader["FR_IsOk"]), 
-                                    RR_IsOk = Convert.ToBoolean(reader["RR_IsOk"])
-                                });
-                            }
-                        }
-                    }
+                    return con.Query<Result>(query, new { pji }).ToList();
                 }
             }
             catch (Exception ex)
             {
                 MsgBox.ErrorWithFormat("ErrorRetrievingResultInfoByPJI", "DatabaseError", ex.Message);
-                return null;
+                return new List<Result>();
             }
-
-            return results;
         }
 
         public bool SaveResult(Result result)
@@ -154,59 +73,25 @@ namespace Ki_ADAS.DB
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
-                    con.Open();
-
-                    // AcceptNo가 DB에 존재하는지 확인
-                    bool exists;
                     const string checkQuery = "SELECT COUNT(*) FROM Result WHERE AcceptNo = ?";
-
-                    using (var checkCmd = new OleDbCommand(checkQuery, con))
-                    {
-                        checkCmd.Parameters.AddWithValue("AcceptNo", result.AcceptNo);
-                        exists = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
-                    }
+                    bool exists = con.ExecuteScalar<int>(checkQuery, new { result.AcceptNo }) > 0;
 
                     if (exists)
                     {
                         // Update
                         const string updateQuery = @"UPDATE Result SET
-                            PJI = ?, Model = ?, StartTime = ?, EndTime = ?, FC_IsOk = ?, FR_IsOk = ?, RR_IsOk = ?
-                            WHERE AcceptNo = ?";
-
-                        using (var cmd = new OleDbCommand(updateQuery, con))
-                        {
-                            cmd.Parameters.AddWithValue("PJI", result.PJI);
-                            cmd.Parameters.AddWithValue("Model", result.Model);
-                            cmd.Parameters.AddWithValue("StartTime", result.StartTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                            cmd.Parameters.AddWithValue("EndTime", result.EndTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                            cmd.Parameters.AddWithValue("FC_IsOk", result.FC_IsOk ? 1 : 0);
-                            cmd.Parameters.AddWithValue("FR_IsOk", result.FR_IsOk ? 1 : 0);
-                            cmd.Parameters.AddWithValue("RR_IsOk", result.RR_IsOk ? 1 : 0);
-                            cmd.Parameters.AddWithValue("AcceptNo", result.AcceptNo);
-
-                            return cmd.ExecuteNonQuery() > 0;
-                        }
+                            PJI = @PJI, Model = @Model, StartTime = @StartTime, EndTime = @EndTime, 
+                            FC_IsOk = @FC_IsOk, FR_IsOk = @FR_IsOk, RR_IsOk = @RR_IsOk
+                            WHERE AcceptNo = @AcceptNo";
+                        return con.Execute(updateQuery, result) > 0;
                     }
                     else
                     {
                         // Add
                         const string insertQuery = @"INSERT INTO Result (
                             AcceptNo, PJI, Model, StartTime, EndTime, FC_IsOk, FR_IsOk, RR_IsOk)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-                        using (var cmd = new OleDbCommand(insertQuery, con))
-                        {
-                            cmd.Parameters.AddWithValue("AcceptNo", result.AcceptNo);
-                            cmd.Parameters.AddWithValue("PJI", result.PJI);
-                            cmd.Parameters.AddWithValue("Model", result.Model);
-                            cmd.Parameters.AddWithValue("StartTime", result.StartTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                            cmd.Parameters.AddWithValue("EndTime", result.EndTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                            cmd.Parameters.AddWithValue("FC_IsOk", result.FC_IsOk ? 1 : 0);
-                            cmd.Parameters.AddWithValue("FR_IsOk", result.FR_IsOk ? 1 : 0);
-                            cmd.Parameters.AddWithValue("RR_IsOk", result.RR_IsOk ? 1 : 0);
-
-                            return cmd.ExecuteNonQuery() > 0;
-                        }
+                            VALUES (@AcceptNo, @PJI, @Model, @StartTime, @EndTime, @FC_IsOk, @FR_IsOk, @RR_IsOk)";
+                        return con.Execute(insertQuery, result) > 0;
                     }
                 }
             }
@@ -217,34 +102,22 @@ namespace Ki_ADAS.DB
             }
         }
 
-        public bool IsDuplicateAceeptNo(string name, string oldAcceptNo = null)
+        public bool IsDuplicateAcceptNo(string acceptNo, string oldAcceptNo = null)
         {
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
                 {
-                    con.Open();
-                    string checkQuery;
-
                     if (string.IsNullOrEmpty(oldAcceptNo))
                     {
-                        checkQuery = "SELECT COUNT(*) FROM Result WHERE AcceptNo = ?";
+                        const string query = "SELECT COUNT(*) FROM Result WHERE AcceptNo = ?";
+                        int count = con.ExecuteScalar<int>(query, new { AcceptNo = acceptNo });
+                        return count > 0;
                     }
                     else
                     {
-                        checkQuery = "SELECT COUNT(*) FROM Result WHERE AcceptNo = ? AND AcceptNo <> ?";
-                    }
-
-                    using (OleDbCommand checkCmd = new OleDbCommand(checkQuery, con))
-                    {
-                        checkCmd.Parameters.AddWithValue("Name", name);
-
-                        if (!string.IsNullOrEmpty(oldAcceptNo))
-                        {
-                            checkCmd.Parameters.AddWithValue("OldName", oldAcceptNo);
-                        }
-
-                        int count = Convert.ToInt32(checkCmd.ExecuteScalar());
+                        const string query = "SELECT COUNT(*) FROM Result WHERE AcceptNo = ? AND AcceptNo <> ?";
+                        int count = con.ExecuteScalar<int>(query, new { NewAcceptNo = acceptNo, OldAcceptNo = oldAcceptNo });
                         return count > 0;
                     }
                 }

@@ -1,14 +1,17 @@
-﻿using Ki_ADAS;
+using Ki_ADAS;
+using Ki_ADAS.ThreadADAS;
 using Ki_ADAS.VEPBench;
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,7 +19,6 @@ namespace Ki_ADAS
 {
     public partial class Frm_Mainfrm : Form
     {
-
         private int m_nCurrentFrmIdx = Def.FOM_IDX_MAIN;
 
         public SettingConfigDb _db;
@@ -30,6 +32,7 @@ namespace Ki_ADAS
         public Frm_Operator User_Monitor = null;
         public VEPBenchDescriptionZone _descriptionZone = null;
         private List<Button> m_NavButtons = new List<Button>();
+        private BarcodeReader _barcodeReader;
         private GlobalVal gv;
 
         private IniFile _iniFile;
@@ -39,10 +42,10 @@ namespace Ki_ADAS
         private const string VEP_IP_KEY = "VepIp";
         private const string VEP_PORT = "VepPort";
 
-
         public Frm_Mainfrm(SettingConfigDb dbInstance)
         {
             InitializeComponent();
+            
             _db = dbInstance;
 
             // Read network configuration
@@ -61,6 +64,7 @@ namespace Ki_ADAS
             m_frmCalibration = new Frm_Calibration();
             m_frmManual = new Frm_Manual();
         }
+
         private void Frm_Mainfrm_Load(object sender, EventArgs e)
         {
             try
@@ -88,7 +92,6 @@ namespace Ki_ADAS
 
                 ShowFrm(Def.FOM_IDX_MAIN);
 
-
                 if (!this.DesignMode)
                 {
                     if (User_Monitor == null || User_Monitor.Text == "")
@@ -97,10 +100,71 @@ namespace Ki_ADAS
                         User_Monitor.Show();
                     }
                 }
+                
+                StartBarcode();
             }
             catch (Exception ex)
             {
                 MsgBox.ErrorWithFormat("ErrorLoadingMainFormFrame", "Error", ex.Message);
+            }
+        }
+        
+        private void Frm_Mainfrm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                _barcodeReader?.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorDisconnectingBarcodeReader", "Error", ex.Message);
+            }
+        }
+
+        private void StartBarcode()
+        {
+            try
+            {
+                _barcodeReader = new BarcodeReader(Frm_Main.barcodeIp);
+                _barcodeReader.OnBarcodeReceived += BarcodeReceivedHandler;
+                _barcodeReader.OnError += BarcodeReader_OnError;
+                _barcodeReader.ConnectBarcodeReader();
+            }
+            catch (Exception ex)
+            {
+                MsgBox.ErrorWithFormat("ErrorConnectingBarcodeReader", "Error", ex.Message);
+            }
+        }
+
+        private void BarcodeReader_OnError(object sender, Exception e)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => MsgBox.ErrorWithFormat("ErrorInBarcodeReadLoop", "Error", e.Message)));
+            }
+            else
+            {
+                MsgBox.ErrorWithFormat("ErrorInBarcodeReadLoop", "Error", e.Message);
+            }
+        }
+
+        private void BarcodeReceivedHandler(object sender, BarcodeReader.BarcodeEventArgs e)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ProcessBarcode(e.BarcodeData)));
+            }
+            else
+            {
+                ProcessBarcode(e.BarcodeData);
+            }
+        }
+
+        private void ProcessBarcode(string barcodeData)
+        {
+            if (m_frmMain != null && !m_frmMain.IsDisposed)
+            {
+                m_frmMain.SetBarcodeData(barcodeData);
             }
         }
 
@@ -118,7 +182,6 @@ namespace Ki_ADAS
                 MsgBox.ErrorWithFormat("ErrorInitializingSubForm", "Error", ex.Message);
             }
         }
-
 
         private void RepositionSubForm(Form fSubform)
         {
@@ -150,7 +213,6 @@ namespace Ki_ADAS
                 RepositionSubForm(m_ActiveSubForm);
             }
         }
-
 
         private void ShowFrm(int nIdx)
         {

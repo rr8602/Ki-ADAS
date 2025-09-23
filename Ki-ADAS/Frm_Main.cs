@@ -1,14 +1,18 @@
-using Ki_ADAS.VEPBench;
-using Ki_ADAS.DB;
 using Ki_ADAS;
+using Ki_ADAS.DB;
+using Ki_ADAS.ThreadADAS;
+using Ki_ADAS.VEPBench;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -27,9 +31,11 @@ namespace Ki_ADAS
         private Thread_Main _mainThread;
         public static string ipAddress;
         public static int port;
+        public static string barcodeIp;
         private const string CONFIG_SECTION = "Network";
         private const string VEP_IP_KEY = "VepIp";
         private const string VEP_PORT = "VepPort";
+        private const string BARCODE_IP_KEY = "BarcodeIp";
 
         public event EventHandler<VEPBenchSynchroZone> SynchroZoneChanged
         {
@@ -53,6 +59,7 @@ namespace Ki_ADAS
 
             ipAddress = _iniFile.ReadValue(CONFIG_SECTION, VEP_IP_KEY);
             port = _iniFile.ReadInteger(CONFIG_SECTION, VEP_PORT);
+            barcodeIp = _iniFile.ReadValue(CONFIG_SECTION, BARCODE_IP_KEY);
 
             _modelRepository = new ModelRepository(_db);
             _infoRepository = new InfoRepository(_db);
@@ -160,52 +167,7 @@ namespace Ki_ADAS
         {
             try
             {
-                string barcode = txt_barcode.Text.Trim();
-
-                if (string.IsNullOrEmpty(barcode))
-                {
-                    MsgBox.Info("PleaseEnterBarcode", "Notification");
-                    return;
-                }
-
-                string pji = barcode.Substring(2, 7);
-                string modelCode = barcode.Substring(barcode.Length - 3);
-                string modelName = _modelRepository.GetModelNameByBarcode(modelCode);
-
-                if (string.IsNullOrEmpty(modelName))
-                {
-                    MsgBox.ErrorWithFormat("CouldNotFindModelCode", "Error", modelCode);
-                    return;
-                }
-
-                var newVehicle = new Info
-                {
-                    AcceptNo = _infoRepository.GetNextAcceptNo(),
-                    PJI = pji,
-                    Model = modelName
-                };
-
-                if (string.IsNullOrEmpty(newVehicle.AcceptNo))
-                {
-                    MsgBox.Error("FailedToGenerateAcceptNo");
-                    return;
-                }
-
-                bool isSaved = _infoRepository.SaveVehicleInfo(newVehicle);
-
-                if (!isSaved)
-                {
-                    MsgBox.Error("FailedToSaveVehicleInformation", "DBError");
-                    return;
-                }
-
-                var item = new ListViewItem(newVehicle.AcceptNo);
-                item.SubItems.Add(newVehicle.PJI);
-                item.SubItems.Add(newVehicle.Model);
-                seqList.Items.Add(item);
-
-                txt_barcode.Clear();
-                AddLogMessage($"Vehicle registration complete: {newVehicle.PJI} / {newVehicle.Model}");
+                CreateBarcodeData(txt_barcode.Text);
             }
             catch (Exception ex)
             {
@@ -217,28 +179,69 @@ namespace Ki_ADAS
 
         private void BtnStop_Click(object sender, EventArgs e)
         {
+            _mainThread.StopThread();
+        }
+
+        public void SetBarcodeData(string barcode)
+        {
             try
             {
-                if (_mainThread == null || !_vepBenchClient.IsConnected)
-                {
-                    MsgBox.Info("ADASProcessNotRunning", "Notification");
-                    return;
-                }
-
-                _mainThread.StopThread();
-                _vepBenchClient.StopMonitoring();
-                _vepBenchClient.DisConnect();
-
-                BtnStart.Enabled = true;
-                BtnStop.Enabled = false;
-
-                AddLogMessage("ADAS process stopped.");
+                CreateBarcodeData(barcode);
             }
             catch (Exception ex)
             {
-                MsgBox.ErrorWithFormat("ErrorStoppingADASProcess", "Error", ex.Message);
+                MsgBox.ErrorWithFormat("ErrorDuringVehicleRegistration", "Error", ex.Message);
+                AddLogMessage($"Error processing barcode: {ex.Message}");
+            }
+        }
 
-                AddLogMessage($"Error occurred: {ex.Message}");
+        public void CreateBarcodeData(string barcode)
+        {
+            string trimmedBarcode = barcode.Trim();
+            string pji = trimmedBarcode.Substring(2, 7);
+            string modelCode = trimmedBarcode.Substring(trimmedBarcode.Length - 3);
+/*            string modelName = _modelRepository.GetModelNameByBarcode(modelCode);
+
+            if (string.IsNullOrEmpty(modelName))
+            {
+                MsgBox.ErrorWithFormat("CouldNotFindModelCode", "Error", modelCode);
+                AddLogMessage($"Could not find model for barcode: {trimmedBarcode}");
+                return;
+            }*/
+
+            if (!_infoRepository.PjiExists(pji))
+            {
+                var newVehicle = new Info
+                {
+                    AcceptNo = _infoRepository.GetNextAcceptNo(),
+                    PJI = pji,
+                    Model = "Sonata"
+                };
+
+                if (string.IsNullOrEmpty(newVehicle.AcceptNo))
+                {
+                    MsgBox.Error("FailedToGenerateAcceptNo");
+                    AddLogMessage("Failed to generate a new AcceptNo.");
+                    return;
+                }
+
+                bool isSaved = _infoRepository.SaveVehicleInfo(newVehicle);
+
+                if (!isSaved)
+                {
+                    MsgBox.Error("FailedToSaveVehicleInformation", "DBError");
+                    AddLogMessage($"Failed to save vehicle info for PJI: {pji}");
+                    return;
+                }
+
+                var item = new ListViewItem(newVehicle.AcceptNo);
+                item.SubItems.Add(newVehicle.PJI);
+                item.SubItems.Add(newVehicle.Model);
+                seqList.Items.Add(item);
+
+                seqList.EnsureVisible(seqList.Items.Count - 1);
+
+                AddLogMessage($"Vehicle automatically registered: {newVehicle.PJI} / {newVehicle.Model}");
             }
         }
 
