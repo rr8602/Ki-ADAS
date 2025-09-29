@@ -18,6 +18,8 @@ namespace Ki_ADAS
         private Frm_Main _main;
         private Result _result;
         private VEPBenchDataManager _vepManager = GlobalVal.Instance._VEP;
+        private Model _model;
+        private readonly ManualResetEvent _completionEvent;
 
         private bool m_bRun = false;
 
@@ -33,14 +35,15 @@ namespace Ki_ADAS
                    (GetAsyncKeyState(0x6B) & 0x8000) != 0;
         }
 
-        public Thread_FrontRadar(VEPBenchClient client, Frm_Main main, Result result)
+        public Thread_FrontRadar(VEPBenchClient client, Frm_Main main, Result result, ManualResetEvent completionEvent)
         {
             _client = client;
             _main = main;
             _result = result;
+            _completionEvent = completionEvent;
         }
 
-        public int StartThread()
+        public int StartThread(Model modelToTest)
         {
             try
             {
@@ -48,6 +51,13 @@ namespace Ki_ADAS
                 {
                     StopThread();
                     Thread.Sleep(10);
+                }
+
+                _model = modelToTest;
+                if (_model == null)
+                {
+                    _main.AddLogMessage("[FrontRadar] Error: Model data is null. Aborting thread start.");
+                    return -1;
                 }
 
                 m_bRun = true;
@@ -79,11 +89,6 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorStoppingFrontRadarThread", "Error", ex.Message);
             }
-        }
-
-        public bool IsThreadDone()
-        {
-            return m_bRun;
         }
 
         public void SetState(int state)
@@ -151,6 +156,10 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorInFrontRadarThreadLoop", "Error", ex.Message);
             }
+            finally
+            {
+                _completionEvent?.Set();
+            }
         }
 
         private void _DoSendInfo()
@@ -158,34 +167,22 @@ namespace Ki_ADAS
             _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrontRadarSendInfo");
             try
             {
-                Model modelInfo = null;
-
-                if (_main.IsHandleCreated)
+                if (_model == null)
                 {
-                    _main.Invoke(new Action(() => {
-                        modelInfo = _main.SelectedModelInfo;
-                    }));
-                }
-                else
-                {
-                    _main.AddLogMessage("[FrontRadar] Error: Main form handle not created before Invoke.");
+                    _main.AddLogMessage("[FrontRadar] Error: ModelInfo is null in _DoSendInfo.");
+                    SetState(TS.STEP_FRADAR_FINISH); // Abort the sequence
+                    return;
                 }
 
-                if (modelInfo == null) 
-                {
-                    _main.AddLogMessage("[FrontRadar] Error: ModelInfo is null after Invoke.");
-                    return; 
-                }
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_XPOSITION_INDEX, (ushort)(_model.FR_X ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_YPOSITION_INDEX, (ushort)(_model.FR_Y ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_ZPOSITION_INDEX, (ushort)(_model.FR_Z ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_ANGLE_INDEX, (ushort)(_model.FR_Angle ?? 0));
 
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_XPOSITION_INDEX, (ushort)(modelInfo.FR_X ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_YPOSITION_INDEX, (ushort)(modelInfo.FR_Y ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_ZPOSITION_INDEX, (ushort)(modelInfo.FR_Z ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_RH_ANGLE_INDEX, (ushort)(modelInfo.FR_Angle ?? 0));
-
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_XPOSITION_INDEX, (ushort)(modelInfo.FL_X ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_YPOSITION_INDEX, (ushort)(modelInfo.FL_Y ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_ZPOSITION_INDEX, (ushort)(modelInfo.FL_Z ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_ANGLE_INDEX, (ushort)(modelInfo.FL_Angle ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_XPOSITION_INDEX, (ushort)(_model.FL_X ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_YPOSITION_INDEX, (ushort)(_model.FL_Y ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_ZPOSITION_INDEX, (ushort)(_model.FL_Z ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_RADAR_LH_ANGLE_INDEX, (ushort)(_model.FL_Angle ?? 0));
 
                 _client.WriteSynchroZone();
 
@@ -355,11 +352,7 @@ namespace Ki_ADAS
 
             try
             {
-                // 완료 처리
-                if (IsShiftEnterPressed())
-                {
-                    _result.FR_IsOk = true; // 성공
-                }
+                _result.FR_IsOk = true; // 성공
             }
             catch (Exception ex)
             {

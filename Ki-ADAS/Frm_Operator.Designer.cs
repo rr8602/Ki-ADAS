@@ -69,7 +69,7 @@
             this.NavTop.Location = new System.Drawing.Point(1, 2);
             this.NavTop.Margin = new System.Windows.Forms.Padding(5);
             this.NavTop.Name = "NavTop";
-            this.NavTop.Size = new System.Drawing.Size(2194, 216);
+            this.NavTop.Size = new System.Drawing.Size(2714, 270);
             this.NavTop.TabIndex = 9;
             this.NavTop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseDown);
             this.NavTop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.NavTop_MouseMove);
@@ -78,7 +78,7 @@
             // 
             this.NavBottom.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.NavBottom.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.NavBottom.Location = new System.Drawing.Point(-397, 2034);
+            this.NavBottom.Location = new System.Drawing.Point(-839, 2225);
             this.NavBottom.Margin = new System.Windows.Forms.Padding(5);
             this.NavBottom.Name = "NavBottom";
             this.NavBottom.Size = new System.Drawing.Size(2194, 10);
@@ -160,10 +160,10 @@
             // 
             this.lbl_message.BackColor = System.Drawing.Color.White;
             this.lbl_message.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lbl_message.Font = new System.Drawing.Font("Arial", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_message.Location = new System.Drawing.Point(27, 886);
+            this.lbl_message.Font = new System.Drawing.Font("Arial", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_message.Location = new System.Drawing.Point(19, 851);
             this.lbl_message.Name = "lbl_message";
-            this.lbl_message.Size = new System.Drawing.Size(2153, 366);
+            this.lbl_message.Size = new System.Drawing.Size(2153, 237);
             this.lbl_message.TabIndex = 99;
             this.lbl_message.Text = "-";
             this.lbl_message.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -246,7 +246,7 @@
             this.lbl_RLeft.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_RLeft.Location = new System.Drawing.Point(1370, 682);
             this.lbl_RLeft.Name = "lbl_RLeft";
-            this.lbl_RLeft.Size = new System.Drawing.Size(399, 84);
+            this.lbl_RLeft.Size = new System.Drawing.Size(397, 85);
             this.lbl_RLeft.TabIndex = 108;
             this.lbl_RLeft.Text = "0.0";
             this.lbl_RLeft.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -407,7 +407,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2194, 1350);
+            this.ClientSize = new System.Drawing.Size(2194, 1102);
             this.Controls.Add(this.lbl_elevation);
             this.Controls.Add(this.lbl_azimuth);
             this.Controls.Add(this.lbl_roll);

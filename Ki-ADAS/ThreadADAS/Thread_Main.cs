@@ -39,6 +39,10 @@ namespace Ki_ADAS
         private bool m_bBarcode = false;
         private readonly object _lock = new object();
 
+        private ManualResetEvent _frCamCompleteEvent = new ManualResetEvent(false);
+        private ManualResetEvent _frontRadarCompleteEvent = new ManualResetEvent(false);
+        private ManualResetEvent _rearRadarCompleteEvent = new ManualResetEvent(false);
+
         private bool _bFRCamComplate = false;
         private bool _bFornt_RadarCamComplate = false;
         private bool _bRear_RadarCamComplate = false;
@@ -63,10 +67,10 @@ namespace Ki_ADAS
             _result = new Result();
             _resultRepository = new ResultRepository(db);
             _client = client;
-            _frCam = new Thread_FRCam(_client, main, _result);
-            _frontRadar = new Thread_FrontRadar(_client, main, _result);
-            _rearRadar = new Thread_RearRadar(_client, main, _result);
             _main = main;
+            _frCam = new Thread_FRCam(_client, main, _result, _frCamCompleteEvent);
+            _frontRadar = new Thread_FrontRadar(_client, main, _result, _frontRadarCompleteEvent);
+            _rearRadar = new Thread_RearRadar(_client, main, _result, _rearRadarCompleteEvent);
         }
 
         public void SetBarcode(Info pInfo, Model pModel)
@@ -262,6 +266,16 @@ namespace Ki_ADAS
             try
             {
                 //변수들 초기화
+                Info info = null;
+                Model model = null;
+
+                _main.Invoke(new Action(() => {
+                    info = _main.SelectedVehicleInfo;
+                    model = _main.SelectedModelInfo;
+                }));
+
+                SetBarcode(info, model);
+
                 m_bBarcode = false;
                 m_bPassNext = false;
 
@@ -480,26 +494,25 @@ namespace Ki_ADAS
             {
                 _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescStartSensorTest");
 
-                while (true)
+                if (Cur_Model.FC_IsTest == true)
                 {
-                    if (Cur_Model.FC_IsTest == true)
-                    {
-                        _frCam.StartThread();
-                    }
-
-                    if (Cur_Model.F_IsTest == true)
-                    {
-                        _frontRadar.StartThread();
-                    }
-
-                    if (Cur_Model.R_IsTest == true)
-                    {
-                        _rearRadar.StartThread();
-                    }
-
-                    SetState(TS.STEP_MAIN_WAIT_TEST_COMPLETE);
-                    break;
+                    _frCamCompleteEvent.Reset();
+                    _frCam.StartThread(Cur_Model);
                 }
+
+                if (Cur_Model.F_IsTest == true)
+                {
+                    _frontRadarCompleteEvent.Reset();
+                    _frontRadar.StartThread(Cur_Model);
+                }
+
+                if (Cur_Model.R_IsTest == true)
+                {
+                    _rearRadarCompleteEvent.Reset();
+                    _rearRadar.StartThread(Cur_Model);
+                }
+
+                SetState(TS.STEP_MAIN_WAIT_TEST_COMPLETE);
             }
             catch (Exception ex)
             {
@@ -511,27 +524,31 @@ namespace Ki_ADAS
         {
             try
             {
-                Thread.Sleep(5000); // 각 검사 쓰레드 종료될 때까지 대기
-
                 _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescWaitTestComplete");
 
-                bool fcDone = !Cur_Model.FC_IsTest || (Cur_Model.FC_IsTest && _frCam.IsThreadDone());
-                bool frDone = !Cur_Model.F_IsTest || (Cur_Model.F_IsTest && _frontRadar.IsThreadDone());
-                bool rrDone = !Cur_Model.R_IsTest || (Cur_Model.R_IsTest && _rearRadar.IsThreadDone());
+                var eventsToWaitFor = new List<WaitHandle>();
 
-                while (true)
+                if (Cur_Model.FC_IsTest)
                 {
-                    if (fcDone || frDone || rrDone)
-                    {
-                        _main.m_frmParent.User_Monitor.StopInspectionTimer();
-                        _result.EndTime = DateTime.Now;
-                        SetState(TS.STEP_MAIN_CENTERING_HOME);
-
-                        break;
-                    }
-
-                    Thread.Sleep(100);
+                    eventsToWaitFor.Add(_frCamCompleteEvent);
                 }
+                if (Cur_Model.F_IsTest)
+                {
+                    eventsToWaitFor.Add(_frontRadarCompleteEvent);
+                }
+                if (Cur_Model.R_IsTest)
+                {
+                    eventsToWaitFor.Add(_rearRadarCompleteEvent);
+                }
+
+                if (eventsToWaitFor.Any())
+                {
+                    WaitHandle.WaitAll(eventsToWaitFor.ToArray());
+                }
+
+                _main.m_frmParent.User_Monitor.StopInspectionTimer();
+                _result.EndTime = DateTime.Now;
+                SetState(TS.STEP_MAIN_CENTERING_HOME);
             }
             catch (Exception ex)
             {

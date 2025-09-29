@@ -19,6 +19,8 @@ namespace Ki_ADAS
         private Frm_Main _main;
         private Result _result;
         private VEPBenchDataManager _vepManager = GlobalVal.Instance._VEP;
+        private Model _model;
+        private readonly ManualResetEvent _completionEvent;
 
         private bool m_bRun = false;
 
@@ -38,14 +40,15 @@ namespace Ki_ADAS
                    (GetAsyncKeyState(0x6B) & 0x8000) != 0;
         }
 
-        public Thread_FRCam(VEPBenchClient client, Frm_Main main, Result result)
+        public Thread_FRCam(VEPBenchClient client, Frm_Main main, Result result, ManualResetEvent completionEvent)
         {
             _client = client;
             _main = main;
             _result = result;
+            _completionEvent = completionEvent;
         }
 
-        public int StartThread()
+        public int StartThread(Model modelToTest)
         {
             try
             {
@@ -53,6 +56,14 @@ namespace Ki_ADAS
                 {
                     StopThread();
                     Thread.Sleep(10);
+                }
+
+                _model = modelToTest;
+
+                if (_model == null)
+                {
+                    _main.AddLogMessage("[FRCam] Error: Model data is null. Aborting thread start.");
+                    return -1;
                 }
 
                 m_bRun = true;
@@ -84,11 +95,6 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorStoppingFRCamThread", "Error", ex.Message);
             }
-        }
-
-        public bool IsThreadDone()
-        {
-            return m_bRun;
         }
 
         public void SetState(int state)
@@ -156,41 +162,34 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorInFRCamThreadLoop", "Error", ex.Message);
             }
+            finally
+            {
+                _completionEvent?.Set();
+            }
         }
 
         private void _DoSendInfo()
         {
             _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescFrCamSendInfo");
+
             try
             {
-                Model modelInfo = null;
-
-                if (_main.IsHandleCreated)
+                if (_model == null) 
                 {
-                    _main.Invoke(new Action(() => {
-                        modelInfo = _main.SelectedModelInfo;
-                    }));
-                }
-                else
-                {
-                    _main.AddLogMessage("[FRCam] Error: Main form handle not created before Invoke.");
-                }
-
-                if (modelInfo == null) 
-                {
-                    _main.AddLogMessage("[FRCam] Error: ModelInfo is null after Invoke.");
+                    _main.AddLogMessage("[FRCam] Error: ModelInfo is null in _DoSendInfo.");
+                    SetState(TS.STEP_CAM_FINISH);
                     return; 
                 }
 
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_DISTANCE_INDEX, (ushort)(modelInfo.FC_Distance ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_HEIGHT_INDEX, (ushort)(modelInfo.FC_Height ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_INTERDISTANCE_INDEX, (ushort)(modelInfo.FC_InterDistance ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_HTU_INDEX, (ushort)(modelInfo.FC_Htu ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_HTL_INDEX, (ushort)(modelInfo.FC_Htl ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_TS_INDEX, (ushort)(modelInfo.FC_Ts ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_ALLIGNMENTAXEOFFSET_INDEX, (ushort)(modelInfo.FC_AlignmentAxeOffset ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_VV_INDEX, (ushort)(modelInfo.FC_Vv ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_STCT_INDEX, (ushort)(modelInfo.FC_StCt ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_DISTANCE_INDEX, (ushort)(_model.FC_Distance ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_HEIGHT_INDEX, (ushort)(_model.FC_Height ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_INTERDISTANCE_INDEX, (ushort)(_model.FC_InterDistance ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_HTU_INDEX, (ushort)(_model.FC_Htu ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_HTL_INDEX, (ushort)(_model.FC_Htl ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_TS_INDEX, (ushort)(_model.FC_Ts ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_ALLIGNMENTAXEOFFSET_INDEX, (ushort)(_model.FC_AlignmentAxeOffset ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_VV_INDEX, (ushort)(_model.FC_Vv ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.FRONT_CAMERA_STCT_INDEX, (ushort)(_model.FC_StCt ?? 0));
 
                 _client.WriteSynchroZone();
 
@@ -360,11 +359,7 @@ namespace Ki_ADAS
 
             try
             {
-                // 완료 처리
-                if (IsShiftEnterPressed())
-                {
-                    _result.FC_IsOk = true; // 성공
-                }
+                _result.FC_IsOk = true; // 성공
             }
             catch (Exception ex)
             { 

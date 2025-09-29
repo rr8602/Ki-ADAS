@@ -114,7 +114,7 @@ namespace Ki_ADAS
 
         private void InitializeAddresses()
         {
-            Addr_Validity = _vepManager.DescriptionZone.ValidityIndicator;
+            Addr_Validity = 0;
             Addr_StatusZone = _vepManager.DescriptionZone.StatusZoneAddr;
             Addr_SynchroZone = _vepManager.DescriptionZone.SynchroZoneAddr;
             Addr_TransmissionZone = _vepManager.DescriptionZone.TransmissionZoneAddr;

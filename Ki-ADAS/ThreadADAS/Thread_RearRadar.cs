@@ -19,6 +19,8 @@ namespace Ki_ADAS
         private Frm_Main _main;
         private Result _result;
         private VEPBenchDataManager _vepManager = GlobalVal.Instance._VEP;
+        private Model _model;
+        private readonly ManualResetEvent _completionEvent;
 
         private bool m_bRun = false;
 
@@ -34,15 +36,16 @@ namespace Ki_ADAS
                    (GetAsyncKeyState(0x6B) & 0x8000) != 0;
         }
 
-        public Thread_RearRadar(VEPBenchClient client, Frm_Main main, Result result)
+        public Thread_RearRadar(VEPBenchClient client, Frm_Main main, Result result, ManualResetEvent completionEvent)
         {
             _GV = GlobalVal.Instance;
             _client = client;
             _main = main;
             _result = result;
+            _completionEvent = completionEvent;
         }
 
-        public int StartThread()
+        public int StartThread(Model modelToTest)
         {
             try
             {
@@ -50,6 +53,14 @@ namespace Ki_ADAS
                 {
                     StopThread();
                     Thread.Sleep(10);
+                }
+
+                _model = modelToTest;
+
+                if (_model == null)
+                {
+                    _main.AddLogMessage("[RearRadar] Error: Model data is null. Aborting thread start.");
+                    return -1;
                 }
 
                 m_bRun = true;
@@ -81,11 +92,6 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorStoppingRearRadarThread", "Error", ex.Message);
             }
-        }
-
-        public bool IsThreadDone()
-        {
-            return m_bRun;
         }
 
         public void SetRRState(int state)
@@ -153,6 +159,10 @@ namespace Ki_ADAS
             {
                 MsgBox.ErrorWithFormat("ErrorInRearRadarThreadLoop", "Error", ex.Message);
             }
+            finally
+            {
+                _completionEvent?.Set();
+            }
         }
 
         private void _DoSendInfo()
@@ -160,34 +170,22 @@ namespace Ki_ADAS
             _main.m_frmParent.User_Monitor.UpdateStepDescription("StepDescRearRadarSendInfo");
             try
             {
-                Model modelInfo = null;
-
-                if (_main.IsHandleCreated)
+                if (_model == null)
                 {
-                    _main.Invoke(new Action(() => {
-                        modelInfo = _main.SelectedModelInfo;
-                    }));
-                }
-                else
-                {
-                    _main.AddLogMessage("[RearRadar] Error: Main form handle not created before Invoke.");
+                    _main.AddLogMessage("[RearRadar] Error: ModelInfo is null in _DoSendInfo.");
+                    SetRRState(TS.STEP_RRADAR_FINISH); // Abort the sequence
+                    return;
                 }
 
-                if (modelInfo == null) 
-                {
-                    _main.AddLogMessage("[RearRadar] Error: ModelInfo is null after Invoke.");
-                    return; 
-                }
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_XPOSITION_INDEX, (ushort)(_model.RR_X ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_YPOSITION_INDEX, (ushort)(_model.RR_Y ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_ZPOSITION_INDEX, (ushort)(_model.RR_Z ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_ANGLE_INDEX, (ushort)(_model.RR_Angle ?? 0));
 
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_XPOSITION_INDEX, (ushort)(modelInfo.RR_X ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_YPOSITION_INDEX, (ushort)(modelInfo.RR_Y ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_ZPOSITION_INDEX, (ushort)(modelInfo.RR_Z ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_RH_ANGLE_INDEX, (ushort)(modelInfo.RR_Angle ?? 0));
-
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_XPOSITION_INDEX, (ushort)(modelInfo.RL_X ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_YPOSITION_INDEX, (ushort)(modelInfo.RL_Y ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_ZPOSITION_INDEX, (ushort)(modelInfo.RL_Z ?? 0));
-                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_ANGLE_INDEX, (ushort)(modelInfo.RL_Angle ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_XPOSITION_INDEX, (ushort)(_model.RL_X ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_YPOSITION_INDEX, (ushort)(_model.RL_Y ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_ZPOSITION_INDEX, (ushort)(_model.RL_Z ?? 0));
+                _vepManager.SynchroZone.SetValue(VEPBenchSynchroZone.REAR_RADAR_LH_ANGLE_INDEX, (ushort)(_model.RL_Angle ?? 0));
 
                 _client.WriteSynchroZone();
 
@@ -357,11 +355,7 @@ namespace Ki_ADAS
 
             try
             {
-                // 완료 처리
-                if (IsShiftEnterPressed())
-                {
-                    _result.RR_IsOk = true; // 성공
-                }
+                _result.RR_IsOk = true; // 성공
             }
             catch (Exception ex)
             {

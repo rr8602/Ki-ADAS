@@ -200,14 +200,14 @@ namespace Ki_ADAS
             string trimmedBarcode = barcode.Trim();
             string pji = trimmedBarcode.Substring(2, 7);
             string modelCode = trimmedBarcode.Substring(trimmedBarcode.Length - 3);
-/*            string modelName = _modelRepository.GetModelNameByBarcode(modelCode);
+            string modelName = _modelRepository.GetModelNameByBarcode(modelCode);
 
             if (string.IsNullOrEmpty(modelName))
             {
                 MsgBox.ErrorWithFormat("CouldNotFindModelCode", "Error", modelCode);
                 AddLogMessage($"Could not find model for barcode: {trimmedBarcode}");
                 return;
-            }*/
+            }
 
             if (!_infoRepository.PjiExists(pji))
             {

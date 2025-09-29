@@ -49,6 +49,11 @@ namespace Ki_ADAS
             _iniFile = new IniFile(iniPath);
         }
 
+        private void InitialNewModel()
+        {
+
+        }
+
         private void Frm_Config_Load(object sender, EventArgs e)
         {
             try
@@ -203,22 +208,87 @@ namespace Ki_ADAS
             }
         }
 
+        private double? ParseDouble(string text)
+        {
+            if (double.TryParse(text, out double result))
+            {
+                return result;
+            }
+            return null;
+        }
+
+        private Model CreateModelFromForm()
+        {
+            return new Model
+            {
+                Name = txtModel.Text,
+                Barcode = txtBarcode.Text,
+                Wheelbase = ParseDouble(txtWheelbase.Text),
+
+                // Front Camera
+                FC_Distance = ParseDouble(txtDistance.Text),
+                FC_Height = ParseDouble(txtHeight.Text),
+                FC_InterDistance = ParseDouble(txtInterDistance.Text),
+                FC_Htu = ParseDouble(txtHtu.Text),
+                FC_Htl = ParseDouble(txtHtl.Text),
+                FC_Ts = ParseDouble(txtTs.Text),
+                FC_AlignmentAxeOffset = ParseDouble(txtOffset.Text),
+                FC_Vv = ParseDouble(txtVv.Text),
+                FC_StCt = ParseDouble(txtStCt.Text),
+                FC_IsTest = chkIsFrontCameraTest.Checked,
+
+                // Front Radar
+                FR_X = ParseDouble(txtFLX.Text),
+                FR_Y = ParseDouble(txtFLY.Text),
+                FR_Z = ParseDouble(txtFLZ.Text),
+                FR_Angle = ParseDouble(txtFLAngle.Text),
+                FL_X = ParseDouble(txtFRX.Text),
+                FL_Y = ParseDouble(txtFRY.Text),
+                FL_Z = ParseDouble(txtFRZ.Text),
+                FL_Angle = ParseDouble(txtFRAngle.Text),
+                F_IsTest = chkIsFrontRadar.Checked,
+
+                // Rear Radar
+                RR_X = ParseDouble(txtRLX.Text),
+                RR_Y = ParseDouble(txtRLY.Text),
+                RR_Z = ParseDouble(txtRLZ.Text),
+                RR_Angle = ParseDouble(txtRLAngle.Text),
+                RL_X = ParseDouble(txtRRX.Text),
+                RL_Y = ParseDouble(txtRRY.Text),
+                RL_Z = ParseDouble(txtRRZ.Text),
+                RL_Angle = ParseDouble(txtRRAngle.Text),
+                R_IsTest = chkIsRearRadar.Checked
+            };
+        }
+
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(txtModel.Text))
+                var newModel = CreateModelFromForm();
+
+                if (string.IsNullOrWhiteSpace(newModel.Name))
                 {
                     MsgBox.Warn("ModelNameRequired");
                     return;
                 }
 
-                if (_modelRepository.AddModel(_modelRepository.GetModelDetails(txtModel.Text)))
+                if (_modelRepository.GetModelDetails(newModel.Name) != null)
+                {
+                    MsgBox.Warn("ModelAlreadyExists");
+                    return;
+                }
+
+                if (_modelRepository.AddModel(newModel))
                 {
                     MsgBox.Info("ModelAddSuccess");
                     txtModel.Text = string.Empty;
                     LoadModelList();
                     ClearAllFields();
+                }
+                else
+                {
+                    MsgBox.Error("ModelAddFailed");
                 }
             }
             catch (Exception ex)
@@ -237,18 +307,29 @@ namespace Ki_ADAS
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(txtModel.Text))
+                string oldModelName = modelList.SelectedItems[0].Text;
+                var updatedModel = CreateModelFromForm();
+
+                if (string.IsNullOrWhiteSpace(updatedModel.Name))
                 {
                     MsgBox.Warn("ModelNameRequired");
                     return;
                 }
 
-                string oldModelName = modelList.SelectedItems[0].Text;
+                if (oldModelName != updatedModel.Name && _modelRepository.GetModelDetails(updatedModel.Name) != null)
+                {
+                    MsgBox.Warn("ModelNameAlreadyExists");
+                    return;
+                }
 
-                if (_modelRepository.UpdateModel(_modelRepository.GetModelDetails(txtModel.Text), oldModelName))
+                if (_modelRepository.UpdateModel(updatedModel, oldModelName))
                 {
                     MsgBox.Info("ModelUpdateSuccess");
                     LoadModelList();
+                }
+                else
+                {
+                    MsgBox.Error("ModelUpdateFailed");
                 }
             }
             catch (Exception ex)
