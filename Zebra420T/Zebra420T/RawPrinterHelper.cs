@@ -1,8 +1,9 @@
 using System;
-using System.Drawing;
+using System.ComponentModel;
 using System.Drawing.Printing;
-using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 public class RawPrinterHelper
 {
@@ -39,7 +40,6 @@ public class RawPrinterHelper
 
     public static bool SendBytesToPrinter(string szPrinterName, IntPtr pBytes, Int32 dwCount)
     {
-        Int32 dwError = 0, dwWritten = 0;
         IntPtr hPrinter = new IntPtr(0);
         DOCINFOA di = new DOCINFOA();
         bool bSuccess = false;
@@ -53,32 +53,54 @@ public class RawPrinterHelper
             {
                 if (StartPagePrinter(hPrinter))
                 {
+                    int dwWritten;
                     bSuccess = WritePrinter(hPrinter, pBytes, dwCount, out dwWritten);
+                    if (!bSuccess || dwWritten != dwCount)
+                    {
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
                     EndPagePrinter(hPrinter);
                 }
-
+                else
+                {
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
                 EndDocPrinter(hPrinter);
             }
-
+            else
+            {
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
             ClosePrinter(hPrinter);
         }
-
-        if (bSuccess == false)
+        else
         {
-            dwError = Marshal.GetLastWin32Error();
+            throw new Win32Exception(Marshal.GetLastWin32Error());
         }
-
+        
         return bSuccess;
     }
 
     public static bool SendStringToPrinter(string szPrinterName, string szString)
     {
-        Int32 dwCount = szString.Length;
-        IntPtr pBytes = Marshal.StringToCoTaskMemAnsi(szString);
+        byte[] utf8Bytes = Encoding.UTF8.GetBytes(szString);
+        int dwCount = utf8Bytes.Length;
 
-        SendBytesToPrinter(szPrinterName, pBytes, dwCount);
-        Marshal.FreeCoTaskMem(pBytes);
+        IntPtr pBytes = Marshal.AllocHGlobal(dwCount);
+        
+        bool result = false;
 
-        return true;
+        try
+        {
+            Marshal.Copy(utf8Bytes, 0, pBytes, dwCount);
+            
+            result = SendBytesToPrinter(szPrinterName, pBytes, dwCount);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(pBytes);
+        }
+
+        return result;
     }
 }

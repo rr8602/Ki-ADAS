@@ -88,6 +88,7 @@ namespace Ki_ADAS.DB
         public bool PjiExists(string pji)
         {
             const string query = "SELECT COUNT(*) FROM Info WHERE PJI = ?";
+
             try
             {
                 using (var con = new OleDbConnection(db.connectionString))
