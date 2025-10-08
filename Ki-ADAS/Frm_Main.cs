@@ -215,7 +215,7 @@ namespace Ki_ADAS
                 {
                     AcceptNo = _infoRepository.GetNextAcceptNo(),
                     PJI = pji,
-                    Model = "Sonata"
+                    Model = "Sonata"  // 실제 바코드에서는 modelName으로 바꾸면 됨
                 };
 
                 if (string.IsNullOrEmpty(newVehicle.AcceptNo))
