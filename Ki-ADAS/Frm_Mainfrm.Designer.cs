@@ -244,6 +244,7 @@
             this.Text = "ADAS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Mainfrm_FormClosing);
             this.Load += new System.EventHandler(this.Frm_Mainfrm_Load);
+            this.Resize += new System.EventHandler(this.Frm_Mainfrm_Resize);
             this.panelNavBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();

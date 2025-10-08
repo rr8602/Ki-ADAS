@@ -74,9 +74,8 @@ namespace Zebra420T
 
         private string GenerateZpl(string printString)
         {
-            const int labelWidthDots = 862;
-            const int labelHeightDots = 406;
-            const int margin = 20;
+            const int labelHeightDots = 610;
+            const int margin = 80;
 
             var allLines = printString.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -84,11 +83,9 @@ namespace Zebra420T
             zpl.AppendLine("^XA");
             zpl.AppendLine("^CI28");
 
-            const int textBlockWidth = labelWidthDots - (margin * 2);
-
-            const int fontHeight = 20;
-            const int fontWidth = 18;
-            const int lineHeight = 25;
+            const int fontHeight = 40;
+            const int fontWidth = 40;
+            const int lineHeight = 45;
 
             int yPosition = margin;
 
@@ -99,7 +96,9 @@ namespace Zebra420T
                     break;
                 }
 
-                zpl.AppendLine($"^FO{margin},{yPosition}^A@N,{fontHeight},{fontWidth},E:KFONT3.FNT^FB{textBlockWidth},2,0,L,0^FD{line.Trim()}^FS");
+                // AON : 기본 폰트 출력
+                // A@N : 다운로드 폰트 출력 (ex: 한글)
+                zpl.AppendLine($"^FO{margin},{yPosition}^A0N,{fontHeight},{fontWidth}^FD{line.Trim()}^FS");
                 yPosition += lineHeight;
             }
 

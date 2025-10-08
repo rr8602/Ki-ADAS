@@ -121,6 +121,11 @@ namespace Ki_ADAS
             }
         }
 
+        private void Frm_Mainfrm_Resize(object sender, EventArgs e)
+        {
+            RepositionSubForm(this.ActiveSubForm);
+        }
+
         private void StartBarcode()
         {
             try
@@ -189,6 +194,7 @@ namespace Ki_ADAS
             {
                 if (fSubform == null)
                     return;
+
                 fSubform.Location = new Point(0, 0);
                 fSubform.Size = new Size(ClientSize.Width - panelNavBar.Size.Width - 4, ClientSize.Height - 4);
             }

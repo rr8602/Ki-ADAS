@@ -22,13 +22,13 @@ namespace Zebra420T
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("-- INFO DO TESTE --");
-            sb.AppendLine($"아이디입니다다        :     {Identification}");
-            sb.AppendLine($"설명입니다다다            :     {Description}");
-            sb.AppendLine($"결과입니다다다           :     {Results}");
-            sb.AppendLine($"Nº Banco             :     {BankNumber}");
-            sb.AppendLine($"Data                 :     {Data}");
-            sb.AppendLine($"Hora                 :     {Time}");
-            sb.AppendLine($"Duraçao              :     {Duration}");
+            sb.AppendLine($"Identificaçao     :       {Identification}");
+            sb.AppendLine($"Descriçao         :       {Description}");
+            sb.AppendLine($"Resultados        :       {Results}");
+            sb.AppendLine($"Nº Banco         :       {BankNumber}");
+            sb.AppendLine($"Data              :       {Data}");
+            sb.AppendLine($"Hora              :       {Time}");
+            sb.AppendLine($"Duraçao           :       {Duration}");
 
             return sb.ToString();
         }

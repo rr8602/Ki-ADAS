@@ -49,11 +49,6 @@ namespace Ki_ADAS
             _iniFile = new IniFile(iniPath);
         }
 
-        private void InitialNewModel()
-        {
-
-        }
-
         private void Frm_Config_Load(object sender, EventArgs e)
         {
             try
